@@ -1,0 +1,207 @@
+product_id,product_name,category,unit_price
+1,Clothing Item 1,Clothing,205.80
+2,Clothing Item 2,Clothing,166.30
+3,Clothing Item 3,Clothing,-36.01
+4,Grocery Item 4,Grocery,-18.60
+5,Toys Item 5,Toys,123.08
+6,Sports Item 6,Sports,276.22
+7,Grocery Item 7,Grocery,194.98
+8,Beauty Item 8,Beauty,108.07
+9,Toys Item 9,Toys,393.23
+10,Toys Item 10,Toys,285.76
+11,Beauty Item 11,Beauty,274.53
+12,Sports Item 12,Sports,90.67
+13,Clothing Item 13,Clothing,370.98
+14,Grocery Item 14,Grocery,61.58
+15,Grocery Item 15,Grocery,166.05
+16,,Clothing,411.89
+17,Home & Kitchen Item 17,Home & Kitchen,INVALID
+18,Toys Item 18,Toys,39.45
+19,Clothing Item 19,Clothing,344.32
+20,Toys Item 20,Toys,167.06
+21,Electronics Item 21,Electronics,49.80
+22,Home & Kitchen Item 22,Home & Kitchen,444.18
+23,Electronics Item 23,Electronics,INVALID
+24,Home & Kitchen Item 24,Home & Kitchen,229.21
+25,Books Item 25,Books,198.03
+26,Grocery Item 26,Grocery,101.84
+27,Beauty Item 27,Beauty,153.36
+28,Books Item 28,Books,459.65
+29,Toys Item 29,Toys,INVALID
+30,Beauty Item 30,Beauty,495.18
+31,Electronics Item 31,Electronics,307.68
+32,Toys Item 32,Toys,424.57
+33,,Books,-42.77
+34,Electronics Item 34,Electronics,INVALID
+35,,Beauty,59.29
+36,Books Item 36,Books,433.50
+37,Sports Item 37,Sports,218.69
+38,Toys Item 38,Toys,314.47
+39,Toys Item 39,Toys,205.98
+40,,Toys,274.82
+41,Home & Kitchen Item 41,Home & Kitchen,240.05
+42,Sports Item 42,Sports,279.92
+43,Beauty Item 43,Beauty,420.77
+44,Home & Kitchen Item 44,Home & Kitchen,147.78
+45,Home & Kitchen Item 45,Home & Kitchen,71.46
+46,Clothing Item 46,Clothing,325.94
+47,Home & Kitchen Item 47,Home & Kitchen,362.05
+48,Grocery Item 48,Grocery,330.66
+49,Home & Kitchen Item 49,Home & Kitchen,46.90
+50,Toys Item 50,Toys,430.77
+51,Toys Item 51,Toys,-48.96
+52,Grocery Item 52,Grocery,257.15
+53,Grocery Item 53,Grocery,195.42
+54,Sports Item 54,Sports,96.96
+55,Electronics Item 55,Electronics,INVALID
+56,Sports Item 56,Sports,357.49
+57,Books Item 57,Books,208.35
+58,Beauty Item 58,Beauty,21.55
+59,,Electronics,286.22
+60,Beauty Item 60,Beauty,61.01
+61,Grocery Item 61,Grocery,481.05
+62,Clothing Item 62,Clothing,75.32
+63,Books Item 63,Books,235.13
+64,Clothing Item 64,Clothing,264.05
+65,Clothing Item 65,Clothing,INVALID
+66,Clothing Item 66,Clothing,343.61
+67,Books Item 67,Books,308.44
+68,Beauty Item 68,Beauty,269.83
+69,Electronics Item 69,Electronics,237.08
+70,Grocery Item 70,Grocery,289.10
+71,Beauty Item 71,Beauty,213.39
+72,Books Item 72,Books,INVALID
+73,Electronics Item 73,Electronics,349.04
+74,Books Item 74,Books,364.84
+75,Books Item 75,Books,35.39
+76,Grocery Item 76,Grocery,291.17
+77,Electronics Item 77,Electronics,329.87
+78,Books Item 78,Books,405.39
+79,Electronics Item 79,Electronics,146.96
+80,Clothing Item 80,Clothing,67.77
+81,Clothing Item 81,Clothing,426.46
+82,Books Item 82,Books,129.76
+83,Books Item 83,Books,141.22
+84,Books Item 84,Books,12.02
+85,Clothing Item 85,Clothing,303.88
+86,Home & Kitchen Item 86,Home & Kitchen,331.27
+87,Beauty Item 87,Beauty,404.87
+88,Books Item 88,Books,392.34
+89,Sports Item 89,Sports,245.02
+90,Electronics Item 90,Electronics,174.70
+91,Clothing Item 91,Clothing,483.83
+92,Home & Kitchen Item 92,Home & Kitchen,419.61
+93,Toys Item 93,Toys,INVALID
+94,Sports Item 94,Sports,332.02
+95,Home & Kitchen Item 95,Home & Kitchen,109.36
+96,Beauty Item 96,Beauty,31.88
+97,Books Item 97,Books,378.95
+98,Clothing Item 98,Clothing,30.99
+99,Grocery Item 99,Grocery,202.37
+100,Books Item 100,Books,240.74
+101,Sports Item 101,Sports,192.99
+102,Toys Item 102,Toys,239.91
+103,Home & Kitchen Item 103,Home & Kitchen,267.56
+104,Toys Item 104,Toys,10.86
+105,Grocery Item 105,Grocery,194.08
+106,Beauty Item 106,Beauty,481.06
+107,Electronics Item 107,Electronics,53.19
+108,Beauty Item 108,Beauty,INVALID
+109,Toys Item 109,Toys,307.18
+110,Books Item 110,Books,170.80
+111,Books Item 111,Books,402.14
+112,Books Item 112,Books,328.89
+113,Toys Item 113,Toys,233.24
+114,Sports Item 114,Sports,368.48
+115,Sports Item 115,Sports,262.37
+116,Home & Kitchen Item 116,Home & Kitchen,160.06
+117,Electronics Item 117,Electronics,338.03
+118,Clothing Item 118,Clothing,10.91
+119,Clothing Item 119,Clothing,265.00
+120,Grocery Item 120,Grocery,178.99
+121,Books Item 121,Books,129.68
+122,Electronics Item 122,Electronics,16.72
+123,Clothing Item 123,Clothing,33.15
+124,Sports Item 124,Sports,475.48
+125,Clothing Item 125,Clothing,INVALID
+126,Clothing Item 126,Clothing,47.75
+127,Home & Kitchen Item 127,Home & Kitchen,191.09
+128,Home & Kitchen Item 128,Home & Kitchen,448.51
+129,Home & Kitchen Item 129,Home & Kitchen,130.39
+130,Grocery Item 130,Grocery,331.93
+131,Clothing Item 131,Clothing,321.19
+132,Books Item 132,Books,385.82
+133,Beauty Item 133,Beauty,132.37
+134,Clothing Item 134,Clothing,142.25
+135,Electronics Item 135,Electronics,INVALID
+136,Beauty Item 136,Beauty,497.99
+137,Books Item 137,Books,478.01
+138,,Books,93.07
+139,Clothing Item 139,Clothing,248.39
+140,Sports Item 140,Sports,307.09
+141,Home & Kitchen Item 141,Home & Kitchen,324.50
+142,Clothing Item 142,Clothing,76.21
+143,Toys Item 143,Toys,113.09
+144,Clothing Item 144,Clothing,456.73
+145,Books Item 145,Books,56.12
+146,Clothing Item 146,Clothing,39.84
+147,Books Item 147,Books,389.72
+148,Electronics Item 148,Electronics,INVALID
+149,Home & Kitchen Item 149,Home & Kitchen,328.16
+150,Electronics Item 150,Electronics,466.77
+151,Toys Item 151,Toys,136.88
+152,Beauty Item 152,Beauty,452.78
+153,Electronics Item 153,Electronics,260.10
+154,Grocery Item 154,Grocery,241.67
+155,Toys Item 155,Toys,-7.25
+156,Clothing Item 156,Clothing,272.35
+157,Electronics Item 157,Electronics,195.28
+158,Grocery Item 158,Grocery,64.99
+159,Beauty Item 159,Beauty,170.04
+160,Books Item 160,Books,203.29
+161,,Clothing,-22.51
+162,Beauty Item 162,Beauty,44.82
+163,Grocery Item 163,Grocery,381.41
+164,Books Item 164,Books,325.65
+165,Home & Kitchen Item 165,Home & Kitchen,279.46
+166,Toys Item 166,Toys,332.05
+167,Books Item 167,Books,349.45
+168,Clothing Item 168,Clothing,INVALID
+169,Beauty Item 169,Beauty,245.81
+170,,Grocery,368.98
+171,Home & Kitchen Item 171,Home & Kitchen,22.66
+172,Electronics Item 172,Electronics,361.26
+173,Sports Item 173,Sports,-8.31
+174,Clothing Item 174,Clothing,397.40
+175,Books Item 175,Books,252.33
+176,Grocery Item 176,Grocery,483.44
+177,Electronics Item 177,Electronics,23.33
+178,Electronics Item 178,Electronics,172.16
+179,Electronics Item 179,Electronics,205.72
+180,Sports Item 180,Sports,-14.57
+181,Grocery Item 181,Grocery,470.33
+182,Home & Kitchen Item 182,Home & Kitchen,-32.07
+183,Sports Item 183,Sports,462.77
+184,Electronics Item 184,Electronics,369.04
+185,Grocery Item 185,Grocery,328.64
+186,Grocery Item 186,Grocery,454.04
+187,Electronics Item 187,Electronics,125.12
+188,Home & Kitchen Item 188,Home & Kitchen,INVALID
+189,Electronics Item 189,Electronics,-7.40
+190,Clothing Item 190,Clothing,230.80
+191,Home & Kitchen Item 191,Home & Kitchen,418.49
+192,Clothing Item 192,Clothing,INVALID
+193,Clothing Item 193,Clothing,61.51
+194,Sports Item 194,Sports,36.23
+195,Sports Item 195,Sports,215.96
+196,Toys Item 196,Toys,165.49
+197,Home & Kitchen Item 197,Home & Kitchen,164.18
+198,Sports Item 198,Sports,383.28
+199,Home & Kitchen Item 199,Home & Kitchen,171.06
+200,Clothing Item 200,Clothing,140.57
+33,,Books,-42.77
+179,Electronics Item 179,Electronics,205.72
+27,Beauty Item 27,Beauty,153.36
+63,Books Item 63,Books,235.13
+96,Beauty Item 96,Beauty,31.88
+184,Electronics Item 184,Electronics,369.04

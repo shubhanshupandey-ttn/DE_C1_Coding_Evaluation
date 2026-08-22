@@ -1,0 +1,1007 @@
+customer_id,customer_name,email,country,signup_date,customer_segment,lifetime_value
+1,Jordan Smith,jordan.smith1@example.com,United Kingdom,2024-02-17,Basic,3748.89
+2,Jordan Wilson,,United States,2020-07-10,Premium,6386.64
+3,Morgan Brown,morgan.brown3@example.com,Germany,2024-01-06,Standard,495.39
+4,Sam Miller,sam.miller4@example.com,United States,2024-04-03,Standard,8880.06
+5,,taylor.miller5@example.com,Australia,2020-07-28,Standard,2416.64
+6,Jordan Miller,jordan.miller6@example.com,India,2024-07-10,Premium,12727.67
+7,Alex Davis,,France,2020-06-10,Standard,14599.42
+8,Sam Jones,sam.jones8@example.com,Australia,2023-03-28,Basic,9315.94
+9,Morgan Johnson,morgan.johnson9@example.com,India,2020-06-12,Premium,3495.68
+10,Morgan Johnson,morgan.johnson10@example.com,Australia,2020-11-29,Standard,6855.81
+11,Riley Garcia,riley.garcia11@example.com,Canada,2023-06-01,Standard,4077.97
+12,Taylor Wilson,taylor.wilson12@example.com,France,2021-07-06,Basic,2534.70
+13,Sam Brown,sam.brown13@example.com,United States,2021-04-14,Standard,12658.49
+14,Alex Garcia,alex.garcia14@example.com,Australia,2021-03-11,Standard,1086.21
+15,Quinn Miller,quinn.miller15@example.com,United Kingdom,2021-06-26,Basic,9678.49
+16,Taylor Brown,taylor.brown16@example.com,France,2023-04-10,Basic,8130.76
+17,Avery Garcia,avery.garcia17@example.com,Japan,2020-07-05,Standard,14963.31
+18,Alex Johnson,alex.johnson18@example.com,France,2023-05-06,Premium,2483.73
+19,Jordan Miller,jordan.miller19@example.com,India,2023-02-07,Standard,14942.21
+20,Alex Johnson,alex.johnson20@example.com,India,2024-04-23,Standard,8100.86
+21,Riley Johnson,riley.johnson21@example.com,United States,2024-01-18,Standard,2456.55
+22,Casey Wilson,casey.wilson22@example.com,Canada,2024-11-17,Basic,7664.46
+23,Casey Wilson,casey.wilson23@example.com,United Kingdom,2023-01-09,Standard,2377.31
+24,Sam Smith,sam.smith24@example.com,Canada,2022-01-13,Standard,7380.23
+25,Casey Brown,casey.brown25@example.com,Canada,2020-06-24,Premium,13182.34
+26,Quinn Johnson,,United Kingdom,2020-09-19,Basic,8037.32
+27,Quinn Wilson,quinn.wilson27@example.com,France,2021-03-09,Premium,7962.34
+28,Sam Brown,sam.brown28@example.com,Australia,2022-06-16,Basic,6044.99
+29,Sam Davis,sam.davis29@example.com,Australia,2020-02-13,Premium,3447.99
+30,Jamie Wilson,jamie.wilson30@example.com,Canada,2023-12-20,Standard,3381.24
+31,Alex Brown,alex.brown31@example.com,Australia,2020-05-25,Premium,568.05
+32,Sam Brown,sam.brown32@example.com,United Kingdom,2024-01-21,Standard,7332.68
+33,Jamie Moore,jamie.moore33@example.com,France,2021-01-24,Standard,11790.83
+34,Jordan Johnson,jordan.johnson34@example.com,France,2022-08-14,Standard,5379.03
+35,Alex Johnson,alex.johnson35@example.com,Canada,2021-05-24,Premium,10950.38
+36,Morgan Brown,morgan.brown36@example.com,United Kingdom,2021-07-24,Standard,2188.72
+37,Quinn Brown,quinn.brown37@example.com,Canada,2020-04-13,Basic,1223.23
+38,Sam Smith,sam.smith38@example.com,Germany,2020-12-06,Basic,13902.87
+39,Avery Davis,avery.davis39@example.com,United States,2020-12-03,Standard,12983.29
+40,Avery Smith,avery.smith40@example.com,Japan,2021-08-07,Basic,4051.53
+41,Avery Wilson,avery.wilson41@example.com,Germany,2021-08-30,Standard,7351.40
+42,Morgan Smith,morgan.smith42@example.com,Australia,2020-04-27,Standard,8178.71
+43,Alex Moore,alex.moore43@example.com,United Kingdom,2020-04-26,Standard,13798.87
+44,Sam Johnson,sam.johnson44@example.com,Canada,2023-10-14,Basic,1120.97
+45,Morgan Miller,morgan.miller45@example.com,Germany,2023-03-31,Premium,13365.28
+46,Jamie Smith,invalid-email-format,Australia,2021-06-18,Standard,6346.45
+47,Morgan Garcia,morgan.garcia47@example.com,India,2022-07-25,Standard,5997.21
+48,Riley Johnson,riley.johnson48@example.com,Canada,2020-05-30,Premium,9355.27
+49,Sam Brown,sam.brown49@example.com,Australia,2024-12-09,Standard,2073.60
+50,Jordan Brown,jordan.brown50@example.com,India,2023-06-06,Standard,2450.43
+51,Sam Smith,sam.smith51@example.com,Canada,2024-12-03,Standard,8363.57
+52,Taylor Jones,invalid-email-format,United Kingdom,2021-07-11,Premium,1694.84
+53,Casey Moore,casey.moore53@example.com,India,2022-11-01,Standard,5208.92
+54,Quinn Jones,quinn.jones54@example.com,Canada,2023-07-23,Basic,12706.95
+55,Avery Jones,avery.jones55@example.com,United Kingdom,2023-07-28,Premium,5069.99
+56,Casey Williams,casey.williams56@example.com,France,2023-02-22,Basic,8320.04
+57,Alex Johnson,alex.johnson57@example.com,United Kingdom,2023-01-22,Premium,13258.29
+58,Alex Garcia,alex.garcia58@example.com,United Kingdom,2020-03-26,Standard,2306.60
+59,Casey Garcia,casey.garcia59@example.com,United States,2022-01-02,Basic,11962.22
+60,Morgan Brown,morgan.brown60@example.com,France,2023-06-25,Standard,5369.81
+61,Taylor Brown,taylor.brown61@example.com,United Kingdom,2024-12-10,Basic,14645.47
+62,Avery Smith,avery.smith62@example.com,France,2024-06-30,Premium,13874.86
+63,Morgan Jones,morgan.jones63@example.com,France,2024-11-21,Premium,10549.05
+64,Alex Davis,alex.davis64@example.com,Japan,2021-12-17,Standard,12267.14
+65,Casey Brown,casey.brown65@example.com,France,2021-11-03,Standard,9934.49
+66,Casey Johnson,casey.johnson66@example.com,France,2023-10-23,Basic,4258.96
+67,Sam Garcia,sam.garcia67@example.com,India,2020-12-31,Basic,1818.59
+68,Jamie Jones,jamie.jones68@example.com,Australia,2024-02-01,Premium,8988.91
+69,Riley Miller,invalid-email-format,France,2023-03-26,Standard,7720.20
+70,Morgan Jones,,Germany,2022-01-15,Premium,6597.26
+71,Avery Johnson,avery.johnson71@example.com,Australia,2023-09-20,Basic,13819.49
+72,Jordan Jones,jordan.jones72@example.com,Australia,2022-04-04,Standard,10036.70
+73,Casey Wilson,casey.wilson73@example.com,France,2023-10-19,Premium,6364.65
+74,Taylor Moore,taylor.moore74@example.com,United States,2021-09-14,Standard,6150.52
+75,Casey Brown,casey.brown75@example.com,Australia,2022-08-10,Standard,8741.77
+76,Quinn Davis,quinn.davis76@example.com,United Kingdom,2023-09-11,Standard,7716.49
+77,Jordan Jones,jordan.jones77@example.com,Australia,2020-07-10,Standard,9530.82
+78,Morgan Jones,morgan.jones78@example.com,United States,2020-04-04,Standard,3067.04
+79,Morgan Davis,morgan.davis79@example.com,Japan,2022-04-28,Standard,11550.49
+80,Jamie Brown,,France,2021-05-14,Basic,5821.28
+81,Taylor Smith,taylor.smith81@example.com,Canada,2024-05-13,Basic,12920.56
+82,Avery Brown,avery.brown82@example.com,Japan,2020-04-12,Premium,14373.69
+83,Sam Brown,sam.brown83@example.com,United Kingdom,2024-06-29,Basic,1908.24
+84,Quinn Wilson,quinn.wilson84@example.com,Japan,NOT-A-DATE,Basic,8972.24
+85,Sam Miller,sam.miller85@example.com,United Kingdom,2024-03-03,Basic,8263.29
+86,Quinn Davis,quinn.davis86@example.com,India,2024-04-17,Standard,3783.87
+87,Sam Davis,sam.davis87@example.com,Canada,2024-01-01,Standard,4191.50
+88,Casey Brown,casey.brown88@example.com,Canada,2020-10-10,Standard,4863.67
+89,Taylor Brown,taylor.brown89@example.com,Germany,2020-05-11,Standard,2376.80
+90,Avery Miller,avery.miller90@example.com,United States,2021-02-27,Standard,7042.27
+91,Avery Miller,avery.miller91@example.com,United States,2024-10-20,Basic,8802.78
+92,Jamie Miller,jamie.miller92@example.com,India,2024-03-23,Standard,14146.85
+93,Avery Miller,avery.miller93@example.com,Germany,2022-09-26,Standard,11046.05
+94,Morgan Jones,,Australia,2023-10-01,Standard,532.47
+95,Avery Williams,avery.williams95@example.com,United States,2022-03-17,Basic,13801.17
+96,Jamie Moore,jamie.moore96@example.com,France,2020-10-04,Standard,1350.82
+97,,invalid-email-format,Germany,2022-07-20,Premium,5748.65
+98,Riley Garcia,riley.garcia98@example.com,France,2021-05-31,Basic,5748.98
+99,Jordan Davis,jordan.davis99@example.com,Australia,2021-04-04,Premium,8137.34
+100,Jordan Smith,jordan.smith100@example.com,Germany,2024-09-14,Basic,14249.21
+101,Alex Moore,alex.moore101@example.com,Canada,2023-03-01,Premium,1980.69
+102,Morgan Davis,,United Kingdom,2023-05-25,Standard,11526.78
+103,Jamie Johnson,jamie.johnson103@example.com,India,2020-08-09,Basic,2540.11
+104,Jamie Smith,jamie.smith104@example.com,France,2022-03-23,Basic,8679.37
+105,Morgan Johnson,morgan.johnson105@example.com,Germany,2020-07-27,Standard,12475.52
+106,Casey Moore,casey.moore106@example.com,United States,2021-12-12,Basic,11963.79
+107,Sam Miller,sam.miller107@example.com,Australia,2020-01-26,Standard,1127.46
+108,Avery Davis,avery.davis108@example.com,Japan,2023-12-19,Premium,14415.73
+109,,taylor.miller109@example.com,India,2023-06-15,Premium,7874.03
+110,Sam Davis,sam.davis110@example.com,India,2021-10-22,Standard,12403.45
+111,Morgan Johnson,morgan.johnson111@example.com,Japan,2023-03-13,Standard,6816.95
+112,Jamie Miller,jamie.miller112@example.com,Australia,2021-01-07,Standard,7465.17
+113,Quinn Brown,quinn.brown113@example.com,India,2024-12-07,Standard,3949.45
+114,Jamie Jones,jamie.jones114@example.com,Germany,2020-06-24,Standard,7797.75
+115,,morgan.miller115@example.com,Japan,2023-08-15,Standard,11396.65
+116,Quinn Davis,quinn.davis116@example.com,Germany,2022-04-08,Basic,1486.49
+117,Morgan Jones,morgan.jones117@example.com,Australia,2022-05-21,Standard,5598.40
+118,Sam Garcia,,India,2021-05-29,Standard,6860.80
+119,Morgan Johnson,morgan.johnson119@example.com,United Kingdom,2021-01-27,Basic,4801.66
+120,Morgan Davis,morgan.davis120@example.com,India,2020-07-24,Standard,8884.84
+121,Morgan Jones,morgan.jones121@example.com,United States,2023-12-21,Standard,2773.68
+122,Sam Williams,sam.williams122@example.com,India,2023-11-29,Standard,14616.99
+123,Taylor Davis,taylor.davis123@example.com,India,2022-08-19,Premium,282.75
+124,Quinn Davis,quinn.davis124@example.com,India,2024-10-30,Standard,14485.91
+125,Quinn Johnson,quinn.johnson125@example.com,Canada,2023-03-27,Basic,6070.54
+126,Alex Williams,alex.williams126@example.com,India,2020-06-23,Premium,8486.31
+127,Morgan Johnson,morgan.johnson127@example.com,Germany,2024-05-07,Standard,6300.99
+128,Sam Miller,,France,2021-09-17,Standard,6696.54
+129,Jamie Moore,jamie.moore129@example.com,Canada,2024-04-11,Premium,14405.62
+130,Morgan Brown,,Germany,2020-12-21,Standard,1309.69
+131,Sam Johnson,sam.johnson131@example.com,Japan,2021-08-19,Premium,6186.91
+132,Alex Brown,alex.brown132@example.com,Japan,2020-05-25,Standard,4312.50
+133,Morgan Jones,morgan.jones133@example.com,Germany,2022-05-20,Basic,9413.36
+134,Jordan Wilson,jordan.wilson134@example.com,India,2024-08-19,Standard,2319.94
+135,Taylor Johnson,taylor.johnson135@example.com,India,2022-06-18,Premium,11910.17
+136,Jordan Davis,jordan.davis136@example.com,India,2022-10-21,Standard,10526.03
+137,Sam Davis,sam.davis137@example.com,France,2024-02-13,Standard,9010.75
+138,Riley Moore,riley.moore138@example.com,United States,2024-04-15,Standard,1460.77
+139,Casey Moore,casey.moore139@example.com,Japan,2022-11-28,Premium,11368.41
+140,Quinn Jones,quinn.jones140@example.com,Japan,2020-07-05,Premium,8821.41
+141,Quinn Garcia,quinn.garcia141@example.com,Canada,2024-10-22,Standard,4883.77
+142,Taylor Garcia,taylor.garcia142@example.com,France,2024-07-24,Standard,7482.49
+143,Sam Smith,sam.smith143@example.com,Australia,2020-08-25,Standard,4786.31
+144,Avery Wilson,avery.wilson144@example.com,Japan,2022-04-26,Basic,117.15
+145,Alex Brown,alex.brown145@example.com,Japan,2023-07-04,Standard,9377.24
+146,Quinn Smith,quinn.smith146@example.com,India,2022-06-16,Standard,8283.37
+147,Quinn Johnson,quinn.johnson147@example.com,Germany,2023-12-24,Premium,9487.33
+148,Taylor Jones,taylor.jones148@example.com,Canada,2021-04-05,Standard,8328.55
+149,Jordan Davis,jordan.davis149@example.com,United Kingdom,2022-10-17,Basic,9750.87
+150,Casey Wilson,casey.wilson150@example.com,Japan,2022-08-25,Basic,6290.81
+151,Morgan Davis,morgan.davis151@example.com,United Kingdom,2024-11-04,Standard,5815.43
+152,Jordan Jones,jordan.jones152@example.com,Australia,2024-06-01,Basic,12830.74
+153,Sam Jones,sam.jones153@example.com,India,2024-09-11,Basic,4314.30
+154,Jamie Moore,jamie.moore154@example.com,United Kingdom,2022-07-03,Basic,7395.64
+155,Sam Davis,sam.davis155@example.com,France,2022-07-21,Standard,8323.57
+156,Riley Brown,riley.brown156@example.com,France,2021-04-23,Basic,3658.20
+157,Avery Smith,avery.smith157@example.com,France,2022-03-01,Standard,7147.35
+158,Taylor Davis,taylor.davis158@example.com,Australia,2024-11-16,Basic,1981.07
+159,Jordan Davis,invalid-email-format,United States,2024-01-19,Premium,13665.58
+160,Taylor Miller,taylor.miller160@example.com,Canada,2022-08-19,Basic,14552.36
+161,Casey Garcia,casey.garcia161@example.com,Canada,2024-10-10,Standard,6022.50
+162,Riley Wilson,riley.wilson162@example.com,Japan,2024-11-21,Standard,4818.25
+163,Sam Smith,sam.smith163@example.com,India,2021-04-10,Standard,3598.08
+164,Jordan Miller,jordan.miller164@example.com,Canada,2022-06-27,Basic,11429.51
+165,Taylor Jones,taylor.jones165@example.com,United States,2021-08-23,Basic,785.27
+166,Riley Garcia,,France,2023-03-05,Standard,3738.54
+167,Taylor Williams,taylor.williams167@example.com,France,2023-06-23,Premium,9181.43
+168,Morgan Davis,morgan.davis168@example.com,Japan,2023-07-30,Basic,2232.45
+169,Casey Davis,casey.davis169@example.com,Japan,2021-08-12,Standard,240.02
+170,Sam Williams,sam.williams170@example.com,India,2023-08-01,Premium,14184.01
+171,Avery Jones,avery.jones171@example.com,France,2024-10-13,Standard,4601.61
+172,Quinn Johnson,quinn.johnson172@example.com,India,NOT-A-DATE,Standard,8621.65
+173,Casey Smith,,India,2020-01-17,Basic,9907.62
+174,Jamie Smith,jamie.smith174@example.com,India,2024-05-07,Basic,11203.07
+175,Morgan Moore,morgan.moore175@example.com,Germany,2023-06-25,Basic,3363.17
+176,Casey Williams,,United States,2021-09-24,Standard,13560.72
+177,Quinn Smith,quinn.smith177@example.com,Canada,2026-11-09,Standard,11012.16
+178,Riley Miller,riley.miller178@example.com,Australia,2022-12-23,Premium,2069.18
+179,Sam Jones,sam.jones179@example.com,Japan,2024-07-09,Basic,3928.85
+180,Casey Garcia,casey.garcia180@example.com,Canada,2020-10-15,Basic,7078.14
+181,Morgan Miller,morgan.miller181@example.com,Australia,2020-07-03,Basic,12088.36
+182,Avery Smith,avery.smith182@example.com,Australia,2023-10-09,Standard,1941.47
+183,Casey Moore,casey.moore183@example.com,Australia,2020-08-09,Standard,9614.38
+184,Morgan Davis,morgan.davis184@example.com,Australia,2023-06-03,Premium,13275.10
+185,Morgan Johnson,morgan.johnson185@example.com,India,2023-08-22,Standard,7017.59
+186,Avery Johnson,,India,2022-10-05,Premium,14199.30
+187,Jordan Johnson,jordan.johnson187@example.com,France,2022-07-18,Standard,8109.44
+188,Riley Wilson,riley.wilson188@example.com,United Kingdom,2024-12-18,Standard,11159.81
+189,Avery Johnson,avery.johnson189@example.com,India,2020-03-08,Basic,9273.22
+190,Riley Brown,riley.brown190@example.com,Australia,2020-07-22,Standard,14263.27
+191,Riley Wilson,riley.wilson191@example.com,United States,2022-03-26,Basic,9707.92
+192,Casey Brown,,Japan,2020-07-06,Basic,14240.26
+193,Morgan Moore,morgan.moore193@example.com,Australia,2021-05-13,Basic,853.62
+194,Taylor Moore,,Germany,2023-04-15,Standard,12464.29
+195,Morgan Brown,morgan.brown195@example.com,United States,2021-07-21,Standard,2298.56
+196,Taylor Williams,taylor.williams196@example.com,Canada,2023-09-15,Standard,11997.86
+197,Alex Williams,alex.williams197@example.com,Germany,2023-04-20,Premium,11870.77
+198,Riley Smith,riley.smith198@example.com,France,2022-12-13,Premium,880.75
+199,Jordan Johnson,jordan.johnson199@example.com,Canada,2022-07-14,Standard,11692.45
+200,Sam Brown,sam.brown200@example.com,India,2022-07-27,Basic,746.14
+201,Alex Smith,alex.smith201@example.com,France,2023-11-06,Basic,12724.75
+202,Jordan Davis,jordan.davis202@example.com,Canada,2021-10-21,Basic,6709.08
+203,Jamie Williams,jamie.williams203@example.com,Australia,2022-02-19,Premium,4197.74
+204,Jamie Wilson,jamie.wilson204@example.com,France,2020-07-22,Standard,7632.71
+205,Jordan Wilson,jordan.wilson205@example.com,Japan,2024-12-23,Basic,3303.84
+206,Morgan Miller,morgan.miller206@example.com,France,2024-02-03,Standard,6857.13
+207,Jordan Garcia,jordan.garcia207@example.com,Australia,2020-11-08,Standard,10010.11
+208,Quinn Johnson,quinn.johnson208@example.com,France,2020-07-16,Premium,1371.93
+209,Riley Williams,riley.williams209@example.com,Australia,2023-10-04,Standard,8838.33
+210,Jordan Miller,jordan.miller210@example.com,France,2024-11-12,Standard,10013.57
+211,Alex Jones,alex.jones211@example.com,Germany,2020-11-12,Standard,5339.53
+212,Quinn Brown,quinn.brown212@example.com,Australia,2020-08-23,Basic,5316.70
+213,Casey Moore,casey.moore213@example.com,United States,2023-06-01,Standard,6493.77
+214,Casey Smith,casey.smith214@example.com,India,2021-11-26,Premium,10570.21
+215,Riley Smith,riley.smith215@example.com,France,2020-05-22,Premium,2234.45
+216,Taylor Smith,taylor.smith216@example.com,France,2022-05-09,Premium,8004.19
+217,Quinn Garcia,quinn.garcia217@example.com,Australia,NOT-A-DATE,Premium,4743.40
+218,Jamie Moore,jamie.moore218@example.com,United Kingdom,2024-03-25,Premium,883.87
+219,Jamie Smith,jamie.smith219@example.com,France,2022-09-21,Standard,4154.33
+220,Jamie Davis,jamie.davis220@example.com,Canada,2021-12-07,Standard,3311.98
+221,Avery Johnson,avery.johnson221@example.com,Japan,2022-12-15,Standard,10209.45
+222,Casey Smith,invalid-email-format,United States,2020-01-16,Standard,14768.24
+223,Morgan Jones,morgan.jones223@example.com,India,2021-08-15,Basic,11533.51
+224,Riley Johnson,riley.johnson224@example.com,United Kingdom,2020-09-21,Premium,11230.51
+225,Avery Wilson,avery.wilson225@example.com,Australia,2020-05-27,Basic,7553.91
+226,Avery Smith,avery.smith226@example.com,Canada,2024-10-31,Standard,6950.34
+227,Riley Moore,riley.moore227@example.com,France,2021-08-15,Standard,6125.90
+228,Jordan Miller,jordan.miller228@example.com,Japan,2024-08-30,Premium,4939.05
+229,Riley Johnson,riley.johnson229@example.com,France,2023-04-21,Standard,1677.36
+230,Avery Wilson,avery.wilson230@example.com,Australia,2021-03-29,Premium,13070.81
+231,Riley Williams,riley.williams231@example.com,Germany,2024-05-08,Premium,9535.05
+232,Riley Garcia,,United Kingdom,2021-04-28,Basic,12302.33
+233,Jordan Williams,jordan.williams233@example.com,United Kingdom,2024-04-05,Standard,2685.14
+234,Jordan Williams,jordan.williams234@example.com,Japan,2024-03-25,Basic,9456.44
+235,Jamie Moore,jamie.moore235@example.com,Australia,2024-11-04,Standard,13869.90
+236,Riley Williams,riley.williams236@example.com,India,2024-06-18,Standard,7086.92
+237,Casey Moore,casey.moore237@example.com,India,2022-08-03,Premium,7659.32
+238,Quinn Smith,quinn.smith238@example.com,Canada,2023-08-13,Premium,12492.28
+239,Jordan Moore,jordan.moore239@example.com,United States,2022-07-10,Standard,5828.79
+240,Jamie Brown,jamie.brown240@example.com,United Kingdom,2020-05-06,Standard,7186.87
+241,Quinn Johnson,quinn.johnson241@example.com,Canada,2022-10-30,Basic,12576.92
+242,Taylor Smith,taylor.smith242@example.com,Japan,2022-12-09,Standard,6622.60
+243,Sam Moore,invalid-email-format,India,2022-03-04,Premium,5655.49
+244,Avery Garcia,avery.garcia244@example.com,Australia,2020-05-14,Standard,880.25
+245,Riley Johnson,riley.johnson245@example.com,India,2024-01-22,Standard,5859.81
+246,Jamie Williams,jamie.williams246@example.com,United Kingdom,2021-12-17,Standard,8782.82
+247,Casey Miller,casey.miller247@example.com,Canada,2021-09-26,Premium,10661.63
+248,Sam Miller,sam.miller248@example.com,United Kingdom,2023-10-04,Standard,4994.30
+249,Sam Johnson,sam.johnson249@example.com,Australia,2020-02-07,Standard,6408.75
+250,Riley Jones,riley.jones250@example.com,Japan,2021-01-28,Premium,3291.47
+251,Morgan Williams,morgan.williams251@example.com,Canada,2022-11-05,Premium,4507.30
+252,Sam Wilson,sam.wilson252@example.com,United Kingdom,2023-05-08,Premium,5117.79
+253,Avery Williams,avery.williams253@example.com,United Kingdom,2024-01-16,Premium,12487.04
+254,Quinn Smith,quinn.smith254@example.com,Germany,2022-06-28,Standard,10177.81
+255,Jamie Jones,jamie.jones255@example.com,Germany,2022-12-29,Basic,11778.63
+256,Morgan Jones,morgan.jones256@example.com,Germany,2022-01-23,Basic,11787.12
+257,Jamie Davis,jamie.davis257@example.com,France,2022-10-26,Standard,4298.40
+258,Sam Miller,sam.miller258@example.com,United Kingdom,2024-11-22,Basic,12271.68
+259,Casey Smith,casey.smith259@example.com,Canada,2023-12-27,Standard,13124.34
+260,Sam Johnson,sam.johnson260@example.com,India,2022-07-09,Standard,11470.44
+261,Sam Williams,sam.williams261@example.com,Germany,2024-07-30,Basic,1466.53
+262,Quinn Garcia,,France,2022-10-25,Basic,6281.96
+263,Riley Brown,riley.brown263@example.com,Germany,2020-02-27,Standard,1315.92
+264,Riley Johnson,riley.johnson264@example.com,United Kingdom,2020-10-08,Basic,9784.41
+265,Alex Jones,alex.jones265@example.com,United Kingdom,2024-04-03,Basic,7139.58
+266,Quinn Davis,quinn.davis266@example.com,United States,2021-06-08,Standard,13597.28
+267,Morgan Williams,morgan.williams267@example.com,France,2020-08-15,Standard,10935.80
+268,Casey Brown,casey.brown268@example.com,France,2023-08-01,Standard,811.47
+269,Jamie Davis,jamie.davis269@example.com,Japan,2023-05-07,Premium,12566.65
+270,Sam Smith,sam.smith270@example.com,United Kingdom,2021-08-19,Standard,8668.21
+271,Avery Smith,avery.smith271@example.com,France,2021-01-18,Standard,3684.41
+272,Jordan Wilson,jordan.wilson272@example.com,United States,2022-03-10,Basic,1108.42
+273,Quinn Smith,quinn.smith273@example.com,India,2024-03-10,Standard,14717.49
+274,Alex Garcia,alex.garcia274@example.com,Canada,2024-04-29,Basic,5237.56
+275,Jamie Garcia,jamie.garcia275@example.com,Australia,2024-07-24,Premium,5349.26
+276,Taylor Davis,taylor.davis276@example.com,United Kingdom,2024-07-19,Basic,7230.11
+277,Taylor Johnson,taylor.johnson277@example.com,United States,2021-08-23,Basic,14159.72
+278,Morgan Smith,morgan.smith278@example.com,Australia,2021-09-27,Basic,13298.28
+279,Sam Miller,sam.miller279@example.com,India,2020-03-15,Basic,8191.16
+280,Morgan Jones,morgan.jones280@example.com,Australia,2021-07-13,Standard,11734.54
+281,Jordan Garcia,jordan.garcia281@example.com,Japan,2022-03-02,Standard,6060.32
+282,Riley Williams,riley.williams282@example.com,India,2024-06-28,Standard,7513.10
+283,Jordan Miller,jordan.miller283@example.com,United Kingdom,2026-12-16,Premium,9076.55
+284,Casey Garcia,casey.garcia284@example.com,India,2021-09-19,Premium,4986.01
+285,Quinn Moore,quinn.moore285@example.com,Japan,2021-12-20,Basic,2583.01
+286,Quinn Smith,quinn.smith286@example.com,France,2021-07-16,Basic,13682.95
+287,Alex Johnson,alex.johnson287@example.com,United Kingdom,2020-03-04,Standard,6152.53
+288,Taylor Moore,taylor.moore288@example.com,United Kingdom,2020-05-17,Standard,6628.78
+289,Morgan Garcia,morgan.garcia289@example.com,United States,2023-05-24,Standard,14247.06
+290,Taylor Davis,taylor.davis290@example.com,Canada,2023-03-21,Basic,5643.00
+291,Taylor Wilson,taylor.wilson291@example.com,India,2021-05-26,Standard,4784.34
+292,Jordan Smith,jordan.smith292@example.com,France,2023-02-24,Basic,7535.76
+293,Jordan Jones,jordan.jones293@example.com,Germany,2023-06-07,Basic,10590.16
+294,Casey Davis,casey.davis294@example.com,Canada,2022-07-14,Standard,2122.35
+295,Taylor Davis,taylor.davis295@example.com,Australia,2023-09-29,Basic,12176.65
+296,Riley Johnson,riley.johnson296@example.com,India,2024-10-09,Standard,4426.40
+297,Taylor Williams,taylor.williams297@example.com,Canada,2021-02-15,Basic,7680.46
+298,Taylor Brown,taylor.brown298@example.com,Australia,2022-08-15,Basic,491.63
+299,Sam Williams,sam.williams299@example.com,India,2022-03-26,Standard,1384.61
+300,Quinn Wilson,quinn.wilson300@example.com,Canada,2020-09-13,Standard,6200.56
+301,Riley Johnson,riley.johnson301@example.com,Australia,2020-09-19,Standard,10233.62
+302,Sam Moore,sam.moore302@example.com,France,2022-10-26,Premium,14497.34
+303,Alex Johnson,alex.johnson303@example.com,United Kingdom,2021-10-22,Standard,4631.46
+304,Morgan Garcia,morgan.garcia304@example.com,India,2024-09-28,Basic,7831.58
+305,Jordan Jones,jordan.jones305@example.com,India,2020-09-13,Premium,14349.64
+306,Casey Moore,casey.moore306@example.com,United Kingdom,2023-04-27,Standard,7588.34
+307,Jamie Williams,jamie.williams307@example.com,Australia,2024-09-21,Premium,9404.74
+308,Jamie Smith,jamie.smith308@example.com,United States,2023-08-06,Basic,522.76
+309,Jamie Jones,jamie.jones309@example.com,France,2023-06-19,Standard,11527.69
+310,Alex Davis,alex.davis310@example.com,India,2022-09-16,Basic,8229.10
+311,Morgan Miller,morgan.miller311@example.com,United States,2020-11-19,Standard,1187.30
+312,Quinn Miller,quinn.miller312@example.com,United Kingdom,2021-10-02,Standard,3139.94
+313,Riley Garcia,riley.garcia313@example.com,Australia,2022-11-20,Basic,2048.42
+314,Sam Johnson,sam.johnson314@example.com,India,2022-07-09,Standard,7050.44
+315,Morgan Williams,morgan.williams315@example.com,France,2024-11-04,Premium,4424.16
+316,Jamie Miller,jamie.miller316@example.com,United Kingdom,2024-07-24,Standard,12993.08
+317,Riley Moore,riley.moore317@example.com,United Kingdom,2022-10-17,Basic,2928.53
+318,Sam Davis,sam.davis318@example.com,United States,2020-07-03,Standard,4697.25
+319,Avery Wilson,avery.wilson319@example.com,Australia,2026-09-21,Standard,3686.86
+320,Alex Jones,alex.jones320@example.com,Japan,2021-08-08,Standard,13246.86
+321,Sam Smith,sam.smith321@example.com,India,NOT-A-DATE,Basic,6520.82
+322,Riley Miller,riley.miller322@example.com,Germany,2022-01-12,Standard,6068.67
+323,Sam Jones,sam.jones323@example.com,India,2024-08-17,Premium,7613.41
+324,Jamie Moore,jamie.moore324@example.com,France,2022-02-03,Premium,14628.73
+325,Riley Wilson,riley.wilson325@example.com,Germany,2023-05-18,Basic,11348.98
+326,Sam Miller,sam.miller326@example.com,United Kingdom,2024-01-01,Standard,775.02
+327,Riley Davis,riley.davis327@example.com,United Kingdom,2021-11-02,Standard,2319.22
+328,Jamie Garcia,jamie.garcia328@example.com,India,2023-04-30,Premium,14860.17
+329,Riley Wilson,riley.wilson329@example.com,India,2022-08-30,Basic,8031.86
+330,Alex Garcia,alex.garcia330@example.com,France,2023-04-10,Standard,1733.11
+331,Casey Smith,casey.smith331@example.com,Germany,2024-01-17,Standard,4056.40
+332,Alex Moore,alex.moore332@example.com,France,2020-10-29,Standard,7911.06
+333,Morgan Smith,morgan.smith333@example.com,Germany,2020-02-08,Standard,10537.76
+334,Quinn Garcia,quinn.garcia334@example.com,Germany,2022-04-20,Standard,6253.11
+335,Sam Moore,sam.moore335@example.com,United States,2023-12-16,Basic,13104.98
+336,Taylor Wilson,taylor.wilson336@example.com,Japan,2022-12-12,Standard,4943.24
+337,Avery Garcia,avery.garcia337@example.com,Australia,2023-01-23,Basic,6948.99
+338,Riley Jones,riley.jones338@example.com,Germany,2021-07-25,Standard,2964.74
+339,Sam Jones,sam.jones339@example.com,India,2024-04-28,Standard,14596.37
+340,Casey Brown,casey.brown340@example.com,Japan,2027-09-25,Standard,7386.15
+341,Sam Jones,sam.jones341@example.com,France,NOT-A-DATE,Standard,8644.80
+342,Riley Williams,riley.williams342@example.com,Canada,2021-12-10,Standard,4385.69
+343,Quinn Jones,quinn.jones343@example.com,India,2023-02-25,Basic,3288.40
+344,Casey Williams,casey.williams344@example.com,Germany,2021-05-11,Premium,11139.28
+345,Alex Wilson,alex.wilson345@example.com,Canada,2022-04-26,Standard,3569.26
+346,Riley Davis,riley.davis346@example.com,United States,2023-02-01,Premium,11584.41
+347,Taylor Miller,taylor.miller347@example.com,Japan,2022-09-04,Standard,13221.65
+348,Morgan Jones,invalid-email-format,Canada,2023-08-28,Standard,9723.88
+349,Jamie Brown,jamie.brown349@example.com,United States,2020-12-24,Standard,10874.45
+350,Avery Williams,avery.williams350@example.com,France,2024-06-01,Basic,641.46
+351,Quinn Williams,quinn.williams351@example.com,India,2024-11-30,Basic,14435.76
+352,Alex Smith,alex.smith352@example.com,Australia,2021-08-05,Standard,9081.47
+353,Quinn Wilson,,United Kingdom,2024-10-08,Standard,13349.97
+354,Sam Davis,sam.davis354@example.com,Australia,2020-11-28,Standard,12151.33
+355,Quinn Jones,quinn.jones355@example.com,Australia,2024-06-07,Basic,309.85
+356,Casey Moore,casey.moore356@example.com,France,2024-08-20,Standard,2978.10
+357,Avery Wilson,avery.wilson357@example.com,Canada,2021-01-13,Standard,6072.42
+358,Taylor Davis,taylor.davis358@example.com,India,2022-02-24,Standard,3795.90
+359,Morgan Davis,morgan.davis359@example.com,India,2023-04-07,Basic,14315.12
+360,Jamie Smith,jamie.smith360@example.com,Germany,2020-05-07,Standard,5457.33
+361,Jordan Davis,jordan.davis361@example.com,India,2023-11-14,Standard,6140.71
+362,Jordan Jones,,United Kingdom,2022-09-06,Standard,3390.65
+363,Taylor Davis,,France,2023-12-08,Basic,9125.51
+364,Sam Davis,sam.davis364@example.com,Germany,2024-04-09,Basic,12049.73
+365,Morgan Moore,morgan.moore365@example.com,Japan,2022-12-17,Basic,1319.87
+366,Riley Johnson,riley.johnson366@example.com,Germany,2023-03-18,Basic,1771.91
+367,Sam Williams,sam.williams367@example.com,Japan,2020-08-26,Premium,12831.84
+368,Morgan Moore,morgan.moore368@example.com,Japan,2024-07-14,Standard,13493.45
+369,Alex Davis,alex.davis369@example.com,United States,2023-02-18,Premium,6289.83
+370,Quinn Jones,quinn.jones370@example.com,United States,2024-03-07,Basic,5999.64
+371,Morgan Moore,morgan.moore371@example.com,Canada,2023-01-13,Premium,6413.09
+372,Alex Johnson,alex.johnson372@example.com,India,2022-04-17,Basic,7133.86
+373,Taylor Williams,taylor.williams373@example.com,France,2022-02-05,Basic,14677.17
+374,Avery Davis,avery.davis374@example.com,France,2020-06-13,Basic,13610.83
+375,,sam.williams375@example.com,United Kingdom,2023-01-05,Standard,5281.77
+376,Avery Wilson,avery.wilson376@example.com,United States,2024-03-28,Premium,14682.99
+377,Alex Jones,alex.jones377@example.com,France,2022-12-25,Standard,10814.50
+378,Avery Brown,avery.brown378@example.com,India,2021-01-21,Standard,5257.78
+379,Jordan Smith,jordan.smith379@example.com,United States,2021-05-07,Basic,6346.68
+380,Morgan Johnson,morgan.johnson380@example.com,United States,2021-05-16,Premium,600.29
+381,Alex Miller,alex.miller381@example.com,United States,NOT-A-DATE,Standard,8142.42
+382,Sam Jones,sam.jones382@example.com,Australia,2023-03-28,Standard,13754.32
+383,Jamie Garcia,jamie.garcia383@example.com,Germany,2022-04-26,Standard,13156.25
+384,Casey Jones,casey.jones384@example.com,United Kingdom,2023-07-06,Premium,14232.95
+385,Avery Wilson,invalid-email-format,France,2024-05-28,Standard,14587.12
+386,Sam Garcia,sam.garcia386@example.com,India,2022-02-09,Standard,6183.06
+387,Taylor Wilson,taylor.wilson387@example.com,India,2024-10-22,Standard,12755.18
+388,Taylor Davis,taylor.davis388@example.com,France,2023-02-15,Basic,8479.55
+389,Sam Williams,sam.williams389@example.com,Australia,2023-08-17,Standard,3899.44
+390,Jordan Davis,jordan.davis390@example.com,Germany,2020-04-15,Basic,1477.71
+391,Casey Miller,invalid-email-format,Canada,2021-01-20,Standard,9083.54
+392,Jamie Wilson,jamie.wilson392@example.com,Australia,2021-09-12,Standard,3212.45
+393,Alex Brown,alex.brown393@example.com,Canada,2024-03-09,Basic,14434.96
+394,Quinn Brown,quinn.brown394@example.com,France,2021-05-05,Standard,10586.15
+395,Sam Garcia,sam.garcia395@example.com,Australia,2021-09-23,Basic,5771.86
+396,Casey Garcia,casey.garcia396@example.com,Canada,2024-07-02,Standard,7509.43
+397,Quinn Garcia,quinn.garcia397@example.com,France,2020-04-03,Basic,5623.50
+398,Jamie Brown,jamie.brown398@example.com,France,2021-08-27,Basic,341.68
+399,Taylor Brown,taylor.brown399@example.com,Germany,2022-10-19,Standard,5759.61
+400,Sam Garcia,sam.garcia400@example.com,Japan,2022-08-01,Standard,12341.72
+401,Taylor Garcia,taylor.garcia401@example.com,Japan,2021-01-11,Premium,10832.67
+402,Sam Smith,sam.smith402@example.com,Canada,2024-08-02,Standard,12602.12
+403,Alex Smith,alex.smith403@example.com,Germany,2020-05-19,Standard,12653.92
+404,Taylor Smith,taylor.smith404@example.com,United States,2023-06-19,Standard,6894.54
+405,Jamie Davis,jamie.davis405@example.com,France,2020-01-25,Standard,334.40
+406,Alex Wilson,alex.wilson406@example.com,India,2020-02-05,Basic,8082.50
+407,Sam Miller,sam.miller407@example.com,Canada,2020-07-16,Basic,13655.62
+408,Sam Williams,sam.williams408@example.com,India,2024-07-27,Standard,9334.73
+409,Riley Jones,riley.jones409@example.com,France,2022-07-29,Basic,1277.39
+410,Jamie Brown,jamie.brown410@example.com,Canada,2023-08-31,Basic,3465.27
+411,Alex Johnson,alex.johnson411@example.com,Japan,2020-04-24,Standard,5719.83
+412,Alex Williams,alex.williams412@example.com,Australia,2023-03-04,Premium,12695.41
+413,Jordan Wilson,jordan.wilson413@example.com,Japan,2021-07-09,Basic,3523.52
+414,Alex Johnson,alex.johnson414@example.com,United States,2021-01-02,Standard,4277.56
+415,Riley Smith,riley.smith415@example.com,France,2020-06-06,Basic,8846.84
+416,Casey Williams,casey.williams416@example.com,France,2023-10-18,Standard,8543.77
+417,Sam Garcia,sam.garcia417@example.com,Canada,2022-10-22,Standard,11122.20
+418,Riley Smith,riley.smith418@example.com,Canada,2021-11-28,Premium,3558.95
+419,Jamie Moore,jamie.moore419@example.com,Australia,2020-03-01,Basic,6010.88
+420,Casey Davis,casey.davis420@example.com,France,2022-06-03,Standard,5401.59
+421,Taylor Moore,taylor.moore421@example.com,India,2024-06-22,Standard,1376.84
+422,Morgan Johnson,morgan.johnson422@example.com,United Kingdom,2024-02-23,Premium,2397.89
+423,Avery Garcia,avery.garcia423@example.com,India,2022-06-29,Standard,1463.65
+424,Riley Jones,riley.jones424@example.com,France,2022-07-08,Premium,1400.73
+425,Sam Wilson,sam.wilson425@example.com,Canada,2021-12-25,Standard,1639.06
+426,Sam Johnson,sam.johnson426@example.com,France,2020-01-26,Standard,11788.14
+427,Casey Miller,casey.miller427@example.com,Germany,2023-03-17,Standard,1362.02
+428,Sam Williams,sam.williams428@example.com,India,2021-09-08,Standard,2625.58
+429,Casey Davis,casey.davis429@example.com,India,2022-05-12,Premium,2591.39
+430,Casey Davis,casey.davis430@example.com,Germany,2024-01-16,Basic,5480.76
+431,Quinn Moore,quinn.moore431@example.com,United Kingdom,2021-09-15,Standard,6922.14
+432,Alex Miller,alex.miller432@example.com,Australia,2022-06-20,Standard,9340.86
+433,Riley Miller,riley.miller433@example.com,United Kingdom,2021-09-07,Basic,12906.68
+434,Riley Moore,riley.moore434@example.com,Australia,2020-12-29,Basic,3092.69
+435,Avery Garcia,avery.garcia435@example.com,Japan,2023-03-25,Standard,10454.87
+436,Morgan Garcia,morgan.garcia436@example.com,France,2022-01-17,Standard,12265.77
+437,Jordan Moore,jordan.moore437@example.com,United Kingdom,2023-10-28,Premium,14959.25
+438,Sam Smith,sam.smith438@example.com,Germany,2022-06-16,Basic,6978.17
+439,Casey Johnson,casey.johnson439@example.com,France,2023-10-10,Basic,11955.29
+440,Quinn Williams,quinn.williams440@example.com,United Kingdom,2024-01-04,Standard,3706.12
+441,Avery Miller,avery.miller441@example.com,Japan,2023-04-07,Premium,14861.44
+442,Avery Wilson,,France,2023-01-18,Standard,13813.84
+443,Alex Garcia,alex.garcia443@example.com,Canada,2020-08-11,Basic,12203.22
+444,Morgan Garcia,morgan.garcia444@example.com,France,2024-03-21,Premium,9228.90
+445,,riley.miller445@example.com,Germany,2022-11-11,Premium,1569.24
+446,Sam Wilson,sam.wilson446@example.com,Japan,2022-02-05,Standard,8671.01
+447,Avery Davis,avery.davis447@example.com,United Kingdom,2021-12-07,Basic,8869.99
+448,Alex Davis,alex.davis448@example.com,Canada,NOT-A-DATE,Premium,6298.03
+449,Taylor Garcia,taylor.garcia449@example.com,Germany,2022-12-03,Standard,6884.46
+450,Quinn Garcia,quinn.garcia450@example.com,Japan,2021-10-15,Standard,6628.67
+451,Jordan Jones,jordan.jones451@example.com,United States,2024-10-05,Premium,10690.61
+452,Riley Johnson,riley.johnson452@example.com,Germany,2022-11-22,Standard,2548.88
+453,Taylor Wilson,taylor.wilson453@example.com,Japan,2021-04-19,Premium,8441.75
+454,Avery Williams,avery.williams454@example.com,France,2020-02-29,Premium,9893.89
+455,Jamie Brown,jamie.brown455@example.com,United States,2023-12-14,Standard,6500.34
+456,Morgan Brown,,Canada,2023-03-28,Standard,10586.02
+457,Jordan Wilson,jordan.wilson457@example.com,Japan,2020-08-21,Premium,4957.18
+458,Casey Davis,casey.davis458@example.com,France,2023-06-05,Standard,9622.72
+459,Avery Moore,avery.moore459@example.com,Japan,2023-06-18,Premium,5344.58
+460,Taylor Jones,taylor.jones460@example.com,United Kingdom,2021-10-03,Basic,8893.51
+461,Jordan Brown,jordan.brown461@example.com,United Kingdom,2022-11-12,Standard,2827.36
+462,Avery Miller,avery.miller462@example.com,France,2021-01-15,Standard,8664.61
+463,Quinn Wilson,quinn.wilson463@example.com,United Kingdom,2023-02-10,Standard,9714.38
+464,Taylor Davis,taylor.davis464@example.com,Japan,2023-06-22,Standard,2887.77
+465,Alex Garcia,alex.garcia465@example.com,Germany,2024-07-27,Basic,7320.67
+466,Avery Wilson,avery.wilson466@example.com,Japan,2022-05-01,Standard,7475.05
+467,Quinn Davis,quinn.davis467@example.com,Germany,2021-08-21,Premium,8524.43
+468,Alex Jones,alex.jones468@example.com,Japan,2023-03-04,Standard,4401.19
+469,Quinn Wilson,quinn.wilson469@example.com,India,2024-05-06,Standard,8633.44
+470,Sam Garcia,sam.garcia470@example.com,Japan,2023-01-23,Standard,11376.12
+471,Morgan Miller,morgan.miller471@example.com,Germany,2021-09-01,Premium,12468.05
+472,Alex Davis,alex.davis472@example.com,Canada,2022-06-18,Standard,12946.77
+473,Jordan Brown,jordan.brown473@example.com,Australia,2024-10-29,Standard,11090.43
+474,Jamie Miller,,Germany,2024-07-24,Premium,2174.60
+475,Morgan Smith,,United Kingdom,NOT-A-DATE,Standard,8030.98
+476,Casey Jones,casey.jones476@example.com,Canada,2020-10-04,Standard,14290.72
+477,Avery Smith,avery.smith477@example.com,United Kingdom,2023-12-07,Basic,13019.01
+478,Taylor Brown,taylor.brown478@example.com,Germany,2024-04-08,Premium,4899.24
+479,Avery Davis,avery.davis479@example.com,France,2022-02-07,Premium,9522.79
+480,Quinn Johnson,quinn.johnson480@example.com,Canada,2022-04-05,Standard,13213.86
+481,Sam Jones,sam.jones481@example.com,Japan,2022-09-26,Standard,13172.03
+482,Riley Moore,riley.moore482@example.com,Canada,NOT-A-DATE,Premium,11634.62
+483,Quinn Garcia,quinn.garcia483@example.com,France,2021-03-22,Basic,11955.60
+484,Avery Brown,avery.brown484@example.com,India,2021-11-22,Standard,4910.69
+485,Sam Moore,sam.moore485@example.com,Australia,2023-10-29,Premium,12801.10
+486,Alex Smith,alex.smith486@example.com,Japan,2020-02-03,Premium,11779.96
+487,Jordan Williams,jordan.williams487@example.com,France,2021-02-18,Standard,110.07
+488,Taylor Jones,taylor.jones488@example.com,India,2020-07-10,Premium,13997.61
+489,Riley Jones,riley.jones489@example.com,United Kingdom,2020-04-16,Premium,10001.18
+490,Avery Jones,avery.jones490@example.com,France,2023-09-04,Basic,11352.96
+491,Jordan Johnson,invalid-email-format,United Kingdom,2023-04-30,Premium,7204.42
+492,Morgan Wilson,morgan.wilson492@example.com,Australia,2026-10-18,Standard,238.38
+493,Jordan Miller,jordan.miller493@example.com,Germany,2022-02-23,Standard,7217.73
+494,Jordan Johnson,jordan.johnson494@example.com,India,2020-10-07,Premium,5576.67
+495,Avery Williams,avery.williams495@example.com,Canada,2022-12-22,Standard,10189.34
+496,Jamie Smith,jamie.smith496@example.com,Australia,2024-01-19,Standard,2545.34
+497,Morgan Williams,morgan.williams497@example.com,Japan,2024-10-27,Basic,9279.53
+498,Morgan Johnson,morgan.johnson498@example.com,Canada,2023-04-22,Basic,2186.20
+499,Avery Garcia,avery.garcia499@example.com,United Kingdom,2021-05-22,Basic,4786.10
+500,Casey Johnson,casey.johnson500@example.com,India,2024-05-14,Standard,9054.89
+501,Alex Jones,,Germany,2024-03-11,Standard,9143.21
+502,Avery Jones,avery.jones502@example.com,Germany,2022-10-10,Standard,11778.64
+503,Avery Johnson,avery.johnson503@example.com,Canada,2022-12-17,Standard,9607.43
+504,Alex Garcia,alex.garcia504@example.com,France,2022-01-18,Basic,2066.54
+505,Sam Williams,sam.williams505@example.com,Canada,2020-02-04,Basic,14321.35
+506,Jamie Johnson,jamie.johnson506@example.com,United States,2024-06-04,Premium,3314.57
+507,Avery Wilson,avery.wilson507@example.com,France,2022-05-17,Standard,10718.17
+508,Avery Johnson,avery.johnson508@example.com,United Kingdom,2021-07-22,Standard,8111.06
+509,Jordan Jones,jordan.jones509@example.com,United Kingdom,2023-01-03,Premium,13821.78
+510,Riley Miller,riley.miller510@example.com,Canada,2021-09-27,Standard,11472.04
+511,Avery Brown,avery.brown511@example.com,France,2020-08-25,Premium,1384.57
+512,Quinn Moore,quinn.moore512@example.com,United Kingdom,2020-09-01,Standard,4708.42
+513,Alex Williams,alex.williams513@example.com,Australia,2022-12-07,Basic,2541.11
+514,Sam Jones,sam.jones514@example.com,India,2024-02-10,Premium,1991.27
+515,Jordan Smith,jordan.smith515@example.com,Canada,2021-06-22,Standard,6496.94
+516,Jamie Johnson,jamie.johnson516@example.com,United States,NOT-A-DATE,Standard,7710.65
+517,Jamie Williams,jamie.williams517@example.com,Canada,2023-03-21,Standard,3901.23
+518,Jordan Brown,jordan.brown518@example.com,United States,2021-05-15,Basic,138.27
+519,Alex Davis,alex.davis519@example.com,United Kingdom,2024-10-22,Standard,13811.38
+520,Alex Wilson,alex.wilson520@example.com,France,2021-04-04,Basic,10738.91
+521,Riley Brown,invalid-email-format,India,2024-08-18,Standard,10832.29
+522,Jordan Moore,jordan.moore522@example.com,United States,2026-11-30,Standard,7580.41
+523,Morgan Wilson,morgan.wilson523@example.com,Canada,2024-12-01,Basic,14315.78
+524,Quinn Jones,quinn.jones524@example.com,Canada,2023-02-06,Basic,4729.40
+525,Quinn Smith,quinn.smith525@example.com,India,2024-02-23,Standard,4444.77
+526,Jamie Brown,jamie.brown526@example.com,Japan,2024-05-01,Standard,8916.19
+527,Morgan Wilson,morgan.wilson527@example.com,United States,2022-04-19,Basic,3752.39
+528,Alex Brown,alex.brown528@example.com,United States,2021-11-17,Standard,9575.53
+529,Alex Miller,alex.miller529@example.com,Canada,2021-02-24,Basic,10935.50
+530,Sam Brown,invalid-email-format,United Kingdom,2023-12-28,Standard,14421.66
+531,Casey Johnson,casey.johnson531@example.com,France,2023-12-06,Premium,3548.94
+532,Riley Davis,riley.davis532@example.com,Canada,2022-11-01,Basic,1365.05
+533,Taylor Miller,taylor.miller533@example.com,France,2023-09-18,Premium,8560.53
+534,Taylor Brown,,France,2023-12-06,Standard,12778.61
+535,Riley Garcia,,Germany,2020-10-05,Standard,3580.81
+536,Jamie Johnson,jamie.johnson536@example.com,Japan,2021-10-05,Premium,2549.19
+537,Avery Johnson,avery.johnson537@example.com,Germany,2022-07-14,Standard,14473.06
+538,Casey Davis,,United Kingdom,2024-07-11,Standard,1886.71
+539,Casey Moore,casey.moore539@example.com,Australia,2020-10-30,Premium,12555.28
+540,Jordan Brown,jordan.brown540@example.com,United States,2023-10-18,Basic,6004.04
+541,Casey Jones,casey.jones541@example.com,France,2024-10-16,Basic,2690.63
+542,Quinn Wilson,quinn.wilson542@example.com,Japan,2020-07-27,Basic,3822.80
+543,Taylor Johnson,taylor.johnson543@example.com,Germany,2020-09-24,Premium,12472.55
+544,Morgan Miller,morgan.miller544@example.com,Canada,2023-04-07,Standard,9491.43
+545,Jamie Jones,jamie.jones545@example.com,Canada,2021-02-08,Basic,1217.31
+546,Quinn Williams,quinn.williams546@example.com,Australia,2020-09-07,Premium,12724.40
+547,Alex Davis,alex.davis547@example.com,France,2024-08-09,Premium,13869.56
+548,Avery Davis,invalid-email-format,United Kingdom,2021-12-25,Premium,10279.87
+549,Morgan Williams,morgan.williams549@example.com,United Kingdom,NOT-A-DATE,Standard,6745.57
+550,Jamie Moore,jamie.moore550@example.com,Japan,2022-04-23,Standard,9744.45
+551,Sam Davis,sam.davis551@example.com,United Kingdom,2022-05-08,Premium,4268.66
+552,Morgan Wilson,morgan.wilson552@example.com,United States,2022-02-22,Standard,14911.90
+553,Riley Davis,riley.davis553@example.com,Australia,2022-03-06,Standard,7321.72
+554,Casey Williams,casey.williams554@example.com,United States,2024-07-18,Premium,8997.03
+555,Casey Smith,casey.smith555@example.com,Australia,2024-04-19,Basic,7128.10
+556,Jamie Brown,jamie.brown556@example.com,Germany,2021-06-29,Basic,1592.00
+557,Sam Smith,sam.smith557@example.com,France,2021-12-27,Basic,14222.26
+558,Taylor Williams,taylor.williams558@example.com,Australia,2023-04-26,Standard,4838.27
+559,Alex Garcia,alex.garcia559@example.com,Germany,2024-09-09,Basic,8497.74
+560,Quinn Wilson,quinn.wilson560@example.com,Canada,2020-04-25,Standard,7407.50
+561,Morgan Moore,invalid-email-format,United States,2021-11-10,Standard,7944.08
+562,Jamie Brown,jamie.brown562@example.com,United Kingdom,2024-07-01,Basic,5177.31
+563,Riley Smith,riley.smith563@example.com,United Kingdom,2024-05-04,Premium,8840.48
+564,Jordan Wilson,,Australia,NOT-A-DATE,Basic,14412.33
+565,Avery Moore,avery.moore565@example.com,United Kingdom,2020-11-18,Premium,4596.30
+566,Avery Davis,avery.davis566@example.com,Australia,2021-04-02,Standard,2695.62
+567,Jamie Williams,jamie.williams567@example.com,India,2020-09-17,Standard,11036.53
+568,Taylor Smith,taylor.smith568@example.com,France,2024-10-08,Basic,14235.60
+569,Jamie Smith,jamie.smith569@example.com,Germany,2023-08-02,Premium,4841.43
+570,Jamie Johnson,invalid-email-format,Canada,2021-05-02,Basic,2195.59
+571,Riley Garcia,riley.garcia571@example.com,Canada,2024-08-09,Premium,13291.27
+572,Riley Davis,riley.davis572@example.com,Canada,2021-12-18,Premium,3224.30
+573,Casey Johnson,casey.johnson573@example.com,Japan,2024-02-09,Basic,817.40
+574,Avery Williams,avery.williams574@example.com,France,2021-12-20,Basic,7446.92
+575,Sam Miller,sam.miller575@example.com,Germany,2020-11-29,Premium,7244.39
+576,Quinn Johnson,quinn.johnson576@example.com,United States,2021-10-14,Basic,597.85
+577,Casey Johnson,casey.johnson577@example.com,France,2020-11-25,Premium,2634.57
+578,Jordan Wilson,jordan.wilson578@example.com,Australia,2023-05-01,Basic,14672.82
+579,Jamie Davis,jamie.davis579@example.com,United Kingdom,2023-05-28,Basic,6526.72
+580,,avery.williams580@example.com,Germany,2022-04-18,Premium,5033.31
+581,Sam Wilson,sam.wilson581@example.com,Germany,2020-07-15,Standard,4294.69
+582,Alex Miller,alex.miller582@example.com,United Kingdom,2020-04-21,Standard,12613.83
+583,Riley Smith,riley.smith583@example.com,Japan,NOT-A-DATE,Standard,4488.79
+584,Jordan Smith,jordan.smith584@example.com,Canada,2022-08-27,Standard,9609.04
+585,Jordan Jones,jordan.jones585@example.com,India,2020-07-05,Basic,7117.07
+586,Sam Miller,sam.miller586@example.com,Australia,2021-01-17,Premium,13293.84
+587,Quinn Smith,,Germany,2024-09-10,Standard,7029.36
+588,Casey Moore,casey.moore588@example.com,Canada,2020-06-24,Premium,11308.30
+589,Riley Wilson,riley.wilson589@example.com,Germany,2023-02-07,Standard,11371.21
+590,Alex Miller,alex.miller590@example.com,Japan,2023-03-18,Basic,6337.62
+591,Morgan Davis,morgan.davis591@example.com,United States,2022-10-25,Standard,5982.59
+592,Jamie Wilson,jamie.wilson592@example.com,United Kingdom,2020-09-03,Basic,10195.27
+593,Quinn Williams,quinn.williams593@example.com,Germany,2024-07-13,Basic,2590.76
+594,Morgan Williams,morgan.williams594@example.com,France,2021-02-17,Premium,1267.69
+595,Taylor Moore,taylor.moore595@example.com,Canada,2020-06-27,Standard,13670.99
+596,Avery Wilson,invalid-email-format,India,2022-11-30,Standard,4959.29
+597,Quinn Smith,quinn.smith597@example.com,France,2020-08-18,Basic,9383.56
+598,Avery Williams,avery.williams598@example.com,Canada,2020-08-04,Premium,8860.22
+599,Jamie Johnson,jamie.johnson599@example.com,Australia,2024-12-02,Basic,13025.38
+600,Avery Jones,avery.jones600@example.com,Japan,2020-03-17,Standard,7335.21
+601,Taylor Jones,taylor.jones601@example.com,France,2020-03-20,Standard,9311.84
+602,Avery Garcia,avery.garcia602@example.com,Japan,2021-07-04,Standard,834.44
+603,Riley Smith,riley.smith603@example.com,India,NOT-A-DATE,Standard,11925.42
+604,Quinn Johnson,quinn.johnson604@example.com,India,2024-03-03,Basic,3496.57
+605,Quinn Garcia,quinn.garcia605@example.com,Canada,2021-01-19,Standard,6309.91
+606,Quinn Brown,quinn.brown606@example.com,Japan,2024-04-04,Basic,6166.84
+607,Sam Garcia,sam.garcia607@example.com,United Kingdom,2020-05-14,Basic,7777.52
+608,Casey Wilson,casey.wilson608@example.com,United States,2020-12-21,Standard,11729.69
+609,Morgan Brown,morgan.brown609@example.com,Japan,2020-04-13,Basic,3817.40
+610,Riley Brown,riley.brown610@example.com,France,2023-07-25,Standard,12370.24
+611,Jordan Smith,,Japan,2020-12-29,Standard,7382.92
+612,Quinn Moore,quinn.moore612@example.com,India,2024-03-13,Standard,5229.31
+613,Jordan Jones,jordan.jones613@example.com,Germany,2024-10-21,Premium,839.80
+614,Morgan Brown,morgan.brown614@example.com,France,2022-11-17,Standard,4109.35
+615,Alex Smith,alex.smith615@example.com,United Kingdom,2023-05-16,Standard,2071.48
+616,Alex Brown,alex.brown616@example.com,India,2023-12-30,Standard,12095.77
+617,Casey Miller,casey.miller617@example.com,Japan,2021-05-31,Basic,12788.63
+618,Morgan Davis,morgan.davis618@example.com,France,2023-04-12,Standard,7857.50
+619,Jordan Smith,invalid-email-format,Australia,2023-02-23,Standard,9969.10
+620,Jamie Moore,jamie.moore620@example.com,Japan,2020-05-10,Standard,10297.76
+621,Riley Jones,riley.jones621@example.com,India,2023-09-05,Standard,12936.22
+622,Casey Brown,casey.brown622@example.com,United States,2024-07-07,Premium,11505.57
+623,Jamie Miller,,United States,2023-09-04,Standard,10243.26
+624,Quinn Jones,invalid-email-format,France,2024-02-17,Standard,6336.63
+625,Alex Moore,alex.moore625@example.com,Germany,2021-12-03,Basic,8623.43
+626,Morgan Wilson,morgan.wilson626@example.com,Australia,2022-11-04,Standard,7188.45
+627,Casey Williams,casey.williams627@example.com,United Kingdom,2021-08-24,Basic,13159.77
+628,Jordan Davis,jordan.davis628@example.com,United Kingdom,2023-10-24,Premium,3953.91
+629,Riley Johnson,riley.johnson629@example.com,India,2022-05-11,Standard,3427.59
+630,Riley Garcia,riley.garcia630@example.com,Canada,2022-08-21,Standard,4481.36
+631,Alex Moore,alex.moore631@example.com,Japan,2024-12-26,Standard,9347.75
+632,Morgan Wilson,morgan.wilson632@example.com,India,2022-04-26,Premium,10242.40
+633,Alex Williams,alex.williams633@example.com,France,2023-03-12,Premium,3084.42
+634,Quinn Williams,quinn.williams634@example.com,Canada,2022-09-25,Standard,10763.46
+635,Riley Williams,riley.williams635@example.com,Japan,2021-07-14,Standard,964.40
+636,Morgan Williams,morgan.williams636@example.com,Canada,2020-09-22,Standard,2460.68
+637,Jamie Miller,jamie.miller637@example.com,Japan,2022-02-24,Standard,6110.56
+638,Alex Smith,alex.smith638@example.com,United States,2024-12-31,Standard,10986.82
+639,Riley Wilson,riley.wilson639@example.com,Germany,2021-04-08,Premium,10183.55
+640,Riley Jones,riley.jones640@example.com,India,2020-12-08,Premium,5814.90
+641,Jordan Smith,jordan.smith641@example.com,Australia,2022-06-07,Standard,4433.33
+642,Taylor Garcia,taylor.garcia642@example.com,Germany,2020-12-03,Basic,7403.66
+643,Avery Smith,avery.smith643@example.com,United Kingdom,2021-03-08,Standard,10934.82
+644,Alex Moore,alex.moore644@example.com,United States,2022-02-07,Standard,1935.11
+645,Casey Wilson,casey.wilson645@example.com,United States,2023-09-17,Standard,8949.47
+646,Jordan Smith,jordan.smith646@example.com,Japan,2022-02-17,Premium,1825.27
+647,Jordan Wilson,jordan.wilson647@example.com,Germany,2023-11-24,Standard,10557.84
+648,Alex Jones,alex.jones648@example.com,India,2023-06-29,Standard,1604.60
+649,Jamie Williams,jamie.williams649@example.com,Canada,2021-08-01,Standard,13489.47
+650,Jordan Johnson,jordan.johnson650@example.com,India,2024-08-29,Standard,9174.13
+651,Sam Brown,sam.brown651@example.com,United Kingdom,2020-03-21,Standard,6205.37
+652,Sam Davis,sam.davis652@example.com,Japan,2021-11-08,Basic,10354.24
+653,Morgan Smith,morgan.smith653@example.com,Canada,2024-09-06,Premium,1426.14
+654,Jamie Davis,jamie.davis654@example.com,Canada,2024-01-21,Premium,1442.23
+655,Jordan Jones,jordan.jones655@example.com,India,2021-06-24,Standard,6905.59
+656,Quinn Smith,quinn.smith656@example.com,United States,2024-10-11,Premium,2703.06
+657,Casey Garcia,casey.garcia657@example.com,Canada,2020-07-13,Basic,4759.34
+658,Alex Smith,alex.smith658@example.com,United Kingdom,2021-11-04,Basic,9983.99
+659,Riley Davis,riley.davis659@example.com,Canada,2022-02-02,Basic,4097.81
+660,Riley Williams,riley.williams660@example.com,Japan,2021-07-10,Premium,6063.73
+661,Avery Davis,avery.davis661@example.com,United Kingdom,2020-08-19,Basic,9767.81
+662,Taylor Smith,taylor.smith662@example.com,Canada,2022-05-02,Basic,12680.81
+663,Jamie Davis,,United Kingdom,2023-06-05,Basic,10208.06
+664,Avery Garcia,avery.garcia664@example.com,United Kingdom,2022-09-16,Standard,12952.38
+665,Quinn Johnson,quinn.johnson665@example.com,Canada,2021-06-19,Basic,6666.25
+666,Riley Smith,riley.smith666@example.com,Germany,2023-10-03,Basic,10201.14
+667,Riley Wilson,riley.wilson667@example.com,Canada,2022-06-05,Standard,10538.64
+668,Morgan Davis,morgan.davis668@example.com,France,2020-10-31,Standard,10176.80
+669,Sam Moore,sam.moore669@example.com,United Kingdom,2022-11-01,Premium,9686.64
+670,Quinn Davis,quinn.davis670@example.com,Japan,2021-10-18,Basic,1215.49
+671,Morgan Garcia,morgan.garcia671@example.com,Germany,2023-02-01,Basic,850.23
+672,Avery Miller,avery.miller672@example.com,Japan,2024-06-28,Basic,1274.58
+673,Jamie Davis,jamie.davis673@example.com,Australia,2020-08-31,Premium,7527.00
+674,Quinn Smith,quinn.smith674@example.com,United States,2024-08-18,Premium,6243.84
+675,Jordan Moore,jordan.moore675@example.com,Germany,2023-09-02,Basic,9599.32
+676,Quinn Garcia,quinn.garcia676@example.com,Germany,2024-09-25,Standard,908.70
+677,Quinn Garcia,,Japan,2024-01-07,Standard,9334.39
+678,Riley Davis,riley.davis678@example.com,Germany,2020-01-05,Premium,11413.87
+679,Riley Garcia,riley.garcia679@example.com,India,2023-01-26,Basic,14470.06
+680,Sam Garcia,sam.garcia680@example.com,United Kingdom,2022-10-05,Basic,782.09
+681,Taylor Miller,taylor.miller681@example.com,Germany,2020-09-04,Premium,9201.69
+682,Avery Brown,avery.brown682@example.com,Australia,2020-08-08,Standard,11743.16
+683,Avery Smith,avery.smith683@example.com,Canada,2024-04-30,Basic,12578.25
+684,Quinn Davis,quinn.davis684@example.com,United Kingdom,2022-10-18,Standard,14347.24
+685,Alex Wilson,alex.wilson685@example.com,France,2024-09-13,Basic,8343.07
+686,Jamie Davis,jamie.davis686@example.com,United Kingdom,2023-11-17,Basic,11738.11
+687,Jamie Williams,jamie.williams687@example.com,France,2023-09-08,Basic,2012.89
+688,Jamie Moore,jamie.moore688@example.com,France,2022-05-07,Basic,7611.24
+689,Jamie Brown,jamie.brown689@example.com,India,2022-07-16,Standard,14457.54
+690,Taylor Williams,taylor.williams690@example.com,India,2024-09-22,Standard,10530.21
+691,Sam Garcia,sam.garcia691@example.com,Germany,2021-02-15,Basic,14039.13
+692,Morgan Moore,morgan.moore692@example.com,United Kingdom,2023-12-25,Basic,10330.51
+693,Taylor Wilson,taylor.wilson693@example.com,Canada,2024-04-07,Standard,9589.47
+694,Riley Wilson,riley.wilson694@example.com,France,2023-10-12,Standard,8602.51
+695,Sam Jones,sam.jones695@example.com,United States,2022-12-06,Basic,6393.56
+696,Jordan Smith,jordan.smith696@example.com,United States,2021-02-13,Standard,890.67
+697,Casey Williams,casey.williams697@example.com,United Kingdom,2024-09-15,Basic,10282.52
+698,Alex Jones,alex.jones698@example.com,Australia,2024-07-25,Standard,8163.46
+699,Quinn Johnson,quinn.johnson699@example.com,Germany,2024-02-29,Standard,10165.34
+700,Sam Miller,sam.miller700@example.com,India,2023-11-20,Standard,11786.18
+701,Alex Miller,alex.miller701@example.com,Australia,2023-02-04,Standard,14354.86
+702,Alex Smith,alex.smith702@example.com,Japan,2024-08-26,Basic,3126.00
+703,,morgan.garcia703@example.com,Germany,2024-05-08,Basic,8244.57
+704,Morgan Jones,morgan.jones704@example.com,Canada,2021-01-17,Standard,14753.45
+705,Taylor Wilson,taylor.wilson705@example.com,India,2023-02-13,Premium,705.45
+706,Casey Williams,casey.williams706@example.com,United States,2021-11-07,Premium,12705.61
+707,Quinn Williams,quinn.williams707@example.com,United States,NOT-A-DATE,Premium,13936.56
+708,Jamie Jones,invalid-email-format,Australia,2020-05-29,Standard,8632.89
+709,Riley Wilson,riley.wilson709@example.com,Canada,2024-05-29,Standard,2839.65
+710,Sam Williams,sam.williams710@example.com,Canada,2021-12-16,Standard,8101.84
+711,Morgan Brown,morgan.brown711@example.com,India,2021-03-23,Standard,5032.89
+712,Jamie Wilson,,United States,2020-08-22,Standard,8463.89
+713,Riley Davis,riley.davis713@example.com,Germany,2020-03-22,Standard,9669.74
+714,Riley Miller,riley.miller714@example.com,France,2021-06-09,Basic,14180.32
+715,Sam Jones,sam.jones715@example.com,Australia,2022-11-19,Premium,7801.33
+716,Sam Davis,sam.davis716@example.com,Germany,2021-10-18,Standard,4516.87
+717,Sam Johnson,invalid-email-format,United States,2023-07-07,Basic,2594.18
+718,Jordan Brown,,France,2024-09-07,Standard,11626.38
+719,Jordan Brown,jordan.brown719@example.com,France,2023-08-17,Standard,10570.87
+720,Jordan Williams,jordan.williams720@example.com,United States,2020-06-28,Premium,10781.34
+721,Jordan Smith,jordan.smith721@example.com,Canada,NOT-A-DATE,Premium,3853.43
+722,Morgan Jones,morgan.jones722@example.com,France,2022-06-05,Standard,6821.77
+723,Riley Smith,riley.smith723@example.com,United States,2023-08-06,Standard,1862.76
+724,Jamie Johnson,jamie.johnson724@example.com,Canada,2022-01-02,Basic,8825.56
+725,Sam Johnson,sam.johnson725@example.com,Canada,2021-07-30,Standard,10319.59
+726,Quinn Miller,invalid-email-format,Japan,2020-11-16,Standard,9944.78
+727,Sam Brown,sam.brown727@example.com,India,2023-07-22,Premium,5925.79
+728,Taylor Jones,taylor.jones728@example.com,Australia,2020-01-23,Standard,13721.12
+729,Sam Wilson,sam.wilson729@example.com,France,2023-01-05,Premium,722.42
+730,Sam Johnson,sam.johnson730@example.com,Australia,2021-03-09,Standard,11249.62
+731,Avery Wilson,,India,2021-02-01,Premium,2841.49
+732,Jordan Williams,jordan.williams732@example.com,United States,2024-10-09,Standard,8552.66
+733,Sam Davis,sam.davis733@example.com,Canada,2021-05-28,Standard,1189.85
+734,Jordan Brown,jordan.brown734@example.com,Australia,2022-01-01,Basic,7359.14
+735,Taylor Brown,taylor.brown735@example.com,Germany,2021-10-12,Premium,9330.79
+736,Quinn Davis,quinn.davis736@example.com,United Kingdom,2023-03-04,Standard,9925.39
+737,Jamie Garcia,jamie.garcia737@example.com,United Kingdom,2020-01-10,Basic,14384.02
+738,Riley Brown,riley.brown738@example.com,France,2021-07-20,Basic,10711.77
+739,Riley Williams,riley.williams739@example.com,Japan,2022-08-05,Standard,5040.29
+740,Quinn Garcia,quinn.garcia740@example.com,Canada,2020-12-25,Basic,7355.87
+741,,jamie.johnson741@example.com,United Kingdom,2024-12-30,Basic,12894.83
+742,Sam Brown,sam.brown742@example.com,Canada,2024-01-29,Standard,13306.40
+743,Jordan Smith,,France,2024-04-24,Basic,9511.23
+744,Jamie Brown,jamie.brown744@example.com,Japan,2023-09-01,Basic,8318.75
+745,Taylor Garcia,taylor.garcia745@example.com,India,2020-10-01,Standard,13382.42
+746,Quinn Wilson,quinn.wilson746@example.com,United States,2023-09-19,Standard,6012.10
+747,Morgan Moore,morgan.moore747@example.com,United Kingdom,2022-07-02,Standard,11382.37
+748,Taylor Williams,taylor.williams748@example.com,United Kingdom,NOT-A-DATE,Standard,8530.61
+749,Quinn Garcia,quinn.garcia749@example.com,Germany,2020-05-08,Premium,11445.94
+750,Casey Garcia,casey.garcia750@example.com,Australia,2022-03-05,Standard,10061.93
+751,Quinn Davis,quinn.davis751@example.com,Australia,2020-07-30,Basic,694.58
+752,Sam Jones,sam.jones752@example.com,United Kingdom,2022-02-10,Basic,4023.41
+753,Avery Garcia,avery.garcia753@example.com,Canada,2022-11-24,Standard,13483.58
+754,Casey Miller,casey.miller754@example.com,France,2021-12-23,Basic,3421.20
+755,Riley Davis,riley.davis755@example.com,United States,2022-10-24,Basic,13318.86
+756,Taylor Davis,taylor.davis756@example.com,India,2021-03-09,Premium,1248.61
+757,Taylor Williams,taylor.williams757@example.com,Canada,2023-09-15,Premium,9070.10
+758,Morgan Miller,morgan.miller758@example.com,Japan,2023-10-14,Basic,10831.81
+759,Quinn Davis,quinn.davis759@example.com,France,2020-02-15,Standard,2502.57
+760,Morgan Smith,morgan.smith760@example.com,United Kingdom,2023-07-13,Premium,8925.98
+761,Sam Smith,sam.smith761@example.com,United Kingdom,2021-06-12,Basic,2288.29
+762,Taylor Wilson,taylor.wilson762@example.com,United States,2024-12-04,Basic,9030.43
+763,Casey Johnson,casey.johnson763@example.com,Japan,2024-11-11,Standard,9137.24
+764,Quinn Williams,quinn.williams764@example.com,United Kingdom,2024-06-15,Standard,6220.43
+765,Jamie Williams,jamie.williams765@example.com,United Kingdom,2024-01-23,Standard,7710.99
+766,Riley Davis,riley.davis766@example.com,France,2022-02-28,Standard,1125.76
+767,Taylor Johnson,taylor.johnson767@example.com,France,2024-08-19,Premium,7888.40
+768,Taylor Moore,taylor.moore768@example.com,United States,NOT-A-DATE,Premium,7190.45
+769,Sam Wilson,invalid-email-format,United Kingdom,2023-05-20,Basic,1488.53
+770,Sam Smith,,France,2022-12-05,Basic,11645.57
+771,Avery Garcia,avery.garcia771@example.com,France,2021-04-14,Basic,10494.88
+772,Quinn Miller,quinn.miller772@example.com,Canada,2022-05-21,Standard,12088.85
+773,Taylor Jones,taylor.jones773@example.com,Canada,2021-08-03,Standard,3564.44
+774,Jamie Wilson,jamie.wilson774@example.com,United States,2023-03-29,Standard,2916.41
+775,Sam Johnson,sam.johnson775@example.com,Germany,2023-11-09,Standard,5687.95
+776,Riley Miller,riley.miller776@example.com,India,2021-06-19,Standard,2406.20
+777,Sam Miller,sam.miller777@example.com,France,2024-03-26,Standard,9217.02
+778,Morgan Miller,morgan.miller778@example.com,United Kingdom,2022-01-28,Standard,8407.68
+779,Sam Wilson,sam.wilson779@example.com,Australia,2024-05-04,Standard,14828.77
+780,Avery Williams,avery.williams780@example.com,Germany,2022-07-03,Basic,9923.31
+781,Taylor Johnson,taylor.johnson781@example.com,Australia,2024-06-28,Standard,6068.36
+782,Sam Moore,sam.moore782@example.com,United Kingdom,2022-03-07,Standard,10631.17
+783,Alex Johnson,alex.johnson783@example.com,France,2020-06-29,Basic,7127.86
+784,Jordan Jones,invalid-email-format,United States,2024-01-23,Standard,1292.59
+785,Avery Miller,avery.miller785@example.com,United States,2024-05-03,Standard,7862.98
+786,Taylor Davis,taylor.davis786@example.com,India,2021-02-02,Standard,3105.44
+787,Alex Moore,alex.moore787@example.com,United Kingdom,2023-10-12,Standard,10506.90
+788,Alex Garcia,alex.garcia788@example.com,United Kingdom,2020-06-26,Standard,104.28
+789,Casey Miller,casey.miller789@example.com,Germany,2022-11-26,Standard,5987.63
+790,Alex Johnson,alex.johnson790@example.com,Australia,2021-12-12,Basic,8288.93
+791,Casey Brown,casey.brown791@example.com,France,2023-03-23,Standard,2998.43
+792,,invalid-email-format,Canada,2022-10-27,Premium,7642.95
+793,Casey Garcia,casey.garcia793@example.com,India,2024-11-29,Basic,12063.84
+794,Sam Moore,sam.moore794@example.com,France,2023-02-27,Standard,6697.25
+795,Quinn Brown,quinn.brown795@example.com,Japan,2023-10-27,Basic,14422.46
+796,Quinn Moore,quinn.moore796@example.com,India,2020-05-18,Basic,7281.36
+797,Avery Brown,avery.brown797@example.com,Australia,2022-04-24,Standard,3525.96
+798,Riley Wilson,riley.wilson798@example.com,India,2021-05-23,Standard,10542.20
+799,Casey Johnson,casey.johnson799@example.com,Australia,2020-06-04,Standard,11256.94
+800,Sam Williams,sam.williams800@example.com,India,2021-01-09,Standard,5367.72
+801,Morgan Davis,morgan.davis801@example.com,Germany,2024-11-22,Basic,3599.43
+802,Casey Brown,casey.brown802@example.com,Australia,2020-11-15,Standard,12540.61
+803,Jordan Johnson,jordan.johnson803@example.com,Japan,2023-06-11,Basic,10169.60
+804,Alex Wilson,alex.wilson804@example.com,Australia,2023-06-25,Basic,12735.36
+805,Riley Davis,,India,2022-10-02,Basic,13226.71
+806,Taylor Wilson,taylor.wilson806@example.com,United Kingdom,2020-04-20,Standard,3409.18
+807,Sam Miller,sam.miller807@example.com,Australia,2022-03-17,Standard,8157.44
+808,Taylor Davis,taylor.davis808@example.com,Japan,2021-10-08,Basic,10503.84
+809,Alex Smith,alex.smith809@example.com,Canada,2021-10-28,Standard,5753.48
+810,Riley Moore,riley.moore810@example.com,India,2021-04-30,Basic,2888.57
+811,Casey Davis,casey.davis811@example.com,United Kingdom,2022-10-18,Basic,5212.14
+812,Avery Brown,avery.brown812@example.com,Australia,2024-10-15,Standard,11307.72
+813,Avery Jones,avery.jones813@example.com,Germany,2024-07-25,Standard,8614.00
+814,Jordan Jones,jordan.jones814@example.com,France,2021-02-05,Basic,8374.57
+815,Taylor Williams,,France,2022-10-20,Standard,245.16
+816,Taylor Wilson,taylor.wilson816@example.com,Japan,2021-09-06,Standard,4804.34
+817,Casey Wilson,casey.wilson817@example.com,Canada,2023-11-15,Basic,810.87
+818,Taylor Smith,taylor.smith818@example.com,Canada,2022-07-10,Standard,3888.92
+819,Riley Jones,riley.jones819@example.com,India,2021-12-05,Standard,8449.22
+820,Alex Miller,alex.miller820@example.com,Germany,2023-03-27,Premium,13023.79
+821,Jamie Wilson,,Australia,2021-10-27,Premium,11726.61
+822,Sam Davis,sam.davis822@example.com,Canada,2022-02-19,Basic,6759.26
+823,Jamie Jones,jamie.jones823@example.com,United Kingdom,2027-06-11,Standard,14353.26
+824,Riley Miller,riley.miller824@example.com,Canada,2020-06-11,Standard,8617.40
+825,Taylor Garcia,taylor.garcia825@example.com,India,2023-12-25,Standard,4821.49
+826,Casey Moore,casey.moore826@example.com,Japan,2024-05-18,Standard,4141.60
+827,Riley Moore,riley.moore827@example.com,United Kingdom,2021-01-11,Standard,6809.30
+828,Alex Williams,invalid-email-format,Canada,2021-03-07,Basic,9964.14
+829,Taylor Miller,taylor.miller829@example.com,Japan,2023-01-28,Premium,1050.51
+830,Alex Smith,alex.smith830@example.com,Canada,2020-07-31,Basic,7907.34
+831,Casey Moore,casey.moore831@example.com,France,2021-09-25,Premium,9857.01
+832,Morgan Brown,morgan.brown832@example.com,United Kingdom,2020-09-25,Basic,6703.09
+833,Sam Williams,sam.williams833@example.com,Australia,2024-11-04,Premium,9986.88
+834,Quinn Davis,quinn.davis834@example.com,India,2023-01-28,Basic,8154.70
+835,Quinn Williams,quinn.williams835@example.com,United Kingdom,2023-04-25,Basic,10494.58
+836,Jamie Davis,jamie.davis836@example.com,France,2022-12-08,Standard,9574.18
+837,Sam Jones,sam.jones837@example.com,Germany,2024-07-06,Basic,7276.61
+838,Jordan Davis,jordan.davis838@example.com,United Kingdom,2021-09-13,Standard,6241.84
+839,Alex Smith,alex.smith839@example.com,United Kingdom,2021-12-05,Standard,11398.57
+840,Casey Davis,casey.davis840@example.com,Japan,2024-03-27,Standard,10347.77
+841,Quinn Jones,quinn.jones841@example.com,India,2023-05-07,Premium,6513.49
+842,Morgan Smith,morgan.smith842@example.com,France,2022-03-19,Standard,2909.71
+843,Morgan Williams,morgan.williams843@example.com,France,2021-03-27,Basic,9725.26
+844,Casey Johnson,casey.johnson844@example.com,India,2021-08-06,Standard,3669.47
+845,Sam Jones,sam.jones845@example.com,United Kingdom,2020-10-06,Standard,12816.88
+846,Casey Johnson,casey.johnson846@example.com,India,2023-12-05,Standard,9304.17
+847,Jamie Davis,jamie.davis847@example.com,United States,2022-12-31,Premium,388.99
+848,Alex Williams,alex.williams848@example.com,United Kingdom,2024-01-04,Basic,4303.51
+849,Quinn Smith,quinn.smith849@example.com,Japan,2021-03-20,Standard,2345.19
+850,Riley Miller,riley.miller850@example.com,Australia,2022-08-07,Standard,12011.99
+851,Alex Garcia,alex.garcia851@example.com,United Kingdom,2020-04-24,Premium,11283.49
+852,Casey Miller,casey.miller852@example.com,Germany,2024-09-19,Premium,7105.19
+853,Casey Miller,casey.miller853@example.com,Germany,2022-02-27,Basic,1917.23
+854,Quinn Brown,quinn.brown854@example.com,Japan,2024-02-14,Basic,599.30
+855,Jordan Wilson,jordan.wilson855@example.com,France,2023-10-27,Standard,3205.86
+856,Casey Garcia,casey.garcia856@example.com,Canada,2021-06-02,Premium,10950.73
+857,Quinn Jones,quinn.jones857@example.com,Germany,2020-08-19,Premium,13324.04
+858,Morgan Miller,morgan.miller858@example.com,India,2023-04-12,Standard,2593.67
+859,Jordan Miller,jordan.miller859@example.com,United States,2023-04-05,Basic,233.05
+860,Quinn Moore,quinn.moore860@example.com,Germany,2020-11-18,Premium,11584.88
+861,Quinn Johnson,quinn.johnson861@example.com,United States,2020-05-02,Standard,5142.49
+862,Riley Williams,riley.williams862@example.com,United Kingdom,2022-09-26,Basic,11892.85
+863,Morgan Garcia,,Australia,2024-07-07,Basic,11849.57
+864,Quinn Brown,quinn.brown864@example.com,United Kingdom,2021-05-28,Premium,5728.76
+865,Alex Davis,alex.davis865@example.com,Japan,2021-01-23,Basic,8429.47
+866,Jamie Williams,jamie.williams866@example.com,Japan,2021-07-17,Standard,4922.85
+867,Jamie Wilson,jamie.wilson867@example.com,Japan,2021-08-28,Premium,8013.95
+868,Casey Wilson,casey.wilson868@example.com,France,2024-02-11,Standard,110.73
+869,Taylor Smith,taylor.smith869@example.com,Germany,2021-10-18,Standard,5524.72
+870,Jordan Wilson,jordan.wilson870@example.com,Japan,2024-04-17,Basic,2929.05
+871,Sam Williams,sam.williams871@example.com,Australia,2020-08-14,Standard,4906.74
+872,Jordan Wilson,jordan.wilson872@example.com,United Kingdom,2020-12-31,Standard,752.28
+873,Alex Brown,alex.brown873@example.com,United States,2023-03-15,Premium,2955.09
+874,Avery Davis,avery.davis874@example.com,India,2020-04-10,Standard,10549.58
+875,Riley Brown,riley.brown875@example.com,Germany,2023-09-04,Standard,1156.02
+876,Quinn Johnson,quinn.johnson876@example.com,Australia,2023-02-16,Standard,9619.86
+877,Avery Garcia,avery.garcia877@example.com,India,2022-12-19,Basic,968.67
+878,Alex Johnson,alex.johnson878@example.com,Germany,2022-11-29,Basic,1261.24
+879,Jordan Johnson,invalid-email-format,Germany,2021-01-30,Basic,8021.75
+880,Sam Brown,sam.brown880@example.com,France,2024-03-08,Standard,14217.80
+881,Jordan Moore,jordan.moore881@example.com,France,2024-12-13,Standard,6934.94
+882,Jordan Williams,jordan.williams882@example.com,Australia,2023-09-08,Basic,8294.49
+883,Taylor Wilson,taylor.wilson883@example.com,Australia,2021-10-07,Basic,6700.88
+884,Sam Garcia,sam.garcia884@example.com,France,2024-08-18,Basic,6243.92
+885,Riley Moore,riley.moore885@example.com,France,2024-04-17,Standard,8229.83
+886,Sam Jones,sam.jones886@example.com,France,2020-01-01,Standard,6840.81
+887,Alex Jones,alex.jones887@example.com,India,2020-01-14,Standard,7812.38
+888,Casey Brown,casey.brown888@example.com,India,2023-02-07,Standard,4792.08
+889,Sam Wilson,sam.wilson889@example.com,Canada,2020-03-18,Standard,8617.02
+890,Quinn Garcia,quinn.garcia890@example.com,Germany,2021-04-22,Premium,4048.32
+891,Casey Jones,casey.jones891@example.com,Germany,2024-02-12,Premium,6056.99
+892,Jordan Garcia,jordan.garcia892@example.com,Canada,2023-05-04,Basic,2676.25
+893,Casey Smith,casey.smith893@example.com,Canada,2024-05-16,Basic,8686.63
+894,Alex Garcia,alex.garcia894@example.com,France,2024-11-12,Standard,12275.41
+895,Jordan Brown,jordan.brown895@example.com,United States,2023-07-22,Basic,12757.22
+896,Avery Smith,avery.smith896@example.com,United Kingdom,2021-10-31,Standard,713.62
+897,Sam Brown,sam.brown897@example.com,France,2022-07-01,Premium,10137.17
+898,Jamie Moore,jamie.moore898@example.com,India,2024-05-29,Standard,3409.08
+899,Avery Williams,avery.williams899@example.com,United States,2023-01-27,Premium,1329.92
+900,Avery Jones,avery.jones900@example.com,United Kingdom,2024-04-09,Premium,7577.16
+901,Taylor Davis,taylor.davis901@example.com,Germany,2023-02-23,Standard,7369.13
+902,Jamie Wilson,jamie.wilson902@example.com,France,NOT-A-DATE,Standard,1167.50
+903,Jamie Johnson,jamie.johnson903@example.com,Australia,2021-12-14,Premium,6262.37
+904,Morgan Garcia,morgan.garcia904@example.com,India,2026-12-13,Standard,9865.61
+905,Riley Moore,riley.moore905@example.com,United Kingdom,2022-06-21,Basic,12061.66
+906,Alex Brown,alex.brown906@example.com,Canada,2020-08-18,Premium,5669.93
+907,Alex Brown,alex.brown907@example.com,India,2020-01-29,Basic,13908.27
+908,Riley Johnson,riley.johnson908@example.com,Australia,2021-03-04,Standard,7120.74
+909,Sam Brown,sam.brown909@example.com,India,2023-01-28,Standard,7896.66
+910,Quinn Moore,quinn.moore910@example.com,United States,2022-02-10,Basic,2206.08
+911,Jamie Wilson,jamie.wilson911@example.com,India,2021-02-15,Premium,2637.76
+912,Jamie Jones,,United States,2020-05-16,Premium,9855.89
+913,Avery Jones,avery.jones913@example.com,Australia,2024-11-05,Standard,13701.74
+914,Jordan Smith,jordan.smith914@example.com,France,2021-04-18,Standard,13262.69
+915,Avery Wilson,avery.wilson915@example.com,Australia,2022-09-19,Basic,1584.10
+916,Jamie Wilson,jamie.wilson916@example.com,Japan,2023-02-22,Premium,3063.24
+917,Alex Smith,alex.smith917@example.com,Australia,2022-09-30,Standard,7988.29
+918,Avery Williams,avery.williams918@example.com,Australia,2023-07-04,Premium,10296.24
+919,Casey Brown,casey.brown919@example.com,India,2024-07-20,Basic,14680.96
+920,Alex Jones,alex.jones920@example.com,United States,2023-02-10,Basic,13366.99
+921,Casey Brown,casey.brown921@example.com,United Kingdom,2027-08-23,Premium,13467.91
+922,Avery Wilson,avery.wilson922@example.com,Germany,2022-05-04,Basic,9225.48
+923,Morgan Moore,morgan.moore923@example.com,Australia,2022-07-08,Premium,14561.00
+924,Sam Williams,sam.williams924@example.com,Germany,2024-11-01,Standard,2164.79
+925,Taylor Jones,taylor.jones925@example.com,United Kingdom,2022-05-30,Standard,13489.78
+926,Taylor Moore,taylor.moore926@example.com,Canada,2021-01-12,Basic,4830.69
+927,Riley Williams,riley.williams927@example.com,France,2022-04-22,Basic,11504.98
+928,Casey Davis,casey.davis928@example.com,India,2020-11-07,Basic,12343.31
+929,Morgan Johnson,,India,2023-05-25,Premium,490.35
+930,Jamie Moore,,United States,2022-01-05,Standard,3559.52
+931,Jordan Davis,invalid-email-format,Japan,2023-12-29,Premium,12707.46
+932,Riley Williams,,United Kingdom,2020-12-01,Basic,7422.54
+933,Morgan Brown,,United States,2021-07-06,Premium,11491.63
+934,Avery Brown,avery.brown934@example.com,Germany,2020-05-15,Basic,14824.83
+935,Taylor Davis,taylor.davis935@example.com,Australia,2024-11-10,Basic,7400.15
+936,Quinn Brown,quinn.brown936@example.com,France,2024-01-14,Standard,11665.60
+937,Riley Miller,riley.miller937@example.com,United States,2022-12-02,Standard,11162.77
+938,Jordan Davis,jordan.davis938@example.com,Germany,2022-11-28,Standard,13178.73
+939,Sam Miller,sam.miller939@example.com,France,2022-11-23,Basic,684.85
+940,Alex Brown,invalid-email-format,India,2024-05-03,Standard,6030.79
+941,Casey Davis,casey.davis941@example.com,United States,2023-11-14,Premium,4486.85
+942,Sam Williams,sam.williams942@example.com,Canada,2024-01-19,Standard,9726.91
+943,Sam Johnson,sam.johnson943@example.com,United Kingdom,2022-03-16,Premium,8823.17
+944,Avery Garcia,avery.garcia944@example.com,Germany,2024-12-12,Standard,2765.29
+945,Quinn Johnson,quinn.johnson945@example.com,United Kingdom,2024-01-11,Standard,10406.59
+946,Jordan Johnson,jordan.johnson946@example.com,Australia,2020-06-23,Premium,6796.04
+947,Sam Miller,sam.miller947@example.com,United Kingdom,2022-02-14,Basic,14630.35
+948,Sam Miller,sam.miller948@example.com,Australia,2023-03-04,Premium,2646.19
+949,Taylor Williams,taylor.williams949@example.com,United States,2022-05-09,Basic,2765.11
+950,Casey Jones,casey.jones950@example.com,India,2023-07-06,Basic,14418.40
+951,Taylor Johnson,taylor.johnson951@example.com,United States,2023-06-29,Basic,14410.46
+952,Casey Smith,casey.smith952@example.com,United States,2023-05-30,Standard,12845.62
+953,Quinn Brown,quinn.brown953@example.com,Japan,2022-04-19,Standard,9926.11
+954,Quinn Johnson,quinn.johnson954@example.com,India,2023-06-23,Standard,197.94
+955,Sam Brown,sam.brown955@example.com,Australia,2020-03-16,Premium,2309.02
+956,Taylor Smith,taylor.smith956@example.com,India,2021-11-09,Standard,12586.42
+957,Jordan Smith,jordan.smith957@example.com,United Kingdom,2023-10-08,Premium,14906.65
+958,Casey Moore,casey.moore958@example.com,United Kingdom,2022-07-21,Standard,10527.72
+959,Jamie Garcia,jamie.garcia959@example.com,India,2021-10-23,Basic,1487.58
+960,Riley Miller,riley.miller960@example.com,Canada,2021-08-22,Basic,11400.79
+961,Quinn Williams,quinn.williams961@example.com,Australia,2022-12-15,Premium,12905.18
+962,Avery Wilson,avery.wilson962@example.com,United States,2020-08-11,Standard,3214.86
+963,Jamie Wilson,jamie.wilson963@example.com,India,2022-05-24,Basic,7306.58
+964,Jamie Garcia,jamie.garcia964@example.com,Australia,2020-09-22,Standard,8669.63
+965,Jamie Moore,jamie.moore965@example.com,Japan,2022-10-05,Standard,10964.85
+966,Taylor Moore,invalid-email-format,Germany,2020-01-04,Standard,4428.27
+967,Jordan Smith,jordan.smith967@example.com,Germany,2024-06-25,Standard,11971.32
+968,Jamie Miller,jamie.miller968@example.com,Germany,2020-01-24,Standard,5073.50
+969,Morgan Jones,morgan.jones969@example.com,India,2022-11-03,Standard,1110.76
+970,Sam Garcia,sam.garcia970@example.com,Australia,2021-11-30,Basic,1796.17
+971,Avery Moore,avery.moore971@example.com,United Kingdom,2021-02-01,Standard,533.85
+972,Riley Garcia,riley.garcia972@example.com,Japan,2024-06-20,Basic,7238.71
+973,Alex Williams,alex.williams973@example.com,Australia,2022-08-05,Standard,9445.29
+974,Avery Smith,avery.smith974@example.com,Australia,2023-02-11,Basic,4560.22
+975,Sam Smith,sam.smith975@example.com,Australia,2020-05-15,Standard,10313.85
+976,Taylor Jones,taylor.jones976@example.com,France,2023-07-07,Basic,5153.37
+977,Sam Williams,sam.williams977@example.com,Canada,2024-11-05,Standard,5904.54
+978,Casey Garcia,casey.garcia978@example.com,Canada,2022-10-14,Basic,4145.31
+979,Morgan Garcia,morgan.garcia979@example.com,Germany,2022-12-11,Standard,14265.83
+980,Casey Williams,casey.williams980@example.com,Germany,2020-07-08,Premium,11795.67
+981,Quinn Wilson,,United Kingdom,2021-01-24,Premium,7291.68
+982,Riley Davis,riley.davis982@example.com,Australia,2020-10-20,Basic,7902.06
+983,Jordan Wilson,jordan.wilson983@example.com,United States,2022-07-29,Standard,2077.49
+984,Avery Wilson,avery.wilson984@example.com,United States,2023-11-08,Premium,4733.62
+985,Jamie Johnson,jamie.johnson985@example.com,Canada,2027-05-23,Standard,13348.87
+986,Casey Smith,casey.smith986@example.com,Germany,2021-10-19,Standard,4750.93
+987,Morgan Brown,morgan.brown987@example.com,Japan,2023-10-06,Standard,8030.91
+988,Jordan Jones,jordan.jones988@example.com,United States,2023-06-29,Premium,4177.19
+989,Sam Wilson,sam.wilson989@example.com,Australia,2021-07-09,Premium,8183.68
+990,Taylor Jones,taylor.jones990@example.com,India,2023-06-09,Standard,2652.00
+991,Riley Wilson,riley.wilson991@example.com,Japan,2023-10-15,Standard,2038.10
+992,Alex Johnson,alex.johnson992@example.com,France,2021-01-01,Standard,1383.18
+993,Jamie Moore,jamie.moore993@example.com,Japan,2023-06-16,Standard,10382.86
+994,Riley Jones,riley.jones994@example.com,Canada,2024-03-27,Standard,3052.39
+995,Quinn Moore,quinn.moore995@example.com,Japan,2020-07-18,Premium,12211.48
+996,Quinn Jones,quinn.jones996@example.com,Japan,2022-08-21,Standard,10682.22
+997,Morgan Brown,morgan.brown997@example.com,India,NOT-A-DATE,Premium,13445.94
+998,Avery Williams,avery.williams998@example.com,Australia,2022-07-17,Standard,10011.19
+999,Quinn Smith,quinn.smith999@example.com,Japan,2022-08-02,Premium,1782.02
+1000,Taylor Jones,taylor.jones1000@example.com,United Kingdom,2022-11-06,Basic,9106.16
+56,Casey Williams,casey.williams56@example.com,France,2023-02-22,Basic,8320.04
+182,Avery Smith,avery.smith182@example.com,Australia,2023-10-09,Standard,1941.47
+565,Avery Moore,avery.moore565@example.com,United Kingdom,2020-11-18,Premium,4596.30
+219,Jamie Smith,jamie.smith219@example.com,France,2022-09-21,Standard,4154.33
+630,Riley Garcia,riley.garcia630@example.com,Canada,2022-08-21,Standard,4481.36
+302,Sam Moore,sam.moore302@example.com,France,2022-10-26,Premium,14497.34
