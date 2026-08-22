@@ -18,15 +18,16 @@ from bronze_common import (  # noqa: E402
     build_arg_parser,
     config_from_args,
     dry_run_validate,
-    get_spark,
     ingest_entity,
+    notebook_spark_if_defined,
     require_pyspark,
+    resolve_spark,
 )
 
 ENTITY_KEY = "customers"
 
 
-def main() -> None:
+def main(spark=None) -> None:
     parser = build_arg_parser("Bronze ingest: customers.csv → bronze_customers")
     args = parser.parse_args()
     config = config_from_args(args)
@@ -36,9 +37,9 @@ def main() -> None:
         return
 
     require_pyspark()
-    spark = get_spark()
-    ingest_entity(spark, config, ENTITY_KEY)
+    session = resolve_spark(spark or notebook_spark_if_defined())
+    ingest_entity(session, config, ENTITY_KEY)
 
 
 if __name__ == "__main__":
-    main()
+    main(spark=notebook_spark_if_defined())

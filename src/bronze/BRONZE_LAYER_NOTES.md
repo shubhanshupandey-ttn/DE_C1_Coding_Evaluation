@@ -48,27 +48,73 @@ python3 src/bronze/ingest_all.py --dry-run
 
 Validates headers, row counts, and spot-checks known Phase 2 defects.
 
-### Databricks cluster / notebook
+### Databricks notebook (recommended)
 
-1. Ensure repo or `data/` CSVs are available to the cluster (Repos, workspace upload, or DBFS).
-2. Install/sync `src/bronze/` on the cluster Python path.
-3. Run:
+**Do NOT use** ``!python .../ingest_all.py`` in a notebook cell.
+
+That runs a **separate OS process** without the notebook's `spark` session. On recent
+Databricks runtimes this fails with:
+
+```
+PySparkValueError: [INVALID_CONNECT_URL] Invalid URL for Spark Connect ...
+```
+
+#### Option A — Notebook cell (best)
+
+Paste into a **Python** cell on a cluster with `spark` available:
+
+```python
+import sys
+from pathlib import Path
+
+REPO = Path("/Workspace/Users/shubhanshu.pandey@tothenew.com/DE_C1_Coding_Evaluation")
+sys.path.insert(0, str(REPO / "src/bronze"))
+
+from bronze_common import BronzeConfig
+from ingest_all import run_ingestion
+
+config = BronzeConfig(
+    data_dir=REPO / "data",
+    catalog_name="de_c1_coding_evaluation",
+    schema_name="bronze",
+    write_mode="overwrite",
+)
+
+run_ingestion(config, spark=spark)  # reuse notebook Spark session
+```
+
+#### Option B — `%run` with CLI args via `sys.argv`
+
+```python
+import sys
+sys.argv = [
+    "ingest_all",
+    "--data-dir", "/Workspace/Users/shubhanshu.pandey@tothenew.com/DE_C1_Coding_Evaluation/data",
+    "--catalog", "de_c1_coding_evaluation",
+    "--schema", "bronze",
+    "--write-mode", "overwrite",
+]
+```
+
+```python
+%run /Workspace/Users/shubhanshu.pandey@tothenew.com/DE_C1_Coding_Evaluation/src/bronze/ingest_all
+```
+
+#### Verify after ingest
+
+```sql
+SELECT COUNT(*) FROM de_c1_coding_evaluation.bronze.bronze_customers;  -- expect 1006
+SELECT COUNT(*) FROM de_c1_coding_evaluation.bronze.bronze_products;   -- expect 206
+SELECT COUNT(*) FROM de_c1_coding_evaluation.bronze.bronze_orders;     -- expect 5163
+```
+
+### Local / non-notebook shell
 
 ```bash
-python src/bronze/ingest_all.py --data-dir /path/to/data
+python3 src/bronze/ingest_all.py --dry-run
 ```
 
-Or in a Databricks notebook:
-
-```python
-%run ./src/bronze/ingest_all
-```
-
-With CLI args in notebook:
-
-```python
-dbutils.notebook.run("ingest_all", 600, {"dry_run": "false"})
-```
+Full Delta write requires a Spark environment (Databricks cluster or local PySpark).
 
 ### Per-entity scripts
 

@@ -148,10 +148,60 @@ def string_schema(columns: list[str]):
     return StructType([StructField(column, StringType(), nullable=True) for column in columns])
 
 
-def get_spark() -> SparkSession:
+def resolve_spark(explicit: SparkSession | None = None) -> SparkSession:
+    """
+    Return a SparkSession, reusing the Databricks notebook session when available.
+
+    On Databricks, ``!python script.py`` starts a **separate process** without the
+    notebook ``spark`` session and will fail with Spark Connect URL errors. Use
+    ``%run``, import this module in a notebook cell, or pass ``spark=spark``.
+    """
+    if explicit is not None:
+        return explicit
+
     from pyspark.sql import SparkSession
 
+    active = SparkSession.getActiveSession()
+    if active is not None:
+        return active
+
+    import __main__ as main_module
+
+    notebook_spark = getattr(main_module, "spark", None)
+    if notebook_spark is not None and hasattr(notebook_spark, "read"):
+        return notebook_spark
+
+    import os
+
+    if os.environ.get("DATABRICKS_RUNTIME_VERSION"):
+        raise RuntimeError(
+            "No active Spark session on Databricks.\n\n"
+            "Do NOT use '!python .../ingest_all.py' — that runs in a subprocess "
+            "without the notebook Spark session and fails with:\n"
+            "  PySparkValueError: [INVALID_CONNECT_URL] ... must start with 'sc://'\n\n"
+            "Use one of these instead:\n"
+            "  1) Notebook cell: run_ingestion(config, spark=spark)  — see BRONZE_LAYER_NOTES.md\n"
+            "  2) %run /Workspace/.../src/bronze/ingest_all\n"
+            "  3) dbutils.notebook.run(...) to execute a wrapper notebook\n"
+        )
+
     return SparkSession.builder.getOrCreate()
+
+
+def get_spark(explicit: SparkSession | None = None) -> SparkSession:
+    """Alias for resolve_spark (backward compatible)."""
+    return resolve_spark(explicit)
+
+
+def notebook_spark_if_defined() -> SparkSession | None:
+    """Return ``spark`` when executed inside a Databricks notebook namespace."""
+    try:
+        candidate = spark  # type: ignore[name-defined]  # noqa: F821
+    except NameError:
+        return None
+    if candidate is not None and hasattr(candidate, "read"):
+        return candidate
+    return None
 
 
 def ensure_schema_exists(spark: SparkSession, config: BronzeConfig) -> None:
@@ -180,8 +230,9 @@ def read_source_csv(spark: SparkSession, path: Path, columns: list[str]) -> Data
 def add_ingestion_metadata(df: DataFrame, source_file: Path) -> DataFrame:
     from pyspark.sql import functions as F
 
+    source_path = str(source_file) if str(source_file).startswith("/") else str(source_file.resolve())
     return df.withColumn("_ingestion_timestamp", F.current_timestamp()).withColumn(
-        "_source_file", F.lit(str(source_file.resolve()))
+        "_source_file", F.lit(source_path)
     )
 
 
