@@ -328,21 +328,19 @@ def bronze_source_json_expr(entity_key: str) -> Column:
 
 
 def empty_failures_df(spark: SparkSession):
-    from pyspark.sql import types as T
+    """Return an empty failures DataFrame with the quarantine schema (serverless-safe)."""
+    from pyspark.sql import functions as F
 
-    schema = T.StructType(
-        [
-            T.StructField("entity_name", T.StringType(), False),
-            T.StructField("business_key", T.StringType(), True),
-            T.StructField("check_category", T.StringType(), False),
-            T.StructField("failure_reason", T.StringType(), False),
-            T.StructField("failed_column", T.StringType(), True),
-            T.StructField("bronze_source_values", T.StringType(), True),
-            T.StructField("quarantine_timestamp", T.TimestampType(), False),
-            T.StructField("run_timestamp", T.TimestampType(), False),
-        ]
+    return spark.range(0).select(
+        F.lit(None).cast("string").alias("entity_name"),
+        F.lit(None).cast("string").alias("business_key"),
+        F.lit(None).cast("string").alias("check_category"),
+        F.lit(None).cast("string").alias("failure_reason"),
+        F.lit(None).cast("string").alias("failed_column"),
+        F.lit(None).cast("string").alias("bronze_source_values"),
+        F.lit(None).cast("timestamp").alias("quarantine_timestamp"),
+        F.lit(None).cast("timestamp").alias("run_timestamp"),
     )
-    return spark.createDataFrame([], schema)
 
 
 def build_failure_df(
@@ -364,9 +362,6 @@ def build_failure_df(
     now_ts = F.current_timestamp()
 
     failing = source_df.filter(condition)
-    if failing.rdd.isEmpty():
-        return empty_failures_df(spark)
-
     return failing.select(
         F.lit(entity_key).alias("entity_name"),
         F.col(business_key).alias("business_key"),
@@ -380,11 +375,13 @@ def build_failure_df(
 
 
 def union_failures(spark: SparkSession, *frames: DataFrame) -> DataFrame:
-    result = empty_failures_df(spark)
+    """Union failure DataFrames; empty inputs are skipped via union (serverless-safe)."""
+    result: DataFrame | None = None
     for frame in frames:
-        if frame is not None and not frame.rdd.isEmpty():
-            result = result.unionByName(frame)
-    return result
+        if frame is None:
+            continue
+        result = frame if result is None else result.unionByName(frame)
+    return result if result is not None else empty_failures_df(spark)
 
 
 def deterministic_tiebreaker_columns(df: DataFrame, entity_key: str, business_key: str) -> list[str]:
