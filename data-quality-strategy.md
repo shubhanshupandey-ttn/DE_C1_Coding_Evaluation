@@ -65,16 +65,18 @@ Data quality framework for the **Silver layer**, aligned with Phase 2 sample dat
 
 | Table | Column | Expected type / format |
 |-------|--------|------------------------|
-| customers | `customer_id` | Integer |
+| customers | `customer_id` | STRING; numerically parseable |
 | customers | `signup_date` | ISO date `YYYY-MM-DD` |
 | customers | `email` | Contains `@` and domain (basic format) |
 | customers | `lifetime_value` | Decimal ≥ 0 |
-| products | `product_id` | Integer |
+| products | `product_id` | STRING; numerically parseable |
 | products | `unit_price` | Decimal numeric |
-| orders | `order_line_id`, `order_id`, `customer_id`, `product_id` | Integer |
+| orders | `order_line_id`, `order_id`, `customer_id`, `product_id` | STRING; numerically parseable |
 | orders | `order_date` | ISO date `YYYY-MM-DD` |
 | orders | `quantity` | Integer |
 | orders | `unit_price` | Decimal numeric |
+
+**Silver storage:** identifier columns remain STRING after validation. Malformed identifiers (e.g. `"INVALID"`) fail type validation and are quarantined.
 
 **Sample defects to detect:** D04, D05, D09, D13
 
@@ -121,12 +123,16 @@ Data quality framework for the **Silver layer**, aligned with Phase 2 sample dat
 | No future signup | customers | `signup_date <= current_date()` |
 | No future orders | orders | `order_date <= current_date()` |
 | Non-negative catalog price | products | `unit_price >= 0` |
-| Catalog price consistency | orders | `orders.unit_price = products.unit_price` for same `product_id` (valid rows) |
+| Catalog price consistency | orders | `orders.unit_price = products.unit_price` for same `product_id` |
 | Valid segment | customers | `customer_segment IN ('Premium','Standard','Basic')` |
 
 **Sample defects to detect:** D06, D10, D14, D15, D17
 
-**Planned handling:** Quarantine; for D17 optionally correct `unit_price` from product catalog in Silver.
+**D17 handling (finalized):** Detect mismatch and **quarantine** the order line. Do **not** auto-replace order `unit_price` with product catalog price. Preserve original Bronze value in quarantine traceability.
+
+**Date rules:** `signup_date <= current_date()` and `order_date <= current_date()` use runtime `current_date()` (no hard-coded evaluation date). `run_timestamp` on quarantine and DQ summary provides pipeline-run traceability.
+
+**Planned handling:** Quarantine all business-logic failures.
 
 ---
 
@@ -160,22 +166,32 @@ Full defect matrix: `DATA_GENERATION_NOTES.md` (17 defect types, 328 injections)
 
 ---
 
-## Execution Model (Planned)
+## Execution Model (Finalized — design)
 
 ```
 Bronze tables
      ▼
-Silver typing / cleansing
+Trim / cleanse + safe typing
      ├── 01_quality_completeness.py
      ├── 02_quality_uniqueness.py
      ├── 03_quality_type_validation.py
+     ├── Canonical valid customers / products
      ├── 04_quality_referential_integrity.py
      └── 05_quality_business_logic.py
      ▼
-Silver curated tables (create_silver_tables.py)
+Silver curated tables (valid rows only)
+     +
+silver_quarantine_records (invalid rows — single centralized table)
+     +
+silver_dq_summary (per-run metrics)
 ```
 
-**Still TBD at Silver phase:** quarantine table design, fail-fast vs. continue, Deequ vs. custom PySpark.
+**Design decisions finalized** (see `src/silver/SILVER_LAYER_NOTES.md`):
+
+- Quarantine: `de_c1_coding_evaluation.silver.silver_quarantine_records`
+- DQ summary: `de_c1_coding_evaluation.silver.silver_dq_summary`
+- Write mode: overwrite per run (idempotent)
+- Implementation: custom PySpark (not Deequ)
 
 ---
 
@@ -186,4 +202,4 @@ Silver curated tables (create_silver_tables.py)
 | `src/data_generation/DATA_GENERATION_NOTES.md` | Defect seeding evidence |
 | `data-model.md` | Schema and keys |
 | `src/silver/*.py` | Implementation (not started) |
-| `ai-prompts/silver-layer.md` | Prompts (not started) |
+| `ai-prompts/silver-layer.md` | Prompts + design iterations |

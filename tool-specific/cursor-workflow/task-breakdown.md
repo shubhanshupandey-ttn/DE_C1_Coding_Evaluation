@@ -6,10 +6,105 @@
 |-------|--------|
 | Phase 1: Foundation | Complete |
 | Phase 2: Data generation | Complete |
-| **Phase 3: Bronze ingestion** | **Complete** |
-| Phase 4: Silver | Not started |
+| Phase 3: Bronze ingestion | Complete (Databricks validated) |
+| **Phase 4: Silver** | **Iteration 2 complete — Iteration 3+ pending** |
 | Phase 5: Gold | Not started |
 | Phase 6: Dashboard | Not started |
+
+---
+
+## Phase 4 — Silver (iterative plan)
+
+### Iteration 1: Design & task planning — **COMPLETE**
+
+| # | Task | Status |
+|---|------|--------|
+| 4.1.1 | Review `data-quality-strategy.md`, `data-model.md`, `DATA_GENERATION_NOTES.md` | Done |
+| 4.1.2 | Review validated Bronze context (row counts, preserved defects) | Done |
+| 4.1.3 | Define Silver catalog/schema/table naming (`de_c1_coding_evaluation.silver`) | Done |
+| 4.1.4 | Propose Silver execution flow and check ordering | Done |
+| 4.1.5 | Define quarantine table structure (`silver_quarantine_records`) | Done |
+| 4.1.6 | Define DQ summary structure (`silver_dq_summary`) | Done |
+| 4.1.7 | Define idempotency strategy (overwrite per run) | Done |
+| 4.1.8 | Create design draft `src/silver/SILVER_LAYER_NOTES.md` | Done |
+| 4.1.9 | Document Iteration 1 in `ai-prompts/silver-layer.md` | Done |
+
+### Iteration 1b: Resolve open design decisions — **COMPLETE**
+
+| # | Task | Status |
+|---|------|--------|
+| 4.1b.1 | Finalize completeness — full `data-quality-strategy.md` field lists | Done |
+| 4.1b.2 | Finalize single centralized quarantine table | Done |
+| 4.1b.3 | Finalize STRING identifiers + numeric-parse validation | Done |
+| 4.1b.4 | Finalize D17 quarantine-only (no auto-correction) | Done |
+| 4.1b.5 | Finalize date rules (`current_date()`) + `run_timestamp` traceability | Done |
+| 4.1b.6 | Confirm execution order unchanged | Done |
+| 4.1b.7 | Update `SILVER_LAYER_NOTES.md`, `data-quality-strategy.md`, `spec.md`, `silver-layer.md` | Done |
+| 4.1b.8 | **Developer approval before Iteration 2** | **Pending** |
+
+---
+
+### Iteration 2: Type standardization, completeness, uniqueness — **COMPLETE (local validation)**
+
+| # | Task | Status |
+|---|------|--------|
+| 4.2.1 | Create `silver_common.py` (config, Bronze read, cast helpers, Spark session) | Done |
+| 4.2.2 | Implement safe STRING trim / normalization | Done |
+| 4.2.3 | Implement typed column parsing (DATE, DECIMAL, INT) with failure flags | Done |
+| 4.2.4 | Implement `01_quality_completeness.py` | Done |
+| 4.2.5 | Implement `02_quality_uniqueness.py` (deterministic duplicate handling) | Done |
+| 4.2.6 | Implement `03_quality_type_validation.py` | Done |
+| 4.2.7 | Local `py_compile` validation | Done |
+| 4.2.8 | Local helper unit tests (`test_silver_helpers.py`) | Done |
+| 4.2.9 | Document Iteration 2 in `ai-prompts/silver-layer.md` | Done |
+| 4.2.10 | Databricks module validation | **Pending** |
+| 4.2.11 | **Developer approval before Iteration 3** | **Pending** |
+
+---
+
+### Iteration 3: Referential integrity, business logic — NOT STARTED
+
+| # | Task | Status |
+|---|------|--------|
+| 4.3.1 | Establish canonical valid parent records (customers, products) | Pending |
+| 4.3.2 | Implement `04_quality_referential_integrity.py` (anti-join orphans) | Pending |
+| 4.3.3 | Implement `05_quality_business_logic.py` (dates, qty, prices, segment, catalog match) | Pending |
+| 4.3.4 | Validate logic against Phase 2 defect matrix (expected counts) | Pending |
+| 4.3.5 | Refine based on review / dry-run inspection | Pending |
+| 4.3.6 | Document Iteration 3 in `ai-prompts/silver-layer.md` | Pending |
+
+---
+
+### Iteration 4: Quarantine + DQ summary — NOT STARTED
+
+| # | Task | Status |
+|---|------|--------|
+| 4.4.1 | Implement quarantine writer (`silver_quarantine_records`) | Pending |
+| 4.4.2 | Support multiple failure reasons per record where practical | Pending |
+| 4.4.3 | Implement DQ summary writer (`silver_dq_summary`) | Pending |
+| 4.4.4 | Ensure all five DQ categories appear in summary | Pending |
+| 4.4.5 | Local validation of summary/quarantine schema logic | Pending |
+| 4.4.6 | Refine based on inspection | Pending |
+| 4.4.7 | Document Iteration 4 in `ai-prompts/silver-layer.md` | Pending |
+
+---
+
+### Iteration 5: Orchestration + Databricks validation — NOT STARTED
+
+| # | Task | Status |
+|---|------|--------|
+| 4.5.1 | Implement `create_silver_tables.py` orchestration | Pending |
+| 4.5.2 | `CREATE SCHEMA IF NOT EXISTS de_c1_coding_evaluation.silver` | Pending |
+| 4.5.3 | Write `silver_customers`, `silver_products`, `silver_orders` | Pending |
+| 4.5.4 | Run full pipeline in Databricks | Pending |
+| 4.5.5 | Verify Silver schema/types | Pending |
+| 4.5.6 | Verify row counts explainable vs Bronze | Pending |
+| 4.5.7 | Verify DQ summary exists and covers all 5 categories | Pending |
+| 4.5.8 | Verify quarantine counts align with known defects (50 null emails, 25+25 orphans, 40 bad qty, etc.) | Pending |
+| 4.5.9 | Verify rerun does not accumulate duplicates | Pending |
+| 4.5.10 | Update `data-quality-strategy.md`, `design-notes.md`, `README.md`, `requirements-analysis.md`, `tool-workflow.md` | Pending |
+| 4.5.11 | Finalize `SILVER_LAYER_NOTES.md` with actual validation results | Pending |
+| 4.5.12 | Document Iteration 5 + acceptance in `ai-prompts/silver-layer.md` | Pending |
 
 ---
 
@@ -17,28 +112,10 @@
 
 | # | Task | Status |
 |---|------|--------|
-| 3.1 | Read foundation + Phase 2 docs | Done |
-| 3.2 | Implement `bronze_common.py` (shared ingest) | Done |
-| 3.3 | Implement `01_ingest_customers.py` | Done |
-| 3.4 | Implement `02_ingest_orders.py` | Done |
-| 3.5 | Implement `03_ingest_products.py` | Done |
-| 3.6 | Implement `ingest_all.py` orchestration | Done |
-| 3.7 | Create `BRONZE_LAYER_NOTES.md` | Done |
-| 3.8 | Update README, design-notes, requirements, data-model | Done |
-| 3.9 | Create `ai-prompts/bronze-layer.md` | Done |
-| 3.10 | Local `py_compile` + `--dry-run` validation | Done |
-| 3.11 | Databricks Delta write validation | **Pending** (no local PySpark) |
+| 3.1–3.11 | Bronze implementation + Databricks validation | Done |
 
 ---
 
 ## Phase 2 — Data Generation (complete)
 
-See git history / prior task breakdown for Phase 2 subtasks (all Done).
-
----
-
-## Next Phase
-
-| Phase | Tasks |
-|-------|-------|
-| Phase 4: Silver | Quality modules, `create_silver_tables.py`, `ai-prompts/silver-layer.md` |
+See git history for Phase 2 subtasks.

@@ -96,3 +96,47 @@ Schemas must support:
 ## Validation Evidence
 
 Recorded in `DATA_GENERATION_NOTES.md` and Phase 2 implementation report.
+
+---
+
+# Specification — Phase 4 Silver (Iteration 1 — Design Finalized)
+
+**Status:** Design finalized (Iteration 1b). **No Silver Python implementation yet.**
+
+## Objective
+
+Transform Bronze Delta tables into curated, typed Silver tables with five DQ categories, quarantine traceability, and DQ summary reporting.
+
+## Environment
+
+| Item | Value |
+|------|-------|
+| Catalog | `de_c1_coding_evaluation` |
+| Bronze inputs | `bronze.bronze_customers`, `bronze_products`, `bronze_orders` |
+| Silver schema | `silver` |
+| Silver outputs | `silver_customers`, `silver_products`, `silver_orders` |
+| Quarantine | `silver_quarantine_records` (single centralized table) |
+| DQ summary | `silver_dq_summary` |
+
+## Finalized Design Decisions
+
+| Area | Decision |
+|------|----------|
+| Completeness | Full required-field lists from `data-quality-strategy.md` |
+| Quarantine | Single table for all entities and five DQ categories |
+| Identifiers | STRING in Silver; numeric parse validated in type check |
+| D17 catalog-price | Quarantine only — no auto-correction |
+| Date rules | `current_date()` at runtime; `run_timestamp` for traceability |
+| Execution order | Bronze → trim → type → completeness → uniqueness → type validation → canonical parents → FK → business logic → Silver → quarantine → DQ summary |
+| Idempotency | Overwrite all Silver objects per run |
+
+## Iteration Plan
+
+1. **Iteration 1 + 1b:** Design + resolve open decisions — **complete**
+2. Iteration 2: Types, completeness, uniqueness — **not started**
+3. Iteration 3: Type validation, FK, business logic — pending
+4. Iteration 4: Quarantine + DQ summary — pending
+5. Iteration 5: Orchestration + Databricks validation — pending
+
+See `src/silver/SILVER_LAYER_NOTES.md` and `tool-specific/cursor-workflow/task-breakdown.md`.
+
