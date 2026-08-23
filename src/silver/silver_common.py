@@ -3,11 +3,13 @@ Shared configuration and utilities for the Silver layer.
 
 Iteration 2: type standardization helpers, completeness/uniqueness/type-validation
 support, and structured failure records for later quarantine (Iterations 4–5).
+
+Serverless compatibility: uses only Spark Connect / DataFrame APIs (no RDD).
+Verify in Databricks after sync: ``import silver_common; print(silver_common.SERVERLESS_COMPAT_VERSION)``
 """
 
 from __future__ import annotations
 
-import json
 import re
 import sys
 from dataclasses import dataclass, field
@@ -16,6 +18,9 @@ from typing import TYPE_CHECKING, Any, Sequence
 
 if TYPE_CHECKING:
     from pyspark.sql import Column, DataFrame, SparkSession
+
+# Bump when serverless compatibility changes (Databricks reload required after sync).
+SERVERLESS_COMPAT_VERSION = 2
 
 # ---------------------------------------------------------------------------
 # Catalog / entity configuration (aligned with data-model.md)
@@ -321,25 +326,24 @@ def bronze_source_json_expr(entity_key: str) -> Column:
     from pyspark.sql import functions as F
 
     fields = business_columns(entity_key)
-    map_cols = []
-    for name in fields:
-        map_cols.extend([F.lit(name), F.col(name)])
-    return F.to_json(F.create_map(*map_cols))
+    return F.to_json(F.struct(*[F.col(name).alias(name) for name in fields]))
 
 
 def empty_failures_df(spark: SparkSession):
     """Return an empty failures DataFrame with the quarantine schema (serverless-safe)."""
-    from pyspark.sql import functions as F
-
-    return spark.range(0).select(
-        F.lit(None).cast("string").alias("entity_name"),
-        F.lit(None).cast("string").alias("business_key"),
-        F.lit(None).cast("string").alias("check_category"),
-        F.lit(None).cast("string").alias("failure_reason"),
-        F.lit(None).cast("string").alias("failed_column"),
-        F.lit(None).cast("string").alias("bronze_source_values"),
-        F.lit(None).cast("timestamp").alias("quarantine_timestamp"),
-        F.lit(None).cast("timestamp").alias("run_timestamp"),
+    return spark.sql(
+        """
+        SELECT
+            CAST(NULL AS STRING) AS entity_name,
+            CAST(NULL AS STRING) AS business_key,
+            CAST(NULL AS STRING) AS check_category,
+            CAST(NULL AS STRING) AS failure_reason,
+            CAST(NULL AS STRING) AS failed_column,
+            CAST(NULL AS STRING) AS bronze_source_values,
+            CAST(NULL AS TIMESTAMP) AS quarantine_timestamp,
+            CAST(NULL AS TIMESTAMP) AS run_timestamp
+        WHERE 1 = 0
+        """
     )
 
 
