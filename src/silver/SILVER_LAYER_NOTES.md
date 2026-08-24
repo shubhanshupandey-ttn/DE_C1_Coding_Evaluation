@@ -1,6 +1,6 @@
 # Silver Layer Notes — Design (Iteration 1 — Finalized)
 
-**Status:** Iteration 2 implementation complete (completeness, uniqueness, type validation). Orchestration and Databricks validation pending Iteration 5.
+**Status:** Iteration 2 **ACCEPTED** — Databricks Serverless validated (`SERVERLESS_COMPAT_VERSION = 7`). Iteration 3+ not started.
 
 Phase 4 Silver design defines how Bronze transforms into curated, typed Delta tables with explicit data-quality enforcement. Open design decisions were resolved in the Iteration 1 design-refinement pass (see `ai-prompts/silver-layer.md`).
 
@@ -295,20 +295,39 @@ run_silver_pipeline(spark=spark)
 
 ---
 
-## Iteration 2 Implementation (Complete)
+## Iteration 2 Implementation (ACCEPTED)
 
 | Module | Status | Defect IDs targeted |
 |--------|--------|---------------------|
-| `silver_common.py` | Implemented | Type trim/parse helpers, failure schema |
-| `01_quality_completeness.py` | Implemented | D01, D02, D07 |
-| `02_quality_uniqueness.py` | Implemented | D03, D08, D16 |
-| `03_quality_type_validation.py` | Implemented | D04, D05, D09, D13 |
+| `silver_common.py` | Implemented + Serverless validated | Type trim/parse helpers, failure schema |
+| `01_quality_completeness.py` | Implemented + Serverless validated | D01, D02, D07 |
+| `02_quality_uniqueness.py` | Implemented + Serverless validated | D03, D08, D16 |
+| `03_quality_type_validation.py` | Implemented + Serverless validated | D04, D05, D09, D13 |
+| `_load_silver_common.py` | Implemented | Databricks fresh module loader |
 
 **Not yet implemented:** `04_referential_integrity`, `05_business_logic`, `create_silver_tables.py`, quarantine write, DQ summary write.
 
 **Deterministic duplicate ranking:** partition by business key; order by tiebreaker columns (asc, nulls last) then row-content hash (no global window).
 
-**Local validation:** `py_compile` + `test_silver_helpers.py` (pure-Python helpers). Databricks execution not performed in Cursor environment.
+**Local validation:** `py_compile` + `test_silver_helpers.py` — **PASS**
+
+**Databricks Serverless validation** (`SERVERLESS_COMPAT_VERSION = 7`, catalog `de_c1_coding_evaluation`, Bronze schema `bronze`):
+
+| Check | customers | products | orders |
+|-------|-----------|----------|--------|
+| Completeness failures | 60 | 9 | 0 |
+| Uniqueness failures | 6 | 6 | 8 |
+| Type validation failures | 50 | 15 | 30 |
+
+**Completeness notes:** customers = 50 (D01 email) + 10 (D02 name) exact; products = 9 observed vs 8 documented D07 injections (one additional blank/edge case in Bronze); orders = 0.
+
+**Uniqueness keys:** `customer_id`, `product_id`, `order_line_id` (not `order_id`). Order duplicate `business_key` examples: 47, 47, 48, 48, 52, 52, 72, 72.
+
+**Type validation notes:** customers 50 = 30 email + 20 signup_date; products 15 = unit_price; orders 30 = order_date; total 95 matches Phase 2 type/format defect count.
+
+**Failure-record semantics:** counts are per validation rule / failed field; defects may overlap across DQ categories; uniqueness reports non-canonical duplicate occurrences.
+
+**Serverless:** no RDD error during validated runs; DataFrame APIs only. Global window warning observed during earlier uniqueness debugging — not treated as validation failure; final uniqueness counts exact.
 
 ---
 

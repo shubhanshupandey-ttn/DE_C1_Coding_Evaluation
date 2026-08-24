@@ -162,6 +162,7 @@ Implemented:
 | `02_quality_uniqueness.py` | PK uniqueness (`customer_id`, `product_id`, `order_line_id`) |
 | `03_quality_type_validation.py` | ID parseability, dates, decimals, ints, email format |
 | `test_silver_helpers.py` | Local unit tests for pure-Python parse/validation helpers |
+| `_load_silver_common.py` | Fresh module loader for Databricks notebook runs |
 
 **Design decisions followed:**
 
@@ -170,29 +171,138 @@ Implemented:
 - No referential integrity or business logic code added
 - Bronze unchanged
 
-**Validation performed (local):**
+**Local validation:**
 
 | Check | Result |
 |-------|--------|
 | `py_compile` all Silver `.py` files | **PASS** |
 | `test_silver_helpers.py` | **PASS** |
-| Databricks execution against Bronze | **Not performed** (no PySpark in Cursor env) |
 
-**Issues encountered:**
+**Serverless compatibility (post-implementation refinements):**
 
-- Removed unused imports during review (`02_quality_uniqueness.py`, `silver_common.py`)
-- `build_failure_df` uses `rdd.isEmpty()` — acceptable for module-level runs; orchestration may optimize in Iteration 5
+Iteration 2 was validated on **Databricks Serverless**. Several compatibility fixes were applied during validation (no change to DQ rules or acceptance scope):
+
+| Issue | Resolution |
+|-------|------------|
+| `df.rdd.isEmpty()` blocked on Serverless | Removed; use `filter().select()` + `unionByName()` |
+| Array + explode failure builder (v3) | Reverted; produced false 100% completeness failures on Spark Connect |
+| Global window for `_row_num` | Replaced with partitioned window + row-content hash tiebreaker |
+| `to_date('NOT-A-DATE')` throws under ANSI SQL | Use SQL `try_to_date` via `F.expr` (NULL on invalid) |
+| `F.try_cast` unavailable in notebook PySpark | Int/decimal parsing uses `when` + `rlike` + `.cast()` only on matched patterns |
+
+Final validated marker: **`SERVERLESS_COMPAT_VERSION = 7`**
+
+---
+
+### Databricks Serverless validation (executed)
+
+**Environment:**
+
+| Setting | Value |
+|---------|-------|
+| Compute | Databricks Serverless |
+| Catalog | `de_c1_coding_evaluation` |
+| Bronze schema | `bronze` |
+| Compat marker | `SERVERLESS_COMPAT_VERSION = 7` |
+
+**Modules exercised:**
+
+- `src/silver/silver_common.py`
+- `src/silver/01_quality_completeness.py`
+- `src/silver/02_quality_uniqueness.py`
+- `src/silver/03_quality_type_validation.py`
+
+**Note on failure-record semantics:** DQ outputs are **failure records per validation rule / failed field**, not necessarily one record per unique bad row. Defects may overlap across categories (completeness, uniqueness, type validation). Do not expect total failure counts to equal total unique defective rows.
+
+---
+
+#### Completeness validation
+
+| Entity | Observed failures | Expected / documented evidence | Assessment |
+|--------|-------------------|-------------------------------|------------|
+| customers | **60** | 50 null/empty emails (D01) + 10 null/empty customer names (D02) = **60** | **Exact match** |
+| products | **9** | 8 documented `product_name` completeness defects (D07) | **Close** — 8 injected nulls plus 1 additional blank/edge-case completeness failure observed in actual Bronze data; recorded as observed result, not adjusted to 8 |
+| orders | **0** | No major completeness injections in Phase 2 | **Correct** |
+
+Completeness validation **successfully executed** on Databricks Serverless.
+
+---
+
+#### Uniqueness validation
+
+| Entity | Uniqueness key | Observed failures | Expected | Assessment |
+|--------|----------------|-------------------|----------|------------|
+| customers | `customer_id` | **6** | 6 (D03) | **Exact match** |
+| products | `product_id` | **6** | 6 (D08) | **Exact match** |
+| orders | `order_line_id` (**not** `order_id`) | **8** | 8 (D16) | **Exact match** |
+
+- Non-canonical duplicate occurrences are flagged as failures; canonical first occurrence is retained deterministically.
+- Order duplicate failure `business_key` values correctly show repeated keys such as `47`, `47`, `48`, `48`, `52`, `52`, `72`, `72` — expected for non-canonical `order_line_id` collisions.
+
+**Serverless warning observed (not a validation failure):**
+
+```
+WARN WindowExpression: No Partition Defined for Window operation!
+```
+
+This warning appeared during an earlier uniqueness run (global window). Later implementation uses a **partitioned** window on the business key with hash tiebreaker. Uniqueness results above were obtained with functionally correct duplicate detection; the warning does not invalidate the observed counts.
+
+Uniqueness validation **successfully executed** on Databricks Serverless.
+
+---
+
+#### Type validation
+
+| Entity | Observed failures | Breakdown | Assessment |
+|--------|-------------------|-----------|------------|
+| customers | **50** | 30 invalid email + 20 invalid `signup_date` | Matches D05 + D04 |
+| products | **15** | 15 non-parseable `unit_price` | Matches D09 |
+| orders | **30** | 30 invalid `order_date` | Matches D13 |
+| **Total** | **95** | 50 + 15 + 30 | **Exact match** with documented Phase 2 type/format defect count |
+
+**Validated behavior:**
+
+- IDs remain **STRING**; numeric parseability validated separately
+- Dates parsed safely (`try_to_date` — invalid → NULL in `*_typed` columns)
+- Decimal/integer fields parsed safely (`when` + `rlike` + cast)
+- Invalid values are **not** silently coerced; they become NULL in typed columns and produce explicit failure records
+- Email format validation working
+
+Type validation **successfully executed** on Databricks Serverless.
+
+---
+
+#### Serverless compatibility summary
+
+| Check | Result |
+|-------|--------|
+| Completeness run on Serverless | **PASS** (no RDD error) |
+| Uniqueness run on Serverless | **PASS** (no RDD error) |
+| Type validation run on Serverless | **PASS** (no RDD error) |
+| Implementation uses DataFrame APIs | **Yes** — no RDD-based processing in validated execution path |
+| All Serverless limitations eliminated | **Not claimed** — only the above validations were performed |
+
+---
+
+**Issues encountered (implementation + validation):**
+
+- Initial `df.rdd.isEmpty()` incompatible with Serverless
+- v3 array+explode failure builder caused false completeness inflation (7× row count)
+- Global window warning on uniqueness (addressed with partitioned ranking)
+- ANSI `to_date` throw on `NOT-A-DATE`; resolved with `try_to_date` SQL expression
+- `F.try_cast` not available in Databricks notebook PySpark bindings
 
 **Refinements:**
 
-- Pure-Python helpers (`is_numeric_identifier`, `is_valid_email_format`, etc.) separated for local testing without Spark
-- Deterministic duplicate tiebreakers: sorted column names + `_row_num` from stable window order
+- Pure-Python helpers separated for local testing without Spark
+- Deterministic duplicate ranking: partition by business key; tiebreaker columns + row-content hash
+- Fresh module loading pattern for Databricks notebooks (`_load_silver_common.py`)
 
 **Accepted suggestions:**
 
 - Shared `silver_common.py` module (per design)
 - Quarantine-compatible failure schema for Iteration 4 compatibility
-- Per-module `main()` for individual Databricks notebook testing
+- Per-module `run_*_all()` for individual Databricks notebook testing
 
 **Rejected / deferred:**
 
@@ -202,11 +312,18 @@ Implemented:
 
 **YOUR EVALUATION:**
 
-_To be completed by developer after Databricks module testing._
+| Criterion | Result |
+|-----------|--------|
+| Local `py_compile` | **PASS** |
+| Local helper tests | **PASS** |
+| Databricks Serverless completeness | **PASS** — customers exact (60); products observed 9 (documented 8 + 1 edge case); orders 0 |
+| Databricks Serverless uniqueness | **PASS** — 6 / 6 / 8 exact match |
+| Databricks Serverless type validation | **PASS** — 95 total exact match with Phase 2 type/format defects |
+| Results align with defect matrix | **Yes** (with documented products completeness observation) |
+| Bronze unchanged | **Yes** |
+| Iteration 3 not started | **Yes** |
 
-Iteration 2 modules implement the approved completeness, uniqueness, and type-validation rules. Failures are structured for later quarantine. Local helper tests pass. Databricks validation against Bronze tables is required before final acceptance.
-
-**FINAL DECISION:** _Pending developer review and Databricks module run._
+**FINAL DECISION:** **ACCEPTED** — Silver Iteration 2 complete. Databricks Serverless validation performed and recorded. Proceed to Iteration 3 when approved.
 
 ---
 
@@ -230,9 +347,9 @@ _Full orchestration + Databricks validation — pending._
 
 ## Cursor Evaluation Evidence (Phase 4 — in progress)
 
-| Requirement | Iteration 1 evidence |
-|-------------|---------------------|
+| Requirement | Evidence |
+|-------------|----------|
 | Persistent context | Foundation docs + Bronze validation + `tool-specific/cursor-workflow/*` |
 | Iteration | Deliberate 5-iteration plan; Iteration 1 design + 1b refinement before code |
-| Validation | Iteration 2: local `py_compile` + helper tests PASS; Databricks pending |
-| Human review | Iteration 1b design ACCEPTED; Iteration 2 pending Databricks run |
+| Validation | Iteration 2: local `py_compile` + helper tests **PASS**; Databricks Serverless completeness / uniqueness / type validation **PASS** |
+| Human review | Iteration 1b design **ACCEPTED**; Iteration 2 **ACCEPTED** (Databricks Serverless validated) |
