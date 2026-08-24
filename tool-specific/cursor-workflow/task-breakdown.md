@@ -7,7 +7,7 @@
 | Phase 1: Foundation | Complete |
 | Phase 2: Data generation | Complete |
 | Phase 3: Bronze ingestion | Complete (Databricks validated) |
-| **Phase 4: Silver** | **Iteration 2 complete — Iteration 3+ pending** |
+| **Phase 4: Silver** | **Iteration 3 implemented — Databricks validation pending** |
 | Phase 5: Gold | Not started |
 | Phase 6: Dashboard | Not started |
 
@@ -57,21 +57,22 @@
 | 4.2.7 | Local `py_compile` validation | Done |
 | 4.2.8 | Local helper unit tests (`test_silver_helpers.py`) | Done |
 | 4.2.9 | Document Iteration 2 in `ai-prompts/silver-layer.md` | Done |
-| 4.2.10 | Databricks module validation | **Pending** |
-| 4.2.11 | **Developer approval before Iteration 3** | **Pending** |
+| 4.2.10 | Databricks module validation | Done |
+| 4.2.11 | **Developer approval before Iteration 3** | Done |
 
 ---
 
-### Iteration 3: Referential integrity, business logic — NOT STARTED
+### Iteration 3: Referential integrity, business logic — **IMPLEMENTED (Databricks validation pending)**
 
 | # | Task | Status |
 |---|------|--------|
-| 4.3.1 | Establish canonical valid parent records (customers, products) | Pending |
-| 4.3.2 | Implement `04_quality_referential_integrity.py` (anti-join orphans) | Pending |
-| 4.3.3 | Implement `05_quality_business_logic.py` (dates, qty, prices, segment, catalog match) | Pending |
-| 4.3.4 | Validate logic against Phase 2 defect matrix (expected counts) | Pending |
-| 4.3.5 | Refine based on review / dry-run inspection | Pending |
-| 4.3.6 | Document Iteration 3 in `ai-prompts/silver-layer.md` | Pending |
+| 4.3.1 | Establish canonical valid parent records (customers, products) | Done |
+| 4.3.2 | Implement `04_quality_referential_integrity.py` (anti-join orphans) | Done |
+| 4.3.3 | Implement `05_quality_business_logic.py` (dates, qty, prices, segment, catalog match) | Done |
+| 4.3.4 | Local `py_compile` + helper tests | Done |
+| 4.3.5 | Validate logic against Phase 2 defect matrix (Databricks Serverless) | **Pending** |
+| 4.3.6 | Document Iteration 3 in `ai-prompts/silver-layer.md` | Done |
+| 4.3.7 | **Developer approval before Iteration 4** | **Pending** |
 
 ---
 

@@ -98,6 +98,10 @@ ENTITY_CONFIG: dict[str, dict[str, Any]] = {
 CHECK_COMPLETENESS = "completeness"
 CHECK_UNIQUENESS = "uniqueness"
 CHECK_TYPE_VALIDATION = "type_validation"
+CHECK_REFERENTIAL_INTEGRITY = "referential_integrity"
+CHECK_BUSINESS_LOGIC = "business_logic"
+
+VALID_CUSTOMER_SEGMENTS = ("Premium", "Standard", "Basic")
 
 QUARANTINE_COLUMNS = [
     "entity_name",
@@ -237,6 +241,17 @@ def parse_int_string(value: str | None) -> int | None:
         return int(text)
     except ValueError:
         return None
+
+
+def is_valid_customer_segment(value: str | None) -> bool:
+    return not is_blank(value) and str(value).strip() in VALID_CUSTOMER_SEGMENTS
+
+
+def col_is_valid_customer_segment(column_name: str) -> Column:
+    from pyspark.sql import functions as F
+
+    trimmed = F.trim(F.col(column_name))
+    return trimmed.isin(list(VALID_CUSTOMER_SEGMENTS))
 
 
 # ---------------------------------------------------------------------------
@@ -453,6 +468,96 @@ def deterministic_rank_order_columns(df: DataFrame, entity_key: str, business_ke
 def add_deterministic_row_number(df: DataFrame) -> DataFrame:
     """Deprecated: global windows are not serverless-friendly. Use deterministic_rank_order_columns."""
     return df
+
+
+def add_duplicate_rank(df: DataFrame, entity_key: str) -> DataFrame:
+    """Assign deterministic duplicate rank within each business key (partitioned window)."""
+    from pyspark.sql import functions as F
+    from pyspark.sql.window import Window
+
+    business_key = ENTITY_CONFIG[entity_key]["business_key"]
+    order_cols = deterministic_rank_order_columns(df, entity_key, business_key)
+    window = Window.partitionBy(F.col(business_key)).orderBy(*order_cols)
+    return df.withColumn("_dup_rank", F.row_number().over(window))
+
+
+def row_fails_completeness(entity_key: str) -> Column:
+    """True when any required field is NULL or blank."""
+    from functools import reduce
+    from operator import or_
+
+    from pyspark.sql import functions as F
+
+    entity = ENTITY_CONFIG[entity_key]
+    conditions = [col_is_blank(column) for column in entity["required_fields"]]
+    if not conditions:
+        return F.lit(False)
+    return reduce(or_, conditions)
+
+
+def row_fails_type_validation(entity_key: str) -> Column:
+    """True when any type-validation rule fails for the row."""
+    from functools import reduce
+    from operator import or_
+
+    from pyspark.sql import functions as F
+
+    entity = ENTITY_CONFIG[entity_key]
+    conditions: list[Column] = []
+
+    for column in entity["id_columns"]:
+        conditions.append(~col_is_blank(column) & ~col_is_numeric_identifier(column))
+    for column in entity["email_columns"]:
+        conditions.append(~col_is_blank(column) & ~col_is_valid_email(column))
+    for column in entity["date_columns"]:
+        typed_col = f"{column}_typed"
+        conditions.append(
+            ~col_is_blank(column)
+            & (~col_is_valid_iso_date(column) | F.col(typed_col).isNull())
+        )
+    for column in entity["int_columns"]:
+        typed_col = f"{column}_typed"
+        conditions.append(~col_is_blank(column) & F.col(typed_col).isNull())
+    for column, _precision, _scale in entity["decimal_columns"]:
+        typed_col = f"{column}_typed"
+        conditions.append(~col_is_blank(column) & F.col(typed_col).isNull())
+
+    if not conditions:
+        return F.lit(False)
+    return reduce(or_, conditions)
+
+
+def canonical_valid_filter(entity_key: str) -> Column:
+    """True for rows that pass Iteration 2 checks and are the canonical duplicate occurrence."""
+    from pyspark.sql import functions as F
+
+    return (
+        (F.col("_dup_rank") == F.lit(1))
+        & ~row_fails_completeness(entity_key)
+        & ~row_fails_type_validation(entity_key)
+    )
+
+
+def prepare_canonical_entity_df(
+    spark: SparkSession, config: SilverConfig, entity_key: str
+) -> tuple[DataFrame, DataFrame]:
+    """
+    Read Bronze, prepare types, rank duplicates, and return
+    (prepared_with_dup_rank, canonical_valid_df).
+    """
+    bronze_df = read_bronze_table(spark, config, entity_key)
+    prepared = prepare_entity_dataframe(bronze_df, entity_key)
+    ranked = add_duplicate_rank(prepared, entity_key)
+    canonical = ranked.filter(canonical_valid_filter(entity_key))
+    return ranked, canonical
+
+
+def canonical_parent_keys_df(canonical_df: DataFrame, entity_key: str) -> DataFrame:
+    """Distinct parent business keys from canonical valid rows."""
+    from pyspark.sql import functions as F
+
+    business_key = ENTITY_CONFIG[entity_key]["business_key"]
+    return canonical_df.select(F.col(business_key)).distinct()
 
 
 def prepare_entity_dataframe(df: DataFrame, entity_key: str) -> DataFrame:

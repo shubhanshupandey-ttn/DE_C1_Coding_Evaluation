@@ -327,9 +327,86 @@ Type validation **successfully executed** on Databricks Serverless.
 
 ---
 
-## Iteration 3: (Not started)
+## Iteration 3: Referential Integrity + Business Logic
 
-_Referential integrity and business logic — pending._
+**PROMPT SENT:**
+
+> Silver Layer Iteration 3 ONLY: implement `04_quality_referential_integrity.py` and `05_quality_business_logic.py`.
+> Reuse Iteration 2 patterns and Serverless-compatible DataFrame APIs.
+> Canonical valid parent keys from Iteration 2 pass logic (not raw Bronze).
+> D17 quarantine-only. No quarantine writes, DQ summary, orchestration, Gold, or Dashboard.
+> Update documentation. STOP after Iteration 3.
+
+**AI RESPONSE SUMMARY:**
+
+| File | Purpose |
+|------|---------|
+| `04_quality_referential_integrity.py` | Orphan `customer_id` / `product_id` on orders vs canonical parents |
+| `05_quality_business_logic.py` | Date, segment, price, quantity, catalog-price rules |
+| `silver_common.py` | Minimal helpers: canonical parents, new check categories, segment validation |
+| `test_silver_helpers.py` | Added `is_valid_customer_segment` test |
+
+**Rules implemented:**
+
+**Referential integrity (`check_category = referential_integrity`):**
+
+- `orders.customer_id` → canonical `customers.customer_id`
+- `orders.product_id` → canonical `products.product_id`
+- Left-join markers + non-blank FK filter (no RDD, no raw Bronze parent tables)
+
+**Business logic (`check_category = business_logic`):**
+
+| Entity | Rule | `failed_column` |
+|--------|------|-----------------|
+| customers | Future signup (`signup_date_typed > current_date()`) | `signup_date` |
+| customers | Valid segment (`Premium`, `Standard`, `Basic`) | `customer_segment` |
+| products | Non-negative `unit_price_typed` | `unit_price` |
+| orders | `quantity_typed > 0` | `quantity` |
+| orders | `order_date_typed <= current_date()` | `order_date` |
+| orders | `unit_price_typed` matches canonical product catalog price | `unit_price` (D17 — no auto-correction) |
+
+**Canonical parents:** prepared Bronze → pass completeness + type validation + `_dup_rank = 1`.
+
+**Validation performed (local):**
+
+| Check | Result |
+|-------|--------|
+| `py_compile` all Silver `.py` files | **PASS** |
+| `test_silver_helpers.py` | **PASS** |
+| Databricks Serverless execution | **Not performed in Cursor** |
+
+**Expected Databricks targets (per rule; overlaps across categories possible):**
+
+| Module | Rule / defect | Approx. expected |
+|--------|---------------|------------------|
+| RI | Orphan customer (D11) | 25 |
+| RI | Orphan product (D12) | 25 |
+| BL | Future signup (D06) | 10 |
+| BL | Negative price (D10) | 10 |
+| BL | Future order (D14) | 15 |
+| BL | Non-positive qty (D15) | 40 |
+| BL | Catalog mismatch (D17) | 20 |
+
+**Issues/fixes during implementation:**
+
+- Restored `parse_int_string` after accidental removal when adding segment helper
+- `col_is_valid_customer_segment` uses `isin(list(VALID_CUSTOMER_SEGMENTS))` for Serverless compatibility
+
+**Acceptance criteria:**
+
+| Criterion | Status |
+|-----------|--------|
+| `04_quality_referential_integrity.py` created | **Yes** |
+| `05_quality_business_logic.py` created | **Yes** |
+| Canonical parent keys (not raw Bronze) | **Yes** |
+| D17 quarantine-only (no price correction) | **Yes** |
+| Serverless-safe (no RDD APIs) | **Yes** (design intent; Databricks run pending) |
+| Quarantine writes | **No** (Iteration 4) |
+| Orchestration / Silver table writes | **No** (Iteration 5) |
+| Bronze unchanged | **Yes** |
+| Databricks validation | **Pending** |
+
+**FINAL DECISION:** **Pending** — implementation complete; Databricks Serverless validation required before ACCEPTED.
 
 ---
 

@@ -1,6 +1,6 @@
 # Silver Layer Notes — Design (Iteration 1 — Finalized)
 
-**Status:** Iteration 2 **ACCEPTED** — Databricks Serverless validated (`SERVERLESS_COMPAT_VERSION = 7`). Iteration 3+ not started.
+**Status:** Iteration 2 **ACCEPTED**. Iteration 3 implemented (referential integrity + business logic); Databricks validation pending.
 
 Phase 4 Silver design defines how Bronze transforms into curated, typed Delta tables with explicit data-quality enforcement. Open design decisions were resolved in the Iteration 1 design-refinement pass (see `ai-prompts/silver-layer.md`).
 
@@ -305,7 +305,7 @@ run_silver_pipeline(spark=spark)
 | `03_quality_type_validation.py` | Implemented + Serverless validated | D04, D05, D09, D13 |
 | `_load_silver_common.py` | Implemented | Databricks fresh module loader |
 
-**Not yet implemented:** `04_referential_integrity`, `05_business_logic`, `create_silver_tables.py`, quarantine write, DQ summary write.
+**Iteration 3+ not implemented at Iteration 2 acceptance:** `04_referential_integrity`, `05_business_logic`, `create_silver_tables.py`, quarantine write, DQ summary write.
 
 **Deterministic duplicate ranking:** partition by business key; order by tiebreaker columns (asc, nulls last) then row-content hash (no global window).
 
@@ -330,6 +330,56 @@ run_silver_pipeline(spark=spark)
 **Serverless:** no RDD error during validated runs; DataFrame APIs only. Global window warning observed during earlier uniqueness debugging — not treated as validation failure; final uniqueness counts exact.
 
 ---
+
+## Iteration 3 Implementation (Databricks validation pending)
+
+| Module | Status | Defect IDs / rules |
+|--------|--------|-------------------|
+| `04_quality_referential_integrity.py` | Implemented | D11, D12 — orphan `customer_id` / `product_id` vs canonical parents |
+| `05_quality_business_logic.py` | Implemented | D06, D10, D14, D15, D17 + valid `customer_segment` |
+| `silver_common.py` (minimal additions) | Updated | Canonical parent helpers, `CHECK_REFERENTIAL_INTEGRITY`, `CHECK_BUSINESS_LOGIC`, segment validation |
+
+**Canonical parent logic:** Bronze → trim/typed columns → completeness + type-validation pass + canonical duplicate rank (`_dup_rank = 1`) → valid parent key set. FK and catalog-price checks use this set, not raw Bronze parents.
+
+**Referential integrity rules:**
+
+- `orders.customer_id` → canonical `customers.customer_id` (left join anti-pattern via null parent marker)
+- `orders.product_id` → canonical `products.product_id`
+- Non-blank FK values only; failures use `check_category = referential_integrity`
+
+**Business logic rules:**
+
+| Entity | Rule | Typed column | D17 note |
+|--------|------|--------------|----------|
+| customers | `signup_date <= current_date()` | `signup_date_typed` | |
+| customers | `customer_segment IN (Premium, Standard, Basic)` | string | |
+| products | `unit_price >= 0` | `unit_price_typed` | |
+| orders | `quantity > 0` | `quantity_typed` | |
+| orders | `order_date <= current_date()` | `order_date_typed` | |
+| orders | `unit_price = catalog unit_price` | join canonical products | **Quarantine only** — no auto-correction |
+
+**Not implemented (Iteration 4+):** quarantine Delta writes, DQ summary writes, `create_silver_tables.py`, Silver curated table writes.
+
+**Local validation:** `py_compile` + `test_silver_helpers.py` (incl. `is_valid_customer_segment`) — **PASS**
+
+**Databricks Serverless validation:** **Not performed in Cursor** — pending notebook run of `04` and `05`.
+
+**Expected validation targets (approximate, per rule — overlaps possible):**
+
+| Check | Expected |
+|-------|----------|
+| Orphan `customer_id` failures | ~25 (D11) |
+| Orphan `product_id` failures | ~25 (D12) |
+| Future signup (D06) | ~10 |
+| Negative product price (D10) | ~10 |
+| Future order date (D14) | ~15 |
+| Non-positive quantity (D15) | ~40 |
+| Catalog price mismatch (D17) | ~20 |
+| Invalid `customer_segment` | ~0 (no dedicated Phase 2 injection) |
+
+---
+
+## Related Artifacts
 
 - `data-quality-strategy.md` — rule definitions
 - `data-model.md` — schemas and keys

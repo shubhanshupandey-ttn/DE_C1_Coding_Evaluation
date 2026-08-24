@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from silver_common import (  # noqa: E402
     is_blank,
     is_numeric_identifier,
+    is_valid_customer_segment,
     is_valid_email_format,
     is_valid_iso_date_string,
     parse_decimal_string,
@@ -53,6 +54,14 @@ def test_parse_int() -> None:
     assert parse_int_string("abc") is None
 
 
+def test_customer_segment() -> None:
+    assert is_valid_customer_segment("Premium") is True
+    assert is_valid_customer_segment("Standard") is True
+    assert is_valid_customer_segment("Basic") is True
+    assert is_valid_customer_segment("Gold") is False
+    assert is_valid_customer_segment("") is False
+
+
 def main() -> None:
     test_is_blank()
     test_numeric_identifier()
@@ -60,6 +69,7 @@ def main() -> None:
     test_iso_date()
     test_parse_decimal()
     test_parse_int()
+    test_customer_segment()
     print("All Silver helper tests passed.")
 
 
