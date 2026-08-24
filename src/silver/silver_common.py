@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from pyspark.sql import Column, DataFrame, SparkSession
 
 # Bump when serverless compatibility changes (Databricks reload required after sync).
-SERVERLESS_COMPAT_VERSION = 5
+SERVERLESS_COMPAT_VERSION = 6
 
 # ---------------------------------------------------------------------------
 # Catalog / entity configuration (aligned with data-model.md)
@@ -278,7 +278,7 @@ def col_is_valid_iso_date(column_name: str) -> Column:
     from pyspark.sql import functions as F
 
     trimmed = F.trim(F.col(column_name))
-    parsed = F.to_date(trimmed, "yyyy-MM-dd")
+    parsed = F.try_to_date(trimmed, "yyyy-MM-dd")
     return parsed.isNotNull() & trimmed.rlike(r"^\d{4}-\d{2}-\d{2}$")
 
 
@@ -296,22 +296,23 @@ def add_typed_columns(df: DataFrame, entity_key: str) -> DataFrame:
 
     for column in config["date_columns"]:
         trimmed = F.trim(F.col(column))
-        result = result.withColumn(f"{column}_typed", F.to_date(trimmed, "yyyy-MM-dd"))
+        result = result.withColumn(f"{column}_typed", F.try_to_date(trimmed, "yyyy-MM-dd"))
 
     for column in config["int_columns"]:
         trimmed = F.trim(F.col(column))
         result = result.withColumn(
             f"{column}_typed",
-            F.when(trimmed.rlike(r"^-?\d+$"), trimmed.cast("int")).otherwise(F.lit(None)),
+            F.when(trimmed.rlike(r"^-?\d+$"), F.try_cast(trimmed, "int")).otherwise(F.lit(None)),
         )
 
     for column, precision, scale in config["decimal_columns"]:
         trimmed = F.trim(F.col(column))
         result = result.withColumn(
             f"{column}_typed",
-            F.when(trimmed.rlike(r"^-?\d+(\.\d+)?$"), trimmed.cast(f"decimal({precision},{scale})")).otherwise(
-                F.lit(None)
-            ),
+            F.when(
+                trimmed.rlike(r"^-?\d+(\.\d+)?$"),
+                F.try_cast(trimmed, f"decimal({precision},{scale})"),
+            ).otherwise(F.lit(None)),
         )
 
     return result
