@@ -13,24 +13,26 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from silver_common import (  # noqa: E402
-    CHECK_UNIQUENESS,
-    ENTITY_CONFIG,
-    SilverConfig,
-    add_deterministic_row_number,
-    build_failure_df,
-    deterministic_tiebreaker_columns,
-    notebook_spark_if_defined,
-    prepare_entity_dataframe,
-    read_bronze_table,
-    require_pyspark,
-    resolve_spark,
-)
+from _load_silver_common import load_silver_common  # noqa: E402
+
+sc = load_silver_common()
+
+CHECK_UNIQUENESS = sc.CHECK_UNIQUENESS
+ENTITY_CONFIG = sc.ENTITY_CONFIG
+SilverConfig = sc.SilverConfig
+add_deterministic_row_number = sc.add_deterministic_row_number
+build_failures_from_rules = sc.build_failures_from_rules
+deterministic_tiebreaker_columns = sc.deterministic_tiebreaker_columns
+notebook_spark_if_defined = sc.notebook_spark_if_defined
+prepare_entity_dataframe = sc.prepare_entity_dataframe
+read_bronze_table = sc.read_bronze_table
+require_pyspark = sc.require_pyspark
+resolve_spark = sc.resolve_spark
 
 # Phase 2 defect mapping: D03 (dup customer_id), D08 (dup product_id), D16 (dup order_line_id)
 
 
-def check_uniqueness(df, entity_key: str, config: SilverConfig):
+def check_uniqueness(df, entity_key: str, config: SilverConfig, spark):
     """
     Flag duplicate business keys. Retain first canonical row deterministically.
 
@@ -43,7 +45,6 @@ def check_uniqueness(df, entity_key: str, config: SilverConfig):
     from pyspark.sql.window import Window
 
     entity = ENTITY_CONFIG[entity_key]
-    spark = df.sparkSession
     business_key = entity["business_key"]
 
     df_numbered = add_deterministic_row_number(df)
@@ -55,15 +56,19 @@ def check_uniqueness(df, entity_key: str, config: SilverConfig):
     ranked = df_numbered.withColumn("_dup_rank", F.row_number().over(window))
 
     duplicate_condition = F.col("_dup_rank") > F.lit(1)
-    failures = build_failure_df(
-        spark,
+    failures = build_failures_from_rules(
         ranked,
         entity_key,
         config,
         CHECK_UNIQUENESS,
-        duplicate_condition,
-        f"Duplicate business key '{business_key}' (non-canonical occurrence)",
-        business_key,
+        [
+            (
+                duplicate_condition,
+                f"Duplicate business key '{business_key}' (non-canonical occurrence)",
+                business_key,
+            )
+        ],
+        spark=spark,
     )
 
     return ranked, failures
@@ -73,7 +78,7 @@ def run_uniqueness_for_entity(spark, entity_key: str, config: SilverConfig | Non
     config = config or SilverConfig()
     bronze_df = read_bronze_table(spark, config, entity_key)
     prepared = prepare_entity_dataframe(bronze_df, entity_key)
-    return check_uniqueness(prepared, entity_key, config)
+    return check_uniqueness(prepared, entity_key, config, spark)
 
 
 def run_uniqueness_all(spark, config: SilverConfig | None = None) -> dict:
@@ -92,6 +97,7 @@ def main() -> None:
 
     print("=" * 60)
     print("Silver Iteration 2 — Uniqueness checks")
+    print(f"Serverless compat version: {sc.SERVERLESS_COMPAT_VERSION}")
     print("=" * 60)
 
     for entity_key in ("customers", "products", "orders"):

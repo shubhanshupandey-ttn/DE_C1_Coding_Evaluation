@@ -13,50 +13,49 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from silver_common import (  # noqa: E402
-    CHECK_COMPLETENESS,
-    ENTITY_CONFIG,
-    SilverConfig,
-    build_failure_df,
-    col_is_blank,
-    notebook_spark_if_defined,
-    prepare_entity_dataframe,
-    read_bronze_table,
-    require_pyspark,
-    resolve_spark,
-    union_failures,
-)
+from _load_silver_common import load_silver_common  # noqa: E402
+
+sc = load_silver_common()
+
+CHECK_COMPLETENESS = sc.CHECK_COMPLETENESS
+ENTITY_CONFIG = sc.ENTITY_CONFIG
+SilverConfig = sc.SilverConfig
+build_failures_from_rules = sc.build_failures_from_rules
+col_is_blank = sc.col_is_blank
+notebook_spark_if_defined = sc.notebook_spark_if_defined
+prepare_entity_dataframe = sc.prepare_entity_dataframe
+read_bronze_table = sc.read_bronze_table
+require_pyspark = sc.require_pyspark
+resolve_spark = sc.resolve_spark
 
 # Phase 2 defect mapping: D01 (null email), D02 (null name), D07 (null product name)
 
 
-def check_completeness(df, entity_key: str, config: SilverConfig):
+def check_completeness(df, entity_key: str, config: SilverConfig, spark):
     """
     Check required fields for NULL/blank values.
 
     Returns (input_df, failures_df).
     """
     entity = ENTITY_CONFIG[entity_key]
-    spark = df.sparkSession
-    failures = []
-
-    for column in entity["required_fields"]:
-        if column not in df.columns:
-            continue
-        condition = col_is_blank(column)
-        failure_df = build_failure_df(
-            spark,
-            df,
-            entity_key,
-            config,
-            CHECK_COMPLETENESS,
-            condition,
+    rules = [
+        (
+            col_is_blank(column),
             f"Required field '{column}' is NULL or blank",
             column,
         )
-        failures.append(failure_df)
-
-    return df, union_failures(spark, *failures)
+        for column in entity["required_fields"]
+        if column in df.columns
+    ]
+    failures = build_failures_from_rules(
+        df,
+        entity_key,
+        config,
+        CHECK_COMPLETENESS,
+        rules,
+        spark=spark,
+    )
+    return df, failures
 
 
 def run_completeness_for_entity(
@@ -66,7 +65,7 @@ def run_completeness_for_entity(
     config = config or SilverConfig()
     bronze_df = read_bronze_table(spark, config, entity_key)
     prepared = prepare_entity_dataframe(bronze_df, entity_key)
-    return check_completeness(prepared, entity_key, config)
+    return check_completeness(prepared, entity_key, config, spark)
 
 
 def run_completeness_all(spark, config: SilverConfig | None = None) -> dict:
@@ -86,6 +85,7 @@ def main() -> None:
 
     print("=" * 60)
     print("Silver Iteration 2 — Completeness checks")
+    print(f"Serverless compat version: {sc.SERVERLESS_COMPAT_VERSION}")
     print("=" * 60)
 
     for entity_key in ("customers", "products", "orders"):

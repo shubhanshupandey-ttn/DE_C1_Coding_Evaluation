@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from pyspark.sql import Column, DataFrame, SparkSession
 
 # Bump when serverless compatibility changes (Databricks reload required after sync).
-SERVERLESS_COMPAT_VERSION = 2
+SERVERLESS_COMPAT_VERSION = 3
 
 # ---------------------------------------------------------------------------
 # Catalog / entity configuration (aligned with data-model.md)
@@ -322,6 +322,13 @@ def business_columns(entity_key: str) -> list[str]:
     return list(ENTITY_CONFIG[entity_key]["string_columns"])
 
 
+def run_timestamp_col(config: SilverConfig) -> Column:
+    """Spark Connect-safe run timestamp literal (avoids Python datetime serialization issues)."""
+    from pyspark.sql import functions as F
+
+    return F.to_timestamp(F.lit(config.run_timestamp.strftime("%Y-%m-%d %H:%M:%S")))
+
+
 def bronze_source_json_expr(entity_key: str) -> Column:
     from pyspark.sql import functions as F
 
@@ -347,6 +354,63 @@ def empty_failures_df(spark: SparkSession):
     )
 
 
+def build_failures_from_rules(
+    source_df: DataFrame,
+    entity_key: str,
+    config: SilverConfig,
+    check_category: str,
+    rules: Sequence[tuple[Any, str, str]],
+    spark: SparkSession | None = None,
+) -> DataFrame:
+    """
+    Build quarantine-compatible failures in a single DataFrame plan.
+
+    Uses array + explode (no union, no RDD). Each rule is
+    (condition: Column, failure_reason: str, failed_column: str).
+    """
+    from pyspark.sql import functions as F
+
+    entity = ENTITY_CONFIG[entity_key]
+    business_key = entity["business_key"]
+
+    if not rules:
+        session = spark
+        if session is None:
+            raise ValueError("spark is required when no failure rules are provided")
+        return empty_failures_df(session)
+
+    failure_array = F.array(
+        *[
+            F.when(
+                condition,
+                F.struct(
+                    F.lit(failed_column).alias("failed_column"),
+                    F.lit(reason).alias("failure_reason"),
+                ),
+            )
+            for condition, reason, failed_column in rules
+        ]
+    )
+
+    return (
+        source_df.select(
+            F.col(business_key).alias("business_key"),
+            F.explode(failure_array).alias("failure"),
+            bronze_source_json_expr(entity_key).alias("bronze_source_values"),
+        )
+        .select(
+            F.lit(entity_key).alias("entity_name"),
+            F.col("business_key"),
+            F.lit(check_category).alias("check_category"),
+            F.col("failure.failure_reason").alias("failure_reason"),
+            F.col("failure.failed_column").alias("failed_column"),
+            F.col("bronze_source_values"),
+            F.current_timestamp().alias("quarantine_timestamp"),
+            run_timestamp_col(config).alias("run_timestamp"),
+        )
+    )
+
+
 def build_failure_df(
     spark: SparkSession,
     source_df: DataFrame,
@@ -357,24 +421,14 @@ def build_failure_df(
     failure_reason: str,
     failed_column: str,
 ) -> DataFrame:
-    """Materialize rows matching condition into the quarantine-compatible schema."""
-    from pyspark.sql import functions as F
-
-    entity = ENTITY_CONFIG[entity_key]
-    business_key = entity["business_key"]
-    run_ts = F.lit(config.run_timestamp)
-    now_ts = F.current_timestamp()
-
-    failing = source_df.filter(condition)
-    return failing.select(
-        F.lit(entity_key).alias("entity_name"),
-        F.col(business_key).alias("business_key"),
-        F.lit(check_category).alias("check_category"),
-        F.lit(failure_reason).alias("failure_reason"),
-        F.lit(failed_column).alias("failed_column"),
-        bronze_source_json_expr(entity_key).alias("bronze_source_values"),
-        now_ts.alias("quarantine_timestamp"),
-        run_ts.alias("run_timestamp"),
+    """Materialize rows matching a single condition into the quarantine-compatible schema."""
+    return build_failures_from_rules(
+        source_df,
+        entity_key,
+        config,
+        check_category,
+        [(condition, failure_reason, failed_column)],
+        spark=spark,
     )
 
 
