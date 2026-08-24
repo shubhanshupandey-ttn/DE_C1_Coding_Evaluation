@@ -306,7 +306,7 @@ run_silver_pipeline(spark=spark)
 
 **Not yet implemented:** `04_referential_integrity`, `05_business_logic`, `create_silver_tables.py`, quarantine write, DQ summary write.
 
-**Deterministic duplicate ranking:** partition by business key; order by tiebreaker columns (asc, nulls last) then `_row_num` (stable Bronze read order).
+**Deterministic duplicate ranking:** partition by business key; order by tiebreaker columns (asc, nulls last) then row-content hash (no global window).
 
 **Local validation:** `py_compile` + `test_silver_helpers.py` (pure-Python helpers). Databricks execution not performed in Cursor environment.
 

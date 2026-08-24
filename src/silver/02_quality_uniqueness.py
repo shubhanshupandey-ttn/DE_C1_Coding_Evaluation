@@ -20,9 +20,8 @@ sc = load_silver_common()
 CHECK_UNIQUENESS = sc.CHECK_UNIQUENESS
 ENTITY_CONFIG = sc.ENTITY_CONFIG
 SilverConfig = sc.SilverConfig
-add_deterministic_row_number = sc.add_deterministic_row_number
 build_failures_from_rules = sc.build_failures_from_rules
-deterministic_tiebreaker_columns = sc.deterministic_tiebreaker_columns
+deterministic_rank_order_columns = sc.deterministic_rank_order_columns
 notebook_spark_if_defined = sc.notebook_spark_if_defined
 prepare_entity_dataframe = sc.prepare_entity_dataframe
 read_bronze_table = sc.read_bronze_table
@@ -36,8 +35,8 @@ def check_uniqueness(df, entity_key: str, config: SilverConfig, spark):
     """
     Flag duplicate business keys. Retain first canonical row deterministically.
 
-    Ranking order: business key partition, tiebreaker columns ascending nulls last,
-    then _row_num (stable input order).
+    Ranking order: partition by business key; tiebreaker columns (asc, nulls last);
+    then row-content hash for deterministic canonical selection (no global window).
 
     Returns (df_with_dup_rank, failures_df).
     """
@@ -47,13 +46,9 @@ def check_uniqueness(df, entity_key: str, config: SilverConfig, spark):
     entity = ENTITY_CONFIG[entity_key]
     business_key = entity["business_key"]
 
-    df_numbered = add_deterministic_row_number(df)
-    tiebreakers = deterministic_tiebreaker_columns(df_numbered, entity_key, business_key)
-    order_cols = [F.col(c).asc_nulls_last() for c in tiebreakers]
-    order_cols.append(F.col("_row_num").asc())
-
+    order_cols = deterministic_rank_order_columns(df, entity_key, business_key)
     window = Window.partitionBy(F.col(business_key)).orderBy(*order_cols)
-    ranked = df_numbered.withColumn("_dup_rank", F.row_number().over(window))
+    ranked = df.withColumn("_dup_rank", F.row_number().over(window))
 
     duplicate_condition = F.col("_dup_rank") > F.lit(1)
     failures = build_failures_from_rules(

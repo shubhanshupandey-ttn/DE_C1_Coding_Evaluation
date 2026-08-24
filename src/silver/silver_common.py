@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from pyspark.sql import Column, DataFrame, SparkSession
 
 # Bump when serverless compatibility changes (Databricks reload required after sync).
-SERVERLESS_COMPAT_VERSION = 4
+SERVERLESS_COMPAT_VERSION = 5
 
 # ---------------------------------------------------------------------------
 # Catalog / entity configuration (aligned with data-model.md)
@@ -422,19 +422,30 @@ def union_failures(spark: SparkSession, *frames: DataFrame) -> DataFrame:
 
 def deterministic_tiebreaker_columns(df: DataFrame, entity_key: str, business_key: str) -> list[str]:
     """Columns for deterministic duplicate ranking (ascending, nulls last)."""
-    excluded = {business_key, "_dup_rank", "_row_num"}
+    excluded = {business_key, "_dup_rank"}
     excluded.update(BRONZE_METADATA_COLUMNS)
     return sorted(c for c in df.columns if c not in excluded)
 
 
-def add_deterministic_row_number(df: DataFrame) -> DataFrame:
-    from pyspark.sql import functions as F
-    from pyspark.sql.window import Window
+def deterministic_rank_order_columns(df: DataFrame, entity_key: str, business_key: str) -> list:
+    """
+    Order expressions for row_number() within each business-key partition.
 
-    window = Window.orderBy(
-        *[F.col(c).asc_nulls_last() for c in sorted(df.columns)],
-    )
-    return df.withColumn("_row_num", F.row_number().over(window))
+    Uses typed/business tiebreaker columns, then a row-content hash so ranking is
+    deterministic without a global (unpartitioned) window.
+    """
+    from pyspark.sql import functions as F
+
+    order_cols = [F.col(c).asc_nulls_last() for c in deterministic_tiebreaker_columns(df, entity_key, business_key)]
+    hash_cols = sorted(c for c in df.columns if c not in {business_key, "_dup_rank"})
+    if hash_cols:
+        order_cols.append(F.hash(*[F.col(c) for c in hash_cols]).asc())
+    return order_cols
+
+
+def add_deterministic_row_number(df: DataFrame) -> DataFrame:
+    """Deprecated: global windows are not serverless-friendly. Use deterministic_rank_order_columns."""
+    return df
 
 
 def prepare_entity_dataframe(df: DataFrame, entity_key: str) -> DataFrame:
