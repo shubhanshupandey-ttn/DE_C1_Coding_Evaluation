@@ -9,6 +9,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from silver_common import (  # noqa: E402
+    calculate_pass_percentage,
+    calculate_summary_metrics,
     is_blank,
     is_numeric_identifier,
     is_valid_customer_segment,
@@ -62,6 +64,24 @@ def test_customer_segment() -> None:
     assert is_valid_customer_segment("") is False
 
 
+def test_pass_percentage() -> None:
+    assert calculate_pass_percentage(100, 95) == 95.0
+    assert calculate_pass_percentage(0, 0) is None
+    assert calculate_pass_percentage(9, 0) == 0.0
+
+
+def test_summary_metrics() -> None:
+    metrics = calculate_summary_metrics(1006, 60)
+    assert metrics["rows_tested"] == 1006
+    assert metrics["rows_failed"] == 60
+    assert metrics["rows_passed"] == 946
+    assert metrics["pass_percentage"] == 946 / 1006 * 100.0
+
+    zero_tested = calculate_summary_metrics(0, 0)
+    assert zero_tested["rows_passed"] == 0
+    assert zero_tested["pass_percentage"] is None
+
+
 def main() -> None:
     test_is_blank()
     test_numeric_identifier()
@@ -70,6 +90,8 @@ def main() -> None:
     test_parse_decimal()
     test_parse_int()
     test_customer_segment()
+    test_pass_percentage()
+    test_summary_metrics()
     print("All Silver helper tests passed.")
 
 

@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from pyspark.sql import Column, DataFrame, SparkSession
 
 # Bump when serverless compatibility changes (Databricks reload required after sync).
-SERVERLESS_COMPAT_VERSION = 7
+SERVERLESS_COMPAT_VERSION = 8
 
 # ---------------------------------------------------------------------------
 # Catalog / entity configuration (aligned with data-model.md)
@@ -113,6 +113,30 @@ QUARANTINE_COLUMNS = [
     "quarantine_timestamp",
     "run_timestamp",
 ]
+
+QUARANTINE_TABLE_NAME = "silver_quarantine_records"
+DQ_SUMMARY_TABLE_NAME = "silver_dq_summary"
+
+DQ_SUMMARY_COLUMNS = [
+    "check_category",
+    "table_name",
+    "rows_tested",
+    "rows_passed",
+    "rows_failed",
+    "pass_percentage",
+    "failure_reason",
+    "run_timestamp",
+]
+
+ALL_CHECK_CATEGORIES = (
+    CHECK_COMPLETENESS,
+    CHECK_UNIQUENESS,
+    CHECK_TYPE_VALIDATION,
+    CHECK_REFERENTIAL_INTEGRITY,
+    CHECK_BUSINESS_LOGIC,
+)
+
+ENTITY_KEYS = ("customers", "products", "orders")
 
 
 @dataclass
@@ -563,3 +587,55 @@ def canonical_parent_keys_df(canonical_df: DataFrame, entity_key: str) -> DataFr
 def prepare_entity_dataframe(df: DataFrame, entity_key: str) -> DataFrame:
     """Trim strings and add typed columns (Iteration 2 type standardization)."""
     return add_typed_columns(df, entity_key)
+
+
+# ---------------------------------------------------------------------------
+# DQ persistence helpers (Iteration 4)
+# ---------------------------------------------------------------------------
+
+
+def silver_table_name(config: SilverConfig, table: str) -> str:
+    return qualified_table(config, config.silver_schema, table)
+
+
+def ensure_silver_schema_exists(spark: SparkSession, config: SilverConfig) -> None:
+    qualified = f"{config.catalog_name}.{config.silver_schema}"
+    spark.sql(f"CREATE SCHEMA IF NOT EXISTS {qualified}")
+
+
+def calculate_pass_percentage(rows_tested: int, rows_passed: int) -> float | None:
+    """Return pass percentage, or None when rows_tested is zero."""
+    if rows_tested <= 0:
+        return None
+    return rows_passed / rows_tested * 100.0
+
+
+def calculate_summary_metrics(rows_tested: int, rows_failed: int) -> dict[str, int | float | None]:
+    """
+    Derive row-oriented DQ summary metrics.
+
+    rows_failed must be a distinct-row count for the category (not failure-record count).
+    """
+    failed = max(0, min(rows_failed, rows_tested))
+    passed = max(0, rows_tested - failed)
+    return {
+        "rows_tested": rows_tested,
+        "rows_passed": passed,
+        "rows_failed": failed,
+        "pass_percentage": calculate_pass_percentage(rows_tested, passed),
+    }
+
+
+def write_delta_table(
+    df: DataFrame,
+    qualified_table_name: str,
+    columns: Sequence[str] | None = None,
+) -> None:
+    """Overwrite a Delta table (idempotent per-run snapshot)."""
+    output = df.select(*columns) if columns is not None else df
+    (
+        output.write.format("delta")
+        .mode("overwrite")
+        .option("overwriteSchema", "true")
+        .saveAsTable(qualified_table_name)
+    )

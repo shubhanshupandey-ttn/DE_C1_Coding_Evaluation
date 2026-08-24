@@ -367,25 +367,29 @@ Type validation **successfully executed** on Databricks Serverless.
 
 **Canonical parents:** prepared Bronze → pass completeness + type validation + `_dup_rank = 1`.
 
-**Validation performed (local):**
+**Validation performed:**
 
 | Check | Result |
 |-------|--------|
 | `py_compile` all Silver `.py` files | **PASS** |
 | `test_silver_helpers.py` | **PASS** |
-| Databricks Serverless execution | **Not performed in Cursor** |
+| Databricks Serverless `04` / `05` | **PASS** |
 
-**Expected Databricks targets (per rule; overlaps across categories possible):**
+**Databricks Serverless observed results:**
 
-| Module | Rule / defect | Approx. expected |
-|--------|---------------|------------------|
-| RI | Orphan customer (D11) | 25 |
-| RI | Orphan product (D12) | 25 |
-| BL | Future signup (D06) | 10 |
-| BL | Negative price (D10) | 10 |
-| BL | Future order (D14) | 15 |
-| BL | Non-positive qty (D15) | 40 |
-| BL | Catalog mismatch (D17) | 20 |
+| Module | Metric | Observed |
+|--------|--------|----------|
+| RI total | failure records | 1087 |
+| RI | D11 (`customer_id=9999991` in JSON) | 25 |
+| RI | D12 (`product_id=9999992` in JSON) | 25 |
+| RI | non-D11/D12 (non-canonical parent) | 1037 |
+| BL customers | future signup | 10 |
+| BL products | negative price | 11 |
+| BL orders | quantity | 40 |
+| BL orders | future order_date | 15 |
+| BL orders | catalog unit_price (total) | 222 |
+| BL orders | D17 proxy (`order_date=2024-06-01`) | 18 |
+| BL orders | other catalog mismatches | 204 |
 
 **Issues/fixes during implementation:**
 
@@ -399,20 +403,199 @@ Type validation **successfully executed** on Databricks Serverless.
 | `04_quality_referential_integrity.py` created | **Yes** |
 | `05_quality_business_logic.py` created | **Yes** |
 | Canonical parent keys (not raw Bronze) | **Yes** |
+| D11/D12 detected at injection volume (25+25) | **Yes** (via `bronze_source_values`) |
 | D17 quarantine-only (no price correction) | **Yes** |
-| Serverless-safe (no RDD APIs) | **Yes** (design intent; Databricks run pending) |
+| Serverless-safe (no RDD APIs) | **Yes** |
 | Quarantine writes | **No** (Iteration 4) |
 | Orchestration / Silver table writes | **No** (Iteration 5) |
 | Bronze unchanged | **Yes** |
-| Databricks validation | **Pending** |
+| Databricks validation | **PASS** |
 
-**FINAL DECISION:** **Pending** — implementation complete; Databricks Serverless validation required before ACCEPTED.
+**YOUR EVALUATION:**
+
+Iteration 3 correctly detects D11 (25), D12 (25), D06 (10), D14 (15), D15 (40), and D17 proxy (18≈20). Higher aggregate RI (1087) and catalog-price (222) totals are explained by canonical-parent FK semantics and order snapshot vs current catalog price — not implementation defects.
+
+**FINAL DECISION:** **ACCEPTED** — Silver Iteration 3 complete. Proceed to Iteration 4 when approved.
 
 ---
 
-## Iteration 4: (Not started)
+## Iteration 4: Quarantine + DQ Summary Persistence
 
-_Quarantine + DQ summary — pending._
+**PROMPT SENT:**
+
+> Silver Layer Iteration 4 ONLY: persist `silver_quarantine_records` and `silver_dq_summary`.
+> Consume Iteration 2/3 failure DataFrames. Delta overwrite (idempotent). Row-oriented summary metrics.
+> No curated Silver tables, no orchestration beyond DQ persistence validation. STOP after Iteration 4.
+
+**AI RESPONSE SUMMARY:**
+
+| File | Purpose |
+|------|---------|
+| `06_write_dq_results.py` | Run all DQ checks, union failures, write quarantine + summary |
+| `silver_common.py` | Minimal persistence helpers: table names, `write_delta_table`, `calculate_pass_percentage` |
+| `test_silver_helpers.py` | Added tests for summary metric helpers |
+
+**Functions provided:**
+
+| Function | Purpose |
+|----------|---------|
+| `run_all_dq_checks(spark, config)` | Invoke all five DQ modules with shared `SilverConfig` |
+| `collect_all_quarantine_failures(spark, dq_results)` | Union quarantine-compatible failure DataFrames |
+| `build_dq_summary_df(spark, dq_results, config)` | Build row-oriented summary (13 rows) |
+| `write_quarantine_records(spark, config, failures_df)` | Delta overwrite → `silver_quarantine_records` |
+| `write_dq_summary(spark, config, summary_df)` | Delta overwrite → `silver_dq_summary` |
+| `run_dq_persistence(spark, config)` | End-to-end persistence entry point |
+
+**Design decisions:**
+
+| Area | Decision |
+|------|----------|
+| Module numbering | `06_write_dq_results.py` (04/05 already used by RI and business logic) |
+| Quarantine input | Reuse existing failure DataFrame schema from Iterations 2–3 |
+| Summary `rows_failed` | Distinct `business_key` per category — not failure-record count |
+| Summary `rows_tested` | Entity DataFrame row count from each DQ module's evaluated DataFrame |
+| Write mode | Delta `overwrite` for both tables (idempotent per run) |
+| Schema creation | `CREATE SCHEMA IF NOT EXISTS de_c1_coding_evaluation.silver` |
+| Timestamps | Shared `SilverConfig.run_timestamp`; `quarantine_timestamp` from failure builders |
+| DQ logic | No changes to `01`–`05` modules |
+
+**Quarantine vs summary distinction:**
+
+- **Quarantine table:** failure-record oriented — multiple rows per source record expected
+- **Summary table:** row-oriented — one failed row counted once per category even if multiple rules fail
+
+**Validation performed (local):**
+
+| Check | Result |
+|-------|--------|
+| `py_compile` all Silver `.py` files | **PASS** |
+| `test_silver_helpers.py` (incl. pass_percentage / summary metrics) | **PASS** |
+| Databricks Serverless execution | **Not performed in Cursor** |
+
+**Databricks validation cells (to run on Serverless):**
+
+```python
+# Cell 1 — load modules (fresh cache)
+import importlib.util, sys
+from pathlib import Path
+from datetime import datetime
+
+silver_dir = Path("/Workspace/Users/<user>/DE_C1_Coding_Evaluation/src/silver")
+for name in list(sys.modules):
+    if name.startswith(("silver_common", "quality_", "referential", "business", "write_dq", "_load")):
+        del sys.modules[name]
+sys.path.insert(0, str(silver_dir))
+
+spec = importlib.util.spec_from_file_location("silver_common", silver_dir / "silver_common.py")
+silver_common = importlib.util.module_from_spec(spec)
+sys.modules["silver_common"] = silver_common
+spec.loader.exec_module(silver_common)
+
+spec = importlib.util.spec_from_file_location("write_dq_results", silver_dir / "06_write_dq_results.py")
+write_dq = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(write_dq)
+
+config = write_dq.SilverConfig(run_timestamp=datetime.utcnow())
+result = write_dq.run_dq_persistence(spark=spark, config=config)
+print("Quarantine table:", result["quarantine_table"])
+print("Summary table:", result["summary_table"])
+```
+
+```python
+# Cell 2 — verify tables exist and have expected columns
+spark.sql("DESCRIBE TABLE de_c1_coding_evaluation.silver.silver_quarantine_records").show(20, truncate=False)
+spark.sql("DESCRIBE TABLE de_c1_coding_evaluation.silver.silver_dq_summary").show(20, truncate=False)
+```
+
+```python
+# Cell 3 — quarantine counts by category (failure-record oriented)
+spark.sql("""
+SELECT check_category, COUNT(*) AS failure_records
+FROM de_c1_coding_evaluation.silver.silver_quarantine_records
+GROUP BY check_category
+ORDER BY check_category
+""").show()
+```
+
+```python
+# Cell 4 — compare failure-record counts to Iteration 2/3 baselines
+spark.sql("""
+SELECT check_category, entity_name, COUNT(*) AS failure_records
+FROM de_c1_coding_evaluation.silver.silver_quarantine_records
+GROUP BY check_category, entity_name
+ORDER BY check_category, entity_name
+""").show(20, False)
+# Expected failure-record baselines:
+# completeness: customers=60, products=9, orders=0
+# uniqueness: 6, 6, 8
+# type_validation: 50, 15, 30
+# referential_integrity: orders=1087
+# business_logic: customers=10, products=11, orders=277
+```
+
+```python
+# Cell 5 — DQ summary (row-oriented metrics)
+spark.sql("""
+SELECT check_category, table_name, rows_tested, rows_passed, rows_failed,
+       ROUND(pass_percentage, 2) AS pass_pct, failure_reason, run_timestamp
+FROM de_c1_coding_evaluation.silver.silver_dq_summary
+ORDER BY check_category, table_name
+""").show(20, False)
+```
+
+```python
+# Cell 6 — verify pass_percentage calculation
+spark.sql("""
+SELECT check_category, table_name,
+       rows_tested, rows_passed, rows_failed, pass_percentage,
+       CASE WHEN rows_tested = 0 THEN pass_percentage IS NULL
+            ELSE ABS(pass_percentage - (rows_passed * 100.0 / rows_tested)) < 0.001
+       END AS pct_ok
+FROM de_c1_coding_evaluation.silver.silver_dq_summary
+""").show(20, False)
+```
+
+```python
+# Cell 7 — idempotency: run twice, counts must match
+count_before = spark.table("de_c1_coding_evaluation.silver.silver_quarantine_records").count()
+write_dq.run_dq_persistence(spark=spark, config=config)
+count_after = spark.table("de_c1_coding_evaluation.silver.silver_quarantine_records").count()
+print(f"Before={count_before}, After={count_after}, Match={count_before == count_after}")
+```
+
+**Expected validation evidence (after Databricks run):**
+
+| Check | Expected |
+|-------|----------|
+| Quarantine table exists | Yes |
+| Summary table exists | Yes |
+| All 5 DQ categories in quarantine | Yes |
+| Completeness failure records | 60 / 9 / 0 |
+| Uniqueness failure records | 6 / 6 / 8 |
+| Type validation failure records | 50 / 15 / 30 |
+| RI failure records (orders) | 1087 |
+| BL failure records | 10 / 11 / 277 |
+| Summary rows | 13 |
+| `run_timestamp` populated | Yes |
+| Second run does not duplicate | Yes (overwrite) |
+
+**Acceptance criteria:**
+
+| Criterion | Status |
+|-----------|--------|
+| `06_write_dq_results.py` created | **Yes** |
+| Quarantine Delta overwrite | **Yes** (design) |
+| DQ summary Delta overwrite | **Yes** (design) |
+| All five DQ categories supported | **Yes** |
+| Row-oriented summary metrics | **Yes** |
+| Reuses Iteration 2/3 failure DataFrames | **Yes** |
+| No changes to `01`–`05` DQ logic | **Yes** |
+| Serverless-safe (no RDD APIs) | **Yes** (design) |
+| Bronze unchanged | **Yes** |
+| Iteration 5 not started | **Yes** |
+| Databricks validation | **Pending** |
+
+**FINAL DECISION:** **PENDING DATABRICKS VALIDATION**
 
 ---
 
@@ -428,5 +611,5 @@ _Full orchestration + Databricks validation — pending._
 |-------------|----------|
 | Persistent context | Foundation docs + Bronze validation + `tool-specific/cursor-workflow/*` |
 | Iteration | Deliberate 5-iteration plan; Iteration 1 design + 1b refinement before code |
-| Validation | Iteration 2: local `py_compile` + helper tests **PASS**; Databricks Serverless completeness / uniqueness / type validation **PASS** |
-| Human review | Iteration 1b design **ACCEPTED**; Iteration 2 **ACCEPTED** (Databricks Serverless validated) |
+| Validation | Iterations 2–3: Databricks Serverless **PASS**; Iteration 4: local **PASS**, Databricks **pending** |
+| Human review | Iterations 1b, 2, 3 **ACCEPTED**; Iteration 4 **pending Databricks** |

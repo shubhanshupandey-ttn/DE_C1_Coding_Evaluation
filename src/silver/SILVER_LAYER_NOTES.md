@@ -1,6 +1,6 @@
 # Silver Layer Notes — Design (Iteration 1 — Finalized)
 
-**Status:** Iteration 2 **ACCEPTED**. Iteration 3 implemented (referential integrity + business logic); Databricks validation pending.
+**Status:** Iteration 2 **ACCEPTED**. Iteration 3 **ACCEPTED**. Iteration 4 **implemented** — Databricks validation pending (`SERVERLESS_COMPAT_VERSION = 8`).
 
 Phase 4 Silver design defines how Bronze transforms into curated, typed Delta tables with explicit data-quality enforcement. Open design decisions were resolved in the Iteration 1 design-refinement pass (see `ai-prompts/silver-layer.md`).
 
@@ -49,6 +49,7 @@ Silver is the **trusted/curated layer**. It must:
 | `03_quality_type_validation.py` | Parse dates, numerics, email format; flag unparseable values |
 | `04_quality_referential_integrity.py` | `orders.customer_id` → customers; `orders.product_id` → products |
 | `05_quality_business_logic.py` | Dates, quantities, prices, segment, catalog-price consistency |
+| `06_write_dq_results.py` | Quarantine + DQ summary persistence (Iteration 4) |
 | `create_silver_tables.py` | Orchestration entry point; runs full pipeline in documented order |
 
 ---
@@ -331,12 +332,12 @@ run_silver_pipeline(spark=spark)
 
 ---
 
-## Iteration 3 Implementation (Databricks validation pending)
+## Iteration 3 Implementation (ACCEPTED)
 
 | Module | Status | Defect IDs / rules |
 |--------|--------|-------------------|
-| `04_quality_referential_integrity.py` | Implemented | D11, D12 — orphan `customer_id` / `product_id` vs canonical parents |
-| `05_quality_business_logic.py` | Implemented | D06, D10, D14, D15, D17 + valid `customer_segment` |
+| `04_quality_referential_integrity.py` | Implemented + Serverless validated | D11, D12 + canonical-parent FK semantics |
+| `05_quality_business_logic.py` | Implemented + Serverless validated | D06, D10, D14, D15, D17 + valid `customer_segment` |
 | `silver_common.py` (minimal additions) | Updated | Canonical parent helpers, `CHECK_REFERENTIAL_INTEGRITY`, `CHECK_BUSINESS_LOGIC`, segment validation |
 
 **Canonical parent logic:** Bronze → trim/typed columns → completeness + type-validation pass + canonical duplicate rank (`_dup_rank = 1`) → valid parent key set. FK and catalog-price checks use this set, not raw Bronze parents.
@@ -346,6 +347,7 @@ run_silver_pipeline(spark=spark)
 - `orders.customer_id` → canonical `customers.customer_id` (left join anti-pattern via null parent marker)
 - `orders.product_id` → canonical `products.product_id`
 - Non-blank FK values only; failures use `check_category = referential_integrity`
+- Order failure `business_key` = `order_line_id`; use `bronze_source_values` JSON to trace `customer_id` / `product_id`
 
 **Business logic rules:**
 
@@ -360,22 +362,74 @@ run_silver_pipeline(spark=spark)
 
 **Not implemented (Iteration 4+):** quarantine Delta writes, DQ summary writes, `create_silver_tables.py`, Silver curated table writes.
 
-**Local validation:** `py_compile` + `test_silver_helpers.py` (incl. `is_valid_customer_segment`) — **PASS**
+**Local validation:** `py_compile` + `test_silver_helpers.py` — **PASS**
 
-**Databricks Serverless validation:** **Not performed in Cursor** — pending notebook run of `04` and `05`.
+**Databricks Serverless validation** (`SERVERLESS_COMPAT_VERSION = 7`):
 
-**Expected validation targets (approximate, per rule — overlaps possible):**
+| Module | Metric | Observed | Defect / notes |
+|--------|--------|----------|----------------|
+| RI (orders) | Total failure records | **1087** | 512 `customer_id` + 575 `product_id` |
+| RI | D11 (`customer_id = 9999991` in source JSON) | **25** | Exact match |
+| RI | D12 (`product_id = 9999992` in source JSON) | **25** | Exact match |
+| RI | Non D11/D12 (existing but non-canonical parent) | **1037** | Expected with canonical FK semantics |
+| BL customers | Future signup | **10** | D06 exact |
+| BL products | Negative `unit_price` | **11** | D10 (~10) |
+| BL orders | Non-positive `quantity` | **40** | D15 exact |
+| BL orders | Future `order_date` | **15** | D14 exact |
+| BL orders | Catalog `unit_price` total | **222** | D17 proxy (`order_date = 2024-06-01`): **18**; other mismatches: **204** |
 
-| Check | Expected |
-|-------|----------|
-| Orphan `customer_id` failures | ~25 (D11) |
-| Orphan `product_id` failures | ~25 (D12) |
-| Future signup (D06) | ~10 |
-| Negative product price (D10) | ~10 |
-| Future order date (D14) | ~15 |
-| Non-positive quantity (D15) | ~40 |
-| Catalog price mismatch (D17) | ~20 |
-| Invalid `customer_segment` | ~0 (no dedicated Phase 2 injection) |
+**Interpretation:** Total RI and catalog-price counts exceed raw D11/D12/D17 injection totals because (1) canonical FK flags orders referencing **existing but Iteration-2-invalid** parents, and (2) catalog-price equality compares order snapshot prices to **current** canonical catalog prices after Phase 2 product mutations. Intentional defects D11/D12/D17 are detected at expected volumes when traced via `bronze_source_values`.
+
+---
+
+## Iteration 4 Implementation (Databricks validation pending)
+
+| Module | Status | Purpose |
+|--------|--------|---------|
+| `06_write_dq_results.py` | Implemented | Persist quarantine + DQ summary Delta tables |
+| `silver_common.py` (minimal additions) | Updated | Table names, summary columns, `write_delta_table`, `calculate_pass_percentage` |
+
+**Tables written (Delta, overwrite per run):**
+
+| Table | FQN |
+|-------|-----|
+| Quarantine | `de_c1_coding_evaluation.silver.silver_quarantine_records` |
+| DQ summary | `de_c1_coding_evaluation.silver.silver_dq_summary` |
+
+**Quarantine semantics:** One row per failure event (rule / failed column). A single source row may produce multiple quarantine records across categories and within a category.
+
+**Summary semantics (row-oriented):**
+
+| Metric | Definition |
+|--------|------------|
+| `rows_tested` | Entity DataFrame row count evaluated by the DQ category |
+| `rows_failed` | **Distinct `business_key`** count failing that category (not failure-record count) |
+| `rows_passed` | `rows_tested - rows_failed` |
+| `pass_percentage` | `rows_passed / rows_tested * 100`; NULL when `rows_tested = 0` |
+
+**Summary coverage:** 13 rows per run — completeness (3), uniqueness (3), type validation (3), referential integrity (orders only, 1), business logic (3).
+
+**Idempotency:** Both tables use Delta `overwrite` mode. Re-running against the same Bronze input replaces the full snapshot — no append accumulation.
+
+**Timestamps:** `run_timestamp` from shared `SilverConfig`; `quarantine_timestamp` from existing failure builders (`current_timestamp()` at failure materialization).
+
+**Not implemented (Iteration 5):** `create_silver_tables.py`, Silver curated table writes, full pipeline orchestration.
+
+**Local validation:** `py_compile` all Silver `.py` files + `test_silver_helpers.py` — **PASS**
+
+**Databricks Serverless validation:** **Pending**
+
+**Expected quarantine failure-record counts (from Iterations 2–3 — not additive):**
+
+| Category | customers | products | orders |
+|----------|-----------|----------|--------|
+| Completeness failure records | 60 | 9 | 0 |
+| Uniqueness failure records | 6 | 6 | 8 |
+| Type validation failure records | 50 | 15 | 30 |
+| Referential integrity failure records | — | — | 1087 |
+| Business logic failure records | 10 | 11 | 277 |
+
+Total quarantine rows **will exceed** the sum of per-category failure-record counts because the same source row can fail multiple categories/rules.
 
 ---
 

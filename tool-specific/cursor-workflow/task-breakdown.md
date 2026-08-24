@@ -7,7 +7,7 @@
 | Phase 1: Foundation | Complete |
 | Phase 2: Data generation | Complete |
 | Phase 3: Bronze ingestion | Complete (Databricks validated) |
-| **Phase 4: Silver** | **Iteration 3 implemented — Databricks validation pending** |
+| **Phase 4: Silver** | **Iteration 4 implemented — Databricks validation pending** |
 | Phase 5: Gold | Not started |
 | Phase 6: Dashboard | Not started |
 
@@ -62,7 +62,7 @@
 
 ---
 
-### Iteration 3: Referential integrity, business logic — **IMPLEMENTED (Databricks validation pending)**
+### Iteration 3: Referential integrity, business logic — **ACCEPTED**
 
 | # | Task | Status |
 |---|------|--------|
@@ -70,23 +70,25 @@
 | 4.3.2 | Implement `04_quality_referential_integrity.py` (anti-join orphans) | Done |
 | 4.3.3 | Implement `05_quality_business_logic.py` (dates, qty, prices, segment, catalog match) | Done |
 | 4.3.4 | Local `py_compile` + helper tests | Done |
-| 4.3.5 | Validate logic against Phase 2 defect matrix (Databricks Serverless) | **Pending** |
+| 4.3.5 | Validate logic against Phase 2 defect matrix (Databricks Serverless) | Done |
 | 4.3.6 | Document Iteration 3 in `ai-prompts/silver-layer.md` | Done |
 | 4.3.7 | **Developer approval before Iteration 4** | **Pending** |
 
 ---
 
-### Iteration 4: Quarantine + DQ summary — NOT STARTED
+### Iteration 4: Quarantine + DQ summary — **IMPLEMENTED (Databricks validation pending)**
 
 | # | Task | Status |
 |---|------|--------|
-| 4.4.1 | Implement quarantine writer (`silver_quarantine_records`) | Pending |
-| 4.4.2 | Support multiple failure reasons per record where practical | Pending |
-| 4.4.3 | Implement DQ summary writer (`silver_dq_summary`) | Pending |
-| 4.4.4 | Ensure all five DQ categories appear in summary | Pending |
-| 4.4.5 | Local validation of summary/quarantine schema logic | Pending |
-| 4.4.6 | Refine based on inspection | Pending |
-| 4.4.7 | Document Iteration 4 in `ai-prompts/silver-layer.md` | Pending |
+| 4.4.1 | Implement quarantine writer (`silver_quarantine_records`) | Done |
+| 4.4.2 | Support multiple failure reasons per record where practical | Done |
+| 4.4.3 | Implement DQ summary writer (`silver_dq_summary`) | Done |
+| 4.4.4 | Ensure all five DQ categories appear in summary | Done |
+| 4.4.5 | Local validation of summary/quarantine schema logic | Done |
+| 4.4.6 | Refine based on inspection | Done |
+| 4.4.7 | Document Iteration 4 in `ai-prompts/silver-layer.md` | Done |
+| 4.4.8 | Databricks Serverless validation (tables, counts, idempotency) | **Pending** |
+| 4.4.9 | **Developer approval before Iteration 5** | **Pending** |
 
 ---
 
