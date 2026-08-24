@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from pyspark.sql import Column, DataFrame, SparkSession
 
 # Bump when serverless compatibility changes (Databricks reload required after sync).
-SERVERLESS_COMPAT_VERSION = 6
+SERVERLESS_COMPAT_VERSION = 7
 
 # ---------------------------------------------------------------------------
 # Catalog / entity configuration (aligned with data-model.md)
@@ -274,11 +274,18 @@ def col_is_valid_email(column_name: str) -> Column:
     return trimmed.rlike(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
+def _safe_try_to_date(column_name: str) -> Column:
+    """ANSI-safe date parse via SQL try_to_date (NULL on invalid input)."""
+    from pyspark.sql import functions as F
+
+    return F.expr(f"try_to_date(trim(`{column_name}`), 'yyyy-MM-dd')")
+
+
 def col_is_valid_iso_date(column_name: str) -> Column:
     from pyspark.sql import functions as F
 
     trimmed = F.trim(F.col(column_name))
-    parsed = F.try_to_date(trimmed, "yyyy-MM-dd")
+    parsed = _safe_try_to_date(column_name)
     return parsed.isNotNull() & trimmed.rlike(r"^\d{4}-\d{2}-\d{2}$")
 
 
@@ -295,14 +302,13 @@ def add_typed_columns(df: DataFrame, entity_key: str) -> DataFrame:
     result = trim_string_columns(df, config["string_columns"])
 
     for column in config["date_columns"]:
-        trimmed = F.trim(F.col(column))
-        result = result.withColumn(f"{column}_typed", F.try_to_date(trimmed, "yyyy-MM-dd"))
+        result = result.withColumn(f"{column}_typed", _safe_try_to_date(column))
 
     for column in config["int_columns"]:
         trimmed = F.trim(F.col(column))
         result = result.withColumn(
             f"{column}_typed",
-            F.when(trimmed.rlike(r"^-?\d+$"), F.try_cast(trimmed, "int")).otherwise(F.lit(None)),
+            F.when(trimmed.rlike(r"^-?\d+$"), trimmed.cast("int")).otherwise(F.lit(None)),
         )
 
     for column, precision, scale in config["decimal_columns"]:
@@ -311,7 +317,7 @@ def add_typed_columns(df: DataFrame, entity_key: str) -> DataFrame:
             f"{column}_typed",
             F.when(
                 trimmed.rlike(r"^-?\d+(\.\d+)?$"),
-                F.try_cast(trimmed, f"decimal({precision},{scale})"),
+                trimmed.cast(f"decimal({precision},{scale})"),
             ).otherwise(F.lit(None)),
         )
 
