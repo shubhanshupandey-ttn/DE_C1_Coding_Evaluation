@@ -13,14 +13,14 @@ from __future__ import annotations
 import re
 import sys
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Sequence
 
 if TYPE_CHECKING:
     from pyspark.sql import Column, DataFrame, SparkSession
 
 # Bump when serverless compatibility changes (Databricks reload required after sync).
-SERVERLESS_COMPAT_VERSION = 8
+SERVERLESS_COMPAT_VERSION = 9
 
 # ---------------------------------------------------------------------------
 # Catalog / entity configuration (aligned with data-model.md)
@@ -117,6 +117,10 @@ QUARANTINE_COLUMNS = [
 QUARANTINE_TABLE_NAME = "silver_quarantine_records"
 DQ_SUMMARY_TABLE_NAME = "silver_dq_summary"
 
+SILVER_CUSTOMERS_TABLE_NAME = "silver_customers"
+SILVER_PRODUCTS_TABLE_NAME = "silver_products"
+SILVER_ORDERS_TABLE_NAME = "silver_orders"
+
 DQ_SUMMARY_COLUMNS = [
     "check_category",
     "table_name",
@@ -139,6 +143,19 @@ ALL_CHECK_CATEGORIES = (
 ENTITY_KEYS = ("customers", "products", "orders")
 
 
+def entity_dq_categories(entity_key: str) -> tuple[str, ...]:
+    """DQ categories applied to an entity for curated-table eligibility."""
+    categories = (
+        CHECK_COMPLETENESS,
+        CHECK_UNIQUENESS,
+        CHECK_TYPE_VALIDATION,
+        CHECK_BUSINESS_LOGIC,
+    )
+    if entity_key == "orders":
+        return categories[:3] + (CHECK_REFERENTIAL_INTEGRITY,) + categories[3:]
+    return categories
+
+
 @dataclass
 class SilverConfig:
     """Runtime configuration for Silver processing."""
@@ -146,7 +163,7 @@ class SilverConfig:
     catalog_name: str = DEFAULT_CATALOG
     bronze_schema: str = DEFAULT_BRONZE_SCHEMA
     silver_schema: str = DEFAULT_SILVER_SCHEMA
-    run_timestamp: datetime = field(default_factory=datetime.utcnow)
+    run_timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 def qualified_table(config: SilverConfig, schema: str, table: str) -> str:

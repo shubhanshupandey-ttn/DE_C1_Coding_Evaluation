@@ -1,6 +1,6 @@
 # Silver Layer Notes — Design (Iteration 1 — Finalized)
 
-**Status:** Iteration 2 **ACCEPTED**. Iteration 3 **ACCEPTED**. Iteration 4 **implemented** — Databricks validation pending (`SERVERLESS_COMPAT_VERSION = 8`).
+**Status:** Iterations 2–4 **ACCEPTED**. Iteration 5 **implemented** — Databricks validation pending (`SERVERLESS_COMPAT_VERSION = 9`).
 
 Phase 4 Silver design defines how Bronze transforms into curated, typed Delta tables with explicit data-quality enforcement. Open design decisions were resolved in the Iteration 1 design-refinement pass (see `ai-prompts/silver-layer.md`).
 
@@ -265,19 +265,32 @@ Re-running Silver on the same Bronze input replaces outputs — no duplicate acc
 
 ---
 
-## Databricks Execution (planned — Iteration 5)
+## Databricks Execution
 
 ```python
-# Notebook cell pattern (same as Bronze)
+# Notebook cell pattern (Serverless)
+import importlib.util, sys
 from pathlib import Path
-import sys
-REPO = Path("/Workspace/Users/.../DE_C1_Coding_Evaluation")
-sys.path.insert(0, str(REPO / "src/silver"))
-from create_silver_tables import run_silver_pipeline  # TBD Iteration 5
-run_silver_pipeline(spark=spark)
+
+silver_dir = Path("/Workspace/Users/shubhanshu.pandey@tothenew.com/DE_C1_Coding_Evaluation/src/silver")
+for name in list(sys.modules):
+    if name.startswith(("silver_common", "quality_", "referential", "business", "write_dq", "create_silver", "_load")):
+        del sys.modules[name]
+sys.path.insert(0, str(silver_dir))
+
+spec = importlib.util.spec_from_file_location("silver_common", silver_dir / "silver_common.py")
+silver_common = importlib.util.module_from_spec(spec)
+sys.modules["silver_common"] = silver_common
+spec.loader.exec_module(silver_common)
+
+spec = importlib.util.spec_from_file_location("create_silver_tables", silver_dir / "create_silver_tables.py")
+create_silver_tables = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(create_silver_tables)
+
+result = create_silver_tables.run_silver_pipeline(spark=spark)
 ```
 
-**Not validated yet** — design only.
+**Databricks validation:** pending (Iteration 5).
 
 ---
 
@@ -382,11 +395,11 @@ run_silver_pipeline(spark=spark)
 
 ---
 
-## Iteration 4 Implementation (Databricks validation pending)
+## Iteration 4 Implementation (ACCEPTED)
 
 | Module | Status | Purpose |
 |--------|--------|---------|
-| `06_write_dq_results.py` | Implemented | Persist quarantine + DQ summary Delta tables |
+| `06_write_dq_results.py` | Implemented + Serverless validated | Persist quarantine + DQ summary Delta tables |
 | `silver_common.py` (minimal additions) | Updated | Table names, summary columns, `write_delta_table`, `calculate_pass_percentage` |
 
 **Tables written (Delta, overwrite per run):**
@@ -417,19 +430,72 @@ run_silver_pipeline(spark=spark)
 
 **Local validation:** `py_compile` all Silver `.py` files + `test_silver_helpers.py` — **PASS**
 
-**Databricks Serverless validation:** **Pending**
+**Databricks Serverless validation** (`SERVERLESS_COMPAT_VERSION = 8`):
 
-**Expected quarantine failure-record counts (from Iterations 2–3 — not additive):**
+| Check | Observed |
+|-------|----------|
+| Quarantine failure records (total) | **1569** |
+| Summary rows | **13** |
+| Idempotency (2nd run) | 1569 → 1569 (no growth) |
+| `pass_percentage` validation | all `pct_ok = true` |
+| D11 / D12 / D17 proxy in quarantine | 25 / 25 / 18 |
+
+**Quarantine failure-record counts (match Iterations 2–3):**
 
 | Category | customers | products | orders |
 |----------|-----------|----------|--------|
-| Completeness failure records | 60 | 9 | 0 |
-| Uniqueness failure records | 6 | 6 | 8 |
-| Type validation failure records | 50 | 15 | 30 |
-| Referential integrity failure records | — | — | 1087 |
-| Business logic failure records | 10 | 11 | 277 |
+| completeness | 60 | 9 | 0 |
+| uniqueness | 6 | 6 | 8 |
+| type_validation | 50 | 15 | 30 |
+| referential_integrity | — | — | 1087 |
+| business_logic | 10 | 11 | 277 |
 
-Total quarantine rows **will exceed** the sum of per-category failure-record counts because the same source row can fail multiple categories/rules.
+**Summary `rows_failed` (distinct business_key — row-oriented):**
+
+| Category | customers | products | orders |
+|----------|-----------|----------|--------|
+| completeness | 60 | 8 | 0 |
+| uniqueness | 6 | 6 | 4 |
+| type_validation | 50 | 15 | 30 |
+| referential_integrity | — | — | 1029 |
+| business_logic | 10 | 10 | 277 |
+
+Summary `rows_failed` is intentionally lower than quarantine failure-record counts where one source row fails multiple rules within the same category (e.g. products completeness 9 records / 8 rows; orders RI 1087 records / 1029 rows).
+
+---
+
+## Iteration 5 Implementation (Databricks validation pending)
+
+| Module | Status | Purpose |
+|--------|--------|---------|
+| `create_silver_tables.py` | Implemented | Full pipeline orchestration + curated Silver writes |
+| `silver_common.py` (minimal additions) | Updated | Curated table names, `entity_dq_categories()` |
+
+**Orchestration flow (`run_silver_pipeline`):**
+
+1. `CREATE SCHEMA IF NOT EXISTS de_c1_coding_evaluation.silver`
+2. Run all five DQ modules via `06_write_dq_results.run_all_dq_checks`
+3. Persist quarantine + DQ summary via `06_write_dq_results.run_dq_persistence`
+4. Build curated DataFrames by anti-joining category failure keys from existing `failures_df` outputs
+5. Write `silver_customers`, `silver_products`, `silver_orders` (Delta overwrite)
+
+**Curated eligibility:** A row is written only if its `business_key` does not appear in **any** applicable category's failure set (completeness, uniqueness, type validation, referential integrity for orders, business logic).
+
+**Curated output schemas (no helper columns):**
+
+| Table | Columns |
+|-------|---------|
+| `silver_customers` | `customer_id`, `customer_name`, `email`, `country`, `signup_date` (DATE), `customer_segment`, `lifetime_value` (DECIMAL 12,2) |
+| `silver_products` | `product_id`, `product_name`, `category`, `unit_price` (DECIMAL 10,2) |
+| `silver_orders` | `order_line_id`, `order_id`, `customer_id`, `product_id`, `order_date` (DATE), `quantity` (INT), `unit_price` (DECIMAL 10,2) |
+
+Typed source columns (`*_typed`) are mapped to final Silver column names. No `line_revenue` (Gold only). D17 remains quarantine-only — no catalog price auto-correction.
+
+**Idempotency:** All five Silver outputs use Delta `overwrite` per run.
+
+**Local validation:** `py_compile` all Silver `.py` files + `test_silver_helpers.py` — **PASS**
+
+**Databricks Serverless validation:** **Pending**
 
 ---
 

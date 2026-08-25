@@ -464,25 +464,142 @@ Iteration 3 correctly detects D11 (25), D12 (25), D06 (10), D14 (15), D15 (40), 
 - **Quarantine table:** failure-record oriented — multiple rows per source record expected
 - **Summary table:** row-oriented — one failed row counted once per category even if multiple rules fail
 
-**Validation performed (local):**
+**Validation performed:**
 
 | Check | Result |
 |-------|--------|
 | `py_compile` all Silver `.py` files | **PASS** |
 | `test_silver_helpers.py` (incl. pass_percentage / summary metrics) | **PASS** |
+| Databricks Serverless execution | **PASS** |
+
+**Databricks Serverless observed results** (`SERVERLESS_COMPAT_VERSION = 8`):
+
+| Check | Observed | Expected | Assessment |
+|-------|----------|----------|------------|
+| Quarantine total failure records | **1569** | 69+20+95+1087+298 | **Exact match** |
+| Summary rows | **13** | 13 | **Exact match** |
+| Table schemas | 8 + 8 columns | As designed | **PASS** |
+| `pass_percentage` math (`pct_ok`) | all `true` | all `true` | **PASS** |
+| Idempotency (2nd run) | 1569 → 1569 | no growth | **PASS** |
+| D11 in quarantine | **25** | 25 | **Exact match** |
+| D12 in quarantine | **25** | 25 | **Exact match** |
+| D17 proxy in quarantine | **18** | ~20 | **PASS** |
+
+**Quarantine failure-record counts by category / entity:**
+
+| Category | customers | products | orders | Total |
+|----------|-----------|----------|--------|-------|
+| completeness | 60 | 9 | 0 | 69 |
+| uniqueness | 6 | 6 | 8 | 20 |
+| type_validation | 50 | 15 | 30 | 95 |
+| referential_integrity | — | — | 1087 | 1087 |
+| business_logic | 10 | 11 | 277 | 298 |
+
+**DQ summary row-oriented `rows_failed` (distinct `business_key` per category):**
+
+| Category | customers | products | orders |
+|----------|-----------|----------|--------|
+| completeness | 60 | 8 | 0 |
+| uniqueness | 6 | 6 | 4 |
+| type_validation | 50 | 15 | 30 |
+| referential_integrity | — | — | 1029 |
+| business_logic | 10 | 10 | 277 |
+
+**Summary vs quarantine distinction (validated):**
+
+- Products completeness: **9** failure records but **8** distinct failed rows (one product row fails multiple required-field rules).
+- Products business logic: **11** failure records but **10** distinct failed rows.
+- Orders uniqueness: **8** failure records but **4** distinct failed rows (duplicate `order_line_id` pairs).
+- Orders RI: **1087** failure records but **1029** distinct failed rows (some orders fail both `customer_id` and `product_id` FK checks).
+
+**Issues encountered:**
+
+- `datetime.utcnow()` deprecation warning in notebook — fixed in `silver_common.py` (`datetime.now(timezone.utc)`).
+
+**Acceptance criteria:**
+
+| Criterion | Status |
+|-----------|--------|
+| `06_write_dq_results.py` created | **Yes** |
+| Quarantine Delta overwrite | **Yes** |
+| DQ summary Delta overwrite | **Yes** |
+| All five DQ categories supported | **Yes** |
+| Row-oriented summary metrics | **Yes** |
+| Reuses Iteration 2/3 failure DataFrames | **Yes** |
+| No changes to `01`–`05` DQ logic | **Yes** |
+| Serverless-safe (no RDD APIs) | **Yes** |
+| Bronze unchanged | **Yes** |
+| Iteration 5 not started | **Yes** |
+| Databricks validation | **PASS** |
+
+**YOUR EVALUATION:**
+
+Iteration 4 persistence matches all Iteration 2/3 failure-record baselines. Summary metrics are correctly row-oriented. Idempotency confirmed. D11/D12/D17 spot checks pass.
+
+**FINAL DECISION:** **ACCEPTED** — Silver Iteration 4 complete. Proceed to Iteration 5 when approved.
+
+---
+
+## Iteration 5: Full Orchestration + Curated Silver Tables
+
+**PROMPT SENT:**
+
+> Silver Iteration 5 ONLY: implement `create_silver_tables.py` with `run_silver_pipeline(spark=spark)`.
+> Reuse Iterations 2–4 DQ modules. Write curated `silver_customers/products/orders`.
+> Delta overwrite, Serverless-safe, no Bronze/Gold/Dashboard changes. STOP after local validation.
+
+**AI RESPONSE SUMMARY:**
+
+| File | Purpose |
+|------|---------|
+| `create_silver_tables.py` | `run_silver_pipeline` — DQ → quarantine/summary → curated tables |
+| `silver_common.py` | `SILVER_*_TABLE_NAME`, `entity_dq_categories()` |
+| `test_silver_helpers.py` | Test for `entity_dq_categories()` |
+
+**Orchestration (`run_silver_pipeline`):**
+
+```
+Bronze → run_all_dq_checks (01–05)
+       → run_dq_persistence (quarantine + summary)
+       → filter_valid_rows (anti-join failure keys per category)
+       → select curated columns (*_typed → final types)
+       → overwrite silver_customers / silver_products / silver_orders
+```
+
+**Curated validity:** Rows excluded if `business_key` appears in any applicable category `failures_df`. No DQ rule duplication — uses existing failure outputs only.
+
+**Design decisions:**
+
+| Area | Decision |
+|------|----------|
+| Valid-row filter | Left-anti join on distinct `business_key` per category failure set |
+| Source DataFrame | `business_logic[*].prepared_df` (final typed state before curated projection) |
+| DQ persistence | Reuse `06_write_dq_results.run_dq_persistence` with precomputed `dq_results` |
+| Write mode | Delta `overwrite` for all five Silver tables |
+| D17 | Quarantine-only — preserved, no price correction |
+| Serverless | DataFrame APIs only; `SERVERLESS_COMPAT_VERSION = 9` |
+
+**Validation performed (local):**
+
+| Check | Result |
+|-------|--------|
+| `py_compile` all Silver `.py` files | **PASS** |
+| `test_silver_helpers.py` | **PASS** |
+| `create_silver_tables` import (notebook-style module load) | **PASS** |
+| Bronze files modified | **No** |
+| Gold/Dashboard files created | **No** |
 | Databricks Serverless execution | **Not performed in Cursor** |
 
 **Databricks validation cells (to run on Serverless):**
 
 ```python
-# Cell 1 — load modules (fresh cache)
+# Cell 1 — run full pipeline
 import importlib.util, sys
 from pathlib import Path
-from datetime import datetime
 
-silver_dir = Path("/Workspace/Users/<user>/DE_C1_Coding_Evaluation/src/silver")
+silver_dir = Path("/Workspace/Users/shubhanshu.pandey@tothenew.com/DE_C1_Coding_Evaluation/src/silver")
 for name in list(sys.modules):
-    if name.startswith(("silver_common", "quality_", "referential", "business", "write_dq", "_load")):
+    if name.startswith(("silver_common", "quality_", "referential", "business", "write_dq", "create_silver", "_load")):
         del sys.modules[name]
 sys.path.insert(0, str(silver_dir))
 
@@ -490,118 +607,71 @@ spec = importlib.util.spec_from_file_location("silver_common", silver_dir / "sil
 silver_common = importlib.util.module_from_spec(spec)
 sys.modules["silver_common"] = silver_common
 spec.loader.exec_module(silver_common)
+print("SERVERLESS_COMPAT_VERSION =", silver_common.SERVERLESS_COMPAT_VERSION)
 
-spec = importlib.util.spec_from_file_location("write_dq_results", silver_dir / "06_write_dq_results.py")
-write_dq = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(write_dq)
+spec = importlib.util.spec_from_file_location("create_silver_tables", silver_dir / "create_silver_tables.py")
+create_silver_tables = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(create_silver_tables)
 
-config = write_dq.SilverConfig(run_timestamp=datetime.utcnow())
-result = write_dq.run_dq_persistence(spark=spark, config=config)
-print("Quarantine table:", result["quarantine_table"])
-print("Summary table:", result["summary_table"])
+result = create_silver_tables.run_silver_pipeline(spark=spark)
+for entity in ("customers", "products", "orders"):
+    print(entity, result["curated"][entity].count(), "->", result["curated_tables"][entity])
 ```
 
 ```python
-# Cell 2 — verify tables exist and have expected columns
-spark.sql("DESCRIBE TABLE de_c1_coding_evaluation.silver.silver_quarantine_records").show(20, truncate=False)
-spark.sql("DESCRIBE TABLE de_c1_coding_evaluation.silver.silver_dq_summary").show(20, truncate=False)
+# Cell 2 — verify curated schemas (no helper columns)
+for table in [
+    "de_c1_coding_evaluation.silver.silver_customers",
+    "de_c1_coding_evaluation.silver.silver_products",
+    "de_c1_coding_evaluation.silver.silver_orders",
+]:
+    print(table)
+    spark.sql(f"DESCRIBE TABLE {table}").show(20, truncate=False)
 ```
 
 ```python
-# Cell 3 — quarantine counts by category (failure-record oriented)
+# Cell 3 — row counts vs Bronze
 spark.sql("""
-SELECT check_category, COUNT(*) AS failure_records
-FROM de_c1_coding_evaluation.silver.silver_quarantine_records
-GROUP BY check_category
-ORDER BY check_category
+SELECT 'bronze_customers' AS tbl, COUNT(*) AS cnt FROM de_c1_coding_evaluation.bronze.bronze_customers
+UNION ALL SELECT 'silver_customers', COUNT(*) FROM de_c1_coding_evaluation.silver.silver_customers
+UNION ALL SELECT 'bronze_products', COUNT(*) FROM de_c1_coding_evaluation.bronze.bronze_products
+UNION ALL SELECT 'silver_products', COUNT(*) FROM de_c1_coding_evaluation.silver.silver_products
+UNION ALL SELECT 'bronze_orders', COUNT(*) FROM de_c1_coding_evaluation.bronze.bronze_orders
+UNION ALL SELECT 'silver_orders', COUNT(*) FROM de_c1_coding_evaluation.silver.silver_orders
 """).show()
 ```
 
 ```python
-# Cell 4 — compare failure-record counts to Iteration 2/3 baselines
-spark.sql("""
-SELECT check_category, entity_name, COUNT(*) AS failure_records
-FROM de_c1_coding_evaluation.silver.silver_quarantine_records
-GROUP BY check_category, entity_name
-ORDER BY check_category, entity_name
-""").show(20, False)
-# Expected failure-record baselines:
-# completeness: customers=60, products=9, orders=0
-# uniqueness: 6, 6, 8
-# type_validation: 50, 15, 30
-# referential_integrity: orders=1087
-# business_logic: customers=10, products=11, orders=277
+# Cell 4 — quarantine/summary unchanged from Iteration 4 baselines
+spark.sql("SELECT check_category, COUNT(*) FROM de_c1_coding_evaluation.silver.silver_quarantine_records GROUP BY 1 ORDER BY 1").show()
+spark.sql("SELECT COUNT(*) FROM de_c1_coding_evaluation.silver.silver_dq_summary").show()
 ```
 
 ```python
-# Cell 5 — DQ summary (row-oriented metrics)
-spark.sql("""
-SELECT check_category, table_name, rows_tested, rows_passed, rows_failed,
-       ROUND(pass_percentage, 2) AS pass_pct, failure_reason, run_timestamp
-FROM de_c1_coding_evaluation.silver.silver_dq_summary
-ORDER BY check_category, table_name
-""").show(20, False)
+# Cell 5 — idempotency
+c1 = spark.table("de_c1_coding_evaluation.silver.silver_orders").count()
+create_silver_tables.run_silver_pipeline(spark=spark)
+c2 = spark.table("de_c1_coding_evaluation.silver.silver_orders").count()
+print(f"orders before={c1}, after={c2}, match={c1==c2}")
 ```
-
-```python
-# Cell 6 — verify pass_percentage calculation
-spark.sql("""
-SELECT check_category, table_name,
-       rows_tested, rows_passed, rows_failed, pass_percentage,
-       CASE WHEN rows_tested = 0 THEN pass_percentage IS NULL
-            ELSE ABS(pass_percentage - (rows_passed * 100.0 / rows_tested)) < 0.001
-       END AS pct_ok
-FROM de_c1_coding_evaluation.silver.silver_dq_summary
-""").show(20, False)
-```
-
-```python
-# Cell 7 — idempotency: run twice, counts must match
-count_before = spark.table("de_c1_coding_evaluation.silver.silver_quarantine_records").count()
-write_dq.run_dq_persistence(spark=spark, config=config)
-count_after = spark.table("de_c1_coding_evaluation.silver.silver_quarantine_records").count()
-print(f"Before={count_before}, After={count_after}, Match={count_before == count_after}")
-```
-
-**Expected validation evidence (after Databricks run):**
-
-| Check | Expected |
-|-------|----------|
-| Quarantine table exists | Yes |
-| Summary table exists | Yes |
-| All 5 DQ categories in quarantine | Yes |
-| Completeness failure records | 60 / 9 / 0 |
-| Uniqueness failure records | 6 / 6 / 8 |
-| Type validation failure records | 50 / 15 / 30 |
-| RI failure records (orders) | 1087 |
-| BL failure records | 10 / 11 / 277 |
-| Summary rows | 13 |
-| `run_timestamp` populated | Yes |
-| Second run does not duplicate | Yes (overwrite) |
 
 **Acceptance criteria:**
 
 | Criterion | Status |
 |-----------|--------|
-| `06_write_dq_results.py` created | **Yes** |
-| Quarantine Delta overwrite | **Yes** (design) |
-| DQ summary Delta overwrite | **Yes** (design) |
-| All five DQ categories supported | **Yes** |
-| Row-oriented summary metrics | **Yes** |
-| Reuses Iteration 2/3 failure DataFrames | **Yes** |
-| No changes to `01`–`05` DQ logic | **Yes** |
-| Serverless-safe (no RDD APIs) | **Yes** (design) |
+| `create_silver_tables.py` created | **Yes** |
+| `run_silver_pipeline(spark=spark)` entry point | **Yes** |
+| Reuses Iterations 2–4 DQ modules | **Yes** |
+| Curated schemas match spec | **Yes** (design) |
+| No helper columns in output | **Yes** (design) |
+| Quarantine + summary written | **Yes** (design) |
+| Delta overwrite idempotency | **Yes** (design) |
+| Serverless-safe (no RDD) | **Yes** (design) |
 | Bronze unchanged | **Yes** |
-| Iteration 5 not started | **Yes** |
+| Gold/Dashboard not started | **Yes** |
 | Databricks validation | **Pending** |
 
 **FINAL DECISION:** **PENDING DATABRICKS VALIDATION**
-
----
-
-## Iteration 5: (Not started)
-
-_Full orchestration + Databricks validation — pending._
 
 ---
 
@@ -611,5 +681,5 @@ _Full orchestration + Databricks validation — pending._
 |-------------|----------|
 | Persistent context | Foundation docs + Bronze validation + `tool-specific/cursor-workflow/*` |
 | Iteration | Deliberate 5-iteration plan; Iteration 1 design + 1b refinement before code |
-| Validation | Iterations 2–3: Databricks Serverless **PASS**; Iteration 4: local **PASS**, Databricks **pending** |
-| Human review | Iterations 1b, 2, 3 **ACCEPTED**; Iteration 4 **pending Databricks** |
+| Validation | Iterations 2–4: Databricks **PASS**; Iteration 5: local **PASS**, Databricks **pending** |
+| Human review | Iterations 1b, 2, 3, 4 **ACCEPTED**; Iteration 5 **pending Databricks** |

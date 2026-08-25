@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from silver_common import (  # noqa: E402
     calculate_pass_percentage,
     calculate_summary_metrics,
+    entity_dq_categories,
     is_blank,
     is_numeric_identifier,
     is_valid_customer_segment,
@@ -82,6 +83,22 @@ def test_summary_metrics() -> None:
     assert zero_tested["pass_percentage"] is None
 
 
+def test_entity_dq_categories() -> None:
+    assert entity_dq_categories("customers") == (
+        "completeness",
+        "uniqueness",
+        "type_validation",
+        "business_logic",
+    )
+    assert entity_dq_categories("orders") == (
+        "completeness",
+        "uniqueness",
+        "type_validation",
+        "referential_integrity",
+        "business_logic",
+    )
+
+
 def main() -> None:
     test_is_blank()
     test_numeric_identifier()
@@ -92,6 +109,7 @@ def main() -> None:
     test_customer_segment()
     test_pass_percentage()
     test_summary_metrics()
+    test_entity_dq_categories()
     print("All Silver helper tests passed.")
 
 

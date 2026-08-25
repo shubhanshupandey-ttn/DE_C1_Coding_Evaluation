@@ -7,7 +7,7 @@
 | Phase 1: Foundation | Complete |
 | Phase 2: Data generation | Complete |
 | Phase 3: Bronze ingestion | Complete (Databricks validated) |
-| **Phase 4: Silver** | **Iteration 4 implemented — Databricks validation pending** |
+| **Phase 4: Silver** | **Iteration 5 implemented — Databricks validation pending** |
 | Phase 5: Gold | Not started |
 | Phase 6: Dashboard | Not started |
 
@@ -76,7 +76,7 @@
 
 ---
 
-### Iteration 4: Quarantine + DQ summary — **IMPLEMENTED (Databricks validation pending)**
+### Iteration 4: Quarantine + DQ summary — **ACCEPTED**
 
 | # | Task | Status |
 |---|------|--------|
@@ -87,27 +87,28 @@
 | 4.4.5 | Local validation of summary/quarantine schema logic | Done |
 | 4.4.6 | Refine based on inspection | Done |
 | 4.4.7 | Document Iteration 4 in `ai-prompts/silver-layer.md` | Done |
-| 4.4.8 | Databricks Serverless validation (tables, counts, idempotency) | **Pending** |
+| 4.4.8 | Databricks Serverless validation (tables, counts, idempotency) | Done |
 | 4.4.9 | **Developer approval before Iteration 5** | **Pending** |
 
 ---
 
-### Iteration 5: Orchestration + Databricks validation — NOT STARTED
+### Iteration 5: Orchestration + Databricks validation — **IMPLEMENTED (Databricks validation pending)**
 
 | # | Task | Status |
 |---|------|--------|
-| 4.5.1 | Implement `create_silver_tables.py` orchestration | Pending |
-| 4.5.2 | `CREATE SCHEMA IF NOT EXISTS de_c1_coding_evaluation.silver` | Pending |
-| 4.5.3 | Write `silver_customers`, `silver_products`, `silver_orders` | Pending |
-| 4.5.4 | Run full pipeline in Databricks | Pending |
-| 4.5.5 | Verify Silver schema/types | Pending |
-| 4.5.6 | Verify row counts explainable vs Bronze | Pending |
-| 4.5.7 | Verify DQ summary exists and covers all 5 categories | Pending |
-| 4.5.8 | Verify quarantine counts align with known defects (50 null emails, 25+25 orphans, 40 bad qty, etc.) | Pending |
-| 4.5.9 | Verify rerun does not accumulate duplicates | Pending |
-| 4.5.10 | Update `data-quality-strategy.md`, `design-notes.md`, `README.md`, `requirements-analysis.md`, `tool-workflow.md` | Pending |
-| 4.5.11 | Finalize `SILVER_LAYER_NOTES.md` with actual validation results | Pending |
-| 4.5.12 | Document Iteration 5 + acceptance in `ai-prompts/silver-layer.md` | Pending |
+| 4.5.1 | Implement `create_silver_tables.py` orchestration | Done |
+| 4.5.2 | `CREATE SCHEMA IF NOT EXISTS de_c1_coding_evaluation.silver` | Done |
+| 4.5.3 | Write `silver_customers`, `silver_products`, `silver_orders` | Done |
+| 4.5.4 | Run full pipeline in Databricks | **Pending** |
+| 4.5.5 | Verify Silver schema/types | **Pending** |
+| 4.5.6 | Verify row counts explainable vs Bronze | **Pending** |
+| 4.5.7 | Verify DQ summary exists and covers all 5 categories | **Pending** |
+| 4.5.8 | Verify quarantine counts align with known defects | **Pending** |
+| 4.5.9 | Verify rerun does not accumulate duplicates | **Pending** |
+| 4.5.10 | Update `data-quality-strategy.md`, `design-notes.md`, `README.md`, `requirements-analysis.md`, `tool-workflow.md` | **Deferred** (post-Databricks acceptance) |
+| 4.5.11 | Finalize `SILVER_LAYER_NOTES.md` with actual validation results | Done (pending Databricks evidence) |
+| 4.5.12 | Document Iteration 5 + acceptance in `ai-prompts/silver-layer.md` | Done |
+| 4.5.13 | **Developer approval / ACCEPTED** | **Pending** |
 
 ---
 
