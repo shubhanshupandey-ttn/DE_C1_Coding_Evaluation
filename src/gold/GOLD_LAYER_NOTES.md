@@ -466,3 +466,20 @@ print(json.dumps({
 | Validation helpers cover schema, grain, reconciliation, trends, joins, segmentation, idempotency | **PASS** |
 
 **FINAL DECISION (Iteration 6):** Orchestration implementation **complete**. Databricks Serverless execution and runtime validation **not yet performed** in this environment. **Phase 5 Gold — NOT YET ACCEPTED.**
+
+---
+
+## Silver RI Alignment Impact on Gold (post-fix)
+
+**Context:** Gold Iteration 6 Databricks validation initially showed entity-level revenue gaps because `silver_orders` contained FKs absent from curated dimensions while RI used `canonical_valid_filter()` parents. Silver `SERVERLESS_COMPAT_VERSION = 10` aligns RI parent keys with curated dimension eligibility (`filter_valid_rows()`).
+
+**Gold SQL:** **Unchanged** — entity tables still use `INNER JOIN` to `silver_customers` / `silver_products`.
+
+**Required revalidation sequence:**
+
+1. Re-run `run_silver_pipeline(spark=spark)` on Databricks (`SERVERLESS_COMPAT_VERSION = 10`)
+2. Confirm reverse RI diagnostics return **0**
+3. Re-run `run_gold_pipeline(spark=spark)` without Gold code changes
+4. Confirm entity Gold revenue/quantity/order-count reconciliations against new `silver_orders`
+
+**Gold ACCEPTED status:** Remains **pending** until post-fix Silver + Gold Databricks evidence is recorded.

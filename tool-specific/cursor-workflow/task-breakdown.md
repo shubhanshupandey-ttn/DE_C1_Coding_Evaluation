@@ -7,7 +7,7 @@
 | Phase 1: Foundation | Complete |
 | Phase 2: Data generation | Complete |
 | Phase 3: Bronze ingestion | Complete (Databricks validated) |
-| **Phase 4: Silver** | **COMPLETE — Iterations 1–5 ACCEPTED** |
+| **Phase 4: Silver** | **COMPLETE — RI alignment fix implemented; Databricks revalidation pending** |
 | **Phase 5: Gold** | **Iteration 6 orchestration done — Databricks validation pending** |
 | Phase 6: Dashboard | Not started |
 
@@ -109,6 +109,17 @@
 | 4.5.11 | Finalize `SILVER_LAYER_NOTES.md` with actual validation results | Done |
 | 4.5.12 | Document Iteration 5 + acceptance in `ai-prompts/silver-layer.md` | Done |
 | 4.5.13 | **Developer approval / ACCEPTED** | **Done** |
+
+### RI Alignment: Curated parent keys — **IMPLEMENTED (Databricks revalidation pending)**
+
+| # | Task | Status |
+|---|------|--------|
+| 4.5.14 | Move `filter_valid_rows` + helpers to `silver_common.py` | Done |
+| 4.5.15 | Reorder DQ: business_logic before referential_integrity | Done |
+| 4.5.16 | RI uses `curated_eligible_parent_keys_df()` | Done |
+| 4.5.17 | Local `py_compile` + helper tests | Done |
+| 4.5.18 | Databricks reverse-RI + row-count revalidation | **Pending** |
+| 4.5.19 | Gold re-run + reconciliation after Silver fix | **Pending** |
 
 ---
 

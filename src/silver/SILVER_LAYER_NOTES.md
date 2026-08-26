@@ -1,6 +1,6 @@
 # Silver Layer Notes — Design (Iteration 1 — Finalized)
 
-**Status:** Silver Iterations 1–5 **ACCEPTED** — full pipeline Databricks Serverless validated (`SERVERLESS_COMPAT_VERSION = 9`). Phase 4 Silver **complete**.
+**Status:** Silver Iterations 1–5 **ACCEPTED** (`SERVERLESS_COMPAT_VERSION = 9`). **RI alignment fix implemented** (`SERVERLESS_COMPAT_VERSION = 10`) — Databricks revalidation **pending**.
 
 Phase 4 Silver design defines how Bronze transforms into curated, typed Delta tables with explicit data-quality enforcement. Open design decisions were resolved in the Iteration 1 design-refinement pass (see `ai-prompts/silver-layer.md`).
 
@@ -564,6 +564,46 @@ The Bronze dataset contains intentional D11/D12 orphan defects. Non-zero RI resu
 | Iteration 4 persistence | quarantine 1,569; summary 13; idempotent overwrite |
 
 **FINAL DECISION:** **ACCEPTED** — Silver Iteration 5 complete. Phase 4 Silver layer **complete**. Gold not started.
+
+---
+
+## RI Alignment Fix — Curated Parent Keys (`SERVERLESS_COMPAT_VERSION = 10`)
+
+**Problem (discovered during Gold Iteration 6 validation):** RI previously validated order FKs against `canonical_valid_filter()` parents (`_dup_rank = 1` + completeness + type only). Curated `silver_customers` / `silver_products` use `filter_valid_rows()` which also applies uniqueness and business_logic. Order lines could pass RI while referencing parent keys absent from curated dimensions (e.g. `product_id = 184`, `customer_id = 177`), causing Gold entity-table reconciliation gaps.
+
+**Fix (implemented — Databricks revalidation pending):**
+
+| Change | Detail |
+|--------|--------|
+| DQ execution order | `01` → `02` → `03` → **`05`** → **`04`** → persistence → curated writes |
+| RI parent population | `curated_eligible_parent_keys_df()` in `silver_common.py` — same `filter_valid_rows()` semantics as curated dimension writes |
+| Shared helpers | `failures_for_category()`, `filter_valid_rows()`, `curated_eligible_parent_keys_df()` moved to `silver_common.py`; `create_silver_tables.py` imports shared implementation |
+| `04_quality_referential_integrity.py` | Accepts `dq_results`; uses curated-eligible parent keys instead of `prepare_canonical_entity_df()` |
+| `06_write_dq_results.py` | Runs business_logic before referential_integrity; passes partial `dq_results` into module 04 |
+
+**Invariant after fix:**
+
+```text
+∀ nonblank customer_id in silver_orders → EXISTS IN silver_customers
+∀ nonblank product_id  in silver_orders → EXISTS IN silver_products
+```
+
+**Expected post-fix (confirm on Databricks):**
+
+| Check | Expected |
+|-------|----------|
+| `silver_customers` | 878 (unchanged) |
+| `silver_products` | 164 (unchanged) |
+| `silver_orders` | < 3,832 (exact count from Databricks) |
+| Reverse RI product FK diagnostic | 0 |
+| Reverse RI customer FK diagnostic | 0 |
+| Gold entity revenue/quantity | Reconcile to new `silver_orders` totals |
+
+**Local validation:** `py_compile` (silver_common, create_silver_tables, 04, 06) + `test_silver_helpers.py` — **PASS**
+
+**Databricks validation:** **Not performed in Cursor environment** — run cells in `ai-prompts/silver-layer.md` § RI Alignment Revalidation.
+
+**Note:** Order catalog-price business_logic still joins `prepare_canonical_entity_df()` products (unchanged). RI and curated dimension keys are now aligned.
 
 ---
 

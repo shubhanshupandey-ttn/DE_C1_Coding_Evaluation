@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from pyspark.sql import Column, DataFrame, SparkSession
 
 # Bump when serverless compatibility changes (Databricks reload required after sync).
-SERVERLESS_COMPAT_VERSION = 9
+SERVERLESS_COMPAT_VERSION = 10
 
 # ---------------------------------------------------------------------------
 # Catalog / entity configuration (aligned with data-model.md)
@@ -604,6 +604,46 @@ def canonical_parent_keys_df(canonical_df: DataFrame, entity_key: str) -> DataFr
 def prepare_entity_dataframe(df: DataFrame, entity_key: str) -> DataFrame:
     """Trim strings and add typed columns (Iteration 2 type standardization)."""
     return add_typed_columns(df, entity_key)
+
+
+def failures_for_category(dq_results: dict, category: str, entity_key: str) -> DataFrame:
+    """Return the failure DataFrame for one DQ category and entity."""
+    if category == CHECK_REFERENTIAL_INTEGRITY:
+        return dq_results["referential_integrity"]["orders"]["failures_df"]
+    return dq_results[category][entity_key]["failures_df"]
+
+
+def filter_valid_rows(df: DataFrame, entity_key: str, dq_results: dict) -> DataFrame:
+    """
+    Return rows whose business key is not present in any applicable category failure set.
+
+    Uses existing failure DataFrames from DQ modules; does not re-run DQ rules.
+    """
+    from pyspark.sql import functions as F
+
+    business_key = ENTITY_CONFIG[entity_key]["business_key"]
+    valid_df = df
+
+    for category in entity_dq_categories(entity_key):
+        failures_df = failures_for_category(dq_results, category, entity_key)
+        failed_keys = failures_df.select(F.col("business_key").alias(business_key)).distinct()
+        valid_df = valid_df.join(failed_keys, on=business_key, how="left_anti")
+
+    return valid_df
+
+
+def curated_eligible_parent_keys_df(
+    prepared_df: DataFrame,
+    entity_key: str,
+    dq_results: dict,
+) -> DataFrame:
+    """
+    Distinct business keys that would survive curated-dimension filtering.
+
+    Same eligibility semantics as silver_customers / silver_products writes.
+    """
+    valid_df = filter_valid_rows(prepared_df, entity_key, dq_results)
+    return canonical_parent_keys_df(valid_df, entity_key)
 
 
 # ---------------------------------------------------------------------------

@@ -63,12 +63,18 @@ def run_all_dq_checks(spark, config: SilverConfig | None = None) -> dict:
     type_validation = _load_module("03_quality_type_validation").run_type_validation_all(
         spark, config
     )
-    referential_integrity = _load_module(
-        "04_quality_referential_integrity"
-    ).run_referential_integrity_all(spark, config)
     business_logic = _load_module("05_quality_business_logic").run_business_logic_all(
         spark, config
     )
+    dq_before_ri = {
+        "completeness": completeness,
+        "uniqueness": uniqueness,
+        "type_validation": type_validation,
+        "business_logic": business_logic,
+    }
+    referential_integrity = _load_module(
+        "04_quality_referential_integrity"
+    ).run_referential_integrity_all(spark, config, dq_results=dq_before_ri)
 
     return {
         "completeness": completeness,

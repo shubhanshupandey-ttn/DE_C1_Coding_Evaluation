@@ -275,3 +275,18 @@ Notebook execution pattern documented in `src/gold/GOLD_LAYER_NOTES.md` § Itera
 | Iteration | Deliberate multi-iteration plan; design before code |
 | Validation | Iterations 2–5 local SQL review **PASS**; Iteration 6 orchestration `py_compile` **PASS**; Databricks runtime **pending** |
 | Human review | Iteration 1b **ACCEPTED**; Phase 5 completion requires Databricks evidence |
+
+---
+
+## Silver RI Alignment — Gold Revalidation Required
+
+Silver `SERVERLESS_COMPAT_VERSION = 10` aligns RI parent keys with curated dimension eligibility. **Gold SQL was not modified.**
+
+After re-running Silver + Gold on Databricks, record:
+
+- New `silver_orders` count and revenue
+- Reverse RI diagnostics (= 0)
+- Gold entity reconciliation vs new `silver_orders`
+- Idempotency (Silver + Gold)
+
+**Phase 5 Gold ACCEPTED:** Pending post-fix Databricks evidence.

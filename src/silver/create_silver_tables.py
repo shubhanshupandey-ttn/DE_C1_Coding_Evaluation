@@ -18,10 +18,9 @@ from _load_silver_common import load_silver_common  # noqa: E402
 
 sc = load_silver_common()
 
-CHECK_REFERENTIAL_INTEGRITY = sc.CHECK_REFERENTIAL_INTEGRITY
 ENTITY_CONFIG = sc.ENTITY_CONFIG
 ENTITY_KEYS = sc.ENTITY_KEYS
-entity_dq_categories = sc.entity_dq_categories
+filter_valid_rows = sc.filter_valid_rows
 SILVER_CUSTOMERS_TABLE_NAME = sc.SILVER_CUSTOMERS_TABLE_NAME
 SILVER_ORDERS_TABLE_NAME = sc.SILVER_ORDERS_TABLE_NAME
 SILVER_PRODUCTS_TABLE_NAME = sc.SILVER_PRODUCTS_TABLE_NAME
@@ -69,31 +68,6 @@ def _load_module(stem: str) -> ModuleType:
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
-
-
-def _failures_for_category(dq_results: dict, category: str, entity_key: str):
-    if category == CHECK_REFERENTIAL_INTEGRITY:
-        return dq_results["referential_integrity"]["orders"]["failures_df"]
-    return dq_results[category][entity_key]["failures_df"]
-
-
-def filter_valid_rows(df, entity_key: str, dq_results: dict):
-    """
-    Return rows whose business key is not present in any category failure set.
-
-    Uses existing failure DataFrames from Iterations 2–5; does not re-run DQ rules.
-    """
-    from pyspark.sql import functions as F
-
-    business_key = ENTITY_CONFIG[entity_key]["business_key"]
-    valid_df = df
-
-    for category in entity_dq_categories(entity_key):
-        failures_df = _failures_for_category(dq_results, category, entity_key)
-        failed_keys = failures_df.select(F.col("business_key").alias(business_key)).distinct()
-        valid_df = valid_df.join(failed_keys, on=business_key, how="left_anti")
-
-    return valid_df
 
 
 def select_curated_customers(df):

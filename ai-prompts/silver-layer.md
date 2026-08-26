@@ -671,6 +671,85 @@ Full Silver pipeline validated on Databricks Serverless. Curated row counts (878
 
 ---
 
+## RI Alignment Fix — Curated Parent Keys (`SERVERLESS_COMPAT_VERSION = 10`)
+
+**Context:** Gold Iteration 6 Databricks validation exposed order FKs in `silver_orders` that were absent from curated `silver_customers` / `silver_products` because RI used `canonical_valid_filter()` parents while curated dimensions used full `filter_valid_rows()`.
+
+**Implementation:**
+
+| File | Change |
+|------|--------|
+| `silver_common.py` | `SERVERLESS_COMPAT_VERSION = 10`; added `failures_for_category()`, `filter_valid_rows()`, `curated_eligible_parent_keys_df()` |
+| `create_silver_tables.py` | Imports shared `filter_valid_rows` from `silver_common` |
+| `04_quality_referential_integrity.py` | RI parents from `curated_eligible_parent_keys_df()`; optional `dq_results` param |
+| `06_write_dq_results.py` | Order: 01→02→03→05→04 |
+
+**Local validation:** `py_compile` + `test_silver_helpers.py` — **PASS**
+
+**Databricks revalidation:** **Pending** — see notebook cells below.
+
+### Databricks revalidation cells
+
+```python
+# Silver RI alignment — re-run full pipeline (Serverless)
+import importlib.util, json, sys
+from pathlib import Path
+
+silver_dir = Path("/Workspace/Users/shubhanshu.pandey@tothenew.com/DE_C1_Coding_Evaluation/src/silver")
+for name in list(sys.modules):
+    if name.startswith(("silver_common", "quality_", "referential", "business", "write_dq", "create_silver", "_load")):
+        del sys.modules[name]
+sys.path.insert(0, str(silver_dir))
+
+spec = importlib.util.spec_from_file_location("silver_common", silver_dir / "silver_common.py")
+silver_common = importlib.util.module_from_spec(spec)
+sys.modules["silver_common"] = silver_common
+spec.loader.exec_module(silver_common)
+print("SERVERLESS_COMPAT_VERSION =", silver_common.SERVERLESS_COMPAT_VERSION)
+
+spec = importlib.util.spec_from_file_location("create_silver_tables", silver_dir / "create_silver_tables.py")
+create_silver_tables = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(create_silver_tables)
+
+result = create_silver_tables.run_silver_pipeline(spark=spark)
+for entity_key in ("customers", "products", "orders"):
+    print(entity_key, result["curated"][entity_key].count())
+```
+
+```sql
+-- B. Reverse RI diagnostics (expect 0)
+SELECT COUNT(*)
+FROM de_c1_coding_evaluation.silver.silver_orders o
+LEFT JOIN de_c1_coding_evaluation.silver.silver_products p ON o.product_id = p.product_id
+WHERE o.product_id IS NOT NULL AND p.product_id IS NULL;
+
+SELECT COUNT(*)
+FROM de_c1_coding_evaluation.silver.silver_orders o
+LEFT JOIN de_c1_coding_evaluation.silver.silver_customers c ON o.customer_id = c.customer_id
+WHERE o.customer_id IS NOT NULL AND c.customer_id IS NULL;
+
+-- C. Silver revenue
+SELECT SUM(quantity * unit_price) FROM de_c1_coding_evaluation.silver.silver_orders;
+```
+
+```python
+# D–H. Re-run Gold pipeline + validation (no Gold code changes)
+gold_dir = Path("/Workspace/Users/shubhanshu.pandey@tothenew.com/DE_C1_Coding_Evaluation/src/gold")
+sys.path.insert(0, str(gold_dir))
+spec = importlib.util.spec_from_file_location("create_gold_tables", gold_dir / "create_gold_tables.py")
+create_gold_tables = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(create_gold_tables)
+
+create_gold_tables.run_gold_pipeline(spark=spark)
+validation = create_gold_tables.validate_gold_pipeline(spark=spark)
+idempotency = create_gold_tables.validate_idempotency(spark=spark)
+print(json.dumps({"row_counts": validation["row_counts"], "reconciliations": validation["reconciliations"]}, indent=2, default=str))
+```
+
+**FINAL DECISION (RI alignment):** Implementation complete. Databricks + Gold revalidation **pending**.
+
+---
+
 ## Cursor Evaluation Evidence (Phase 4 — complete)
 
 | Requirement | Evidence |
