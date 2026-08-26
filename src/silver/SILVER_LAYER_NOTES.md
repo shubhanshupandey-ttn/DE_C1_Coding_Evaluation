@@ -1,6 +1,6 @@
 # Silver Layer Notes — Design (Iteration 1 — Finalized)
 
-**Status:** Iterations 2–4 **ACCEPTED**. Iteration 5 **implemented** — Databricks validation pending (`SERVERLESS_COMPAT_VERSION = 9`).
+**Status:** Silver Iterations 1–5 **ACCEPTED** — full pipeline Databricks Serverless validated (`SERVERLESS_COMPAT_VERSION = 9`). Phase 4 Silver **complete**.
 
 Phase 4 Silver design defines how Bronze transforms into curated, typed Delta tables with explicit data-quality enforcement. Open design decisions were resolved in the Iteration 1 design-refinement pass (see `ai-prompts/silver-layer.md`).
 
@@ -290,7 +290,7 @@ spec.loader.exec_module(create_silver_tables)
 result = create_silver_tables.run_silver_pipeline(spark=spark)
 ```
 
-**Databricks validation:** pending (Iteration 5).
+**Databricks validation:** **PASS** (Iteration 5 — full `run_silver_pipeline` on Serverless).
 
 ---
 
@@ -464,11 +464,11 @@ Summary `rows_failed` is intentionally lower than quarantine failure-record coun
 
 ---
 
-## Iteration 5 Implementation (Databricks validation pending)
+## Iteration 5 Implementation (ACCEPTED)
 
 | Module | Status | Purpose |
 |--------|--------|---------|
-| `create_silver_tables.py` | Implemented | Full pipeline orchestration + curated Silver writes |
+| `create_silver_tables.py` | Implemented + Serverless validated | Full pipeline orchestration + curated Silver writes |
 | `silver_common.py` (minimal additions) | Updated | Curated table names, `entity_dq_categories()` |
 
 **Orchestration flow (`run_silver_pipeline`):**
@@ -481,21 +481,89 @@ Summary `rows_failed` is intentionally lower than quarantine failure-record coun
 
 **Curated eligibility:** A row is written only if its `business_key` does not appear in **any** applicable category's failure set (completeness, uniqueness, type validation, referential integrity for orders, business logic).
 
-**Curated output schemas (no helper columns):**
+**Curated output schemas (validated — no helper columns):**
 
 | Table | Columns |
 |-------|---------|
-| `silver_customers` | `customer_id`, `customer_name`, `email`, `country`, `signup_date` (DATE), `customer_segment`, `lifetime_value` (DECIMAL 12,2) |
-| `silver_products` | `product_id`, `product_name`, `category`, `unit_price` (DECIMAL 10,2) |
-| `silver_orders` | `order_line_id`, `order_id`, `customer_id`, `product_id`, `order_date` (DATE), `quantity` (INT), `unit_price` (DECIMAL 10,2) |
+| `silver_customers` | `customer_id` STRING, `customer_name` STRING, `email` STRING, `country` STRING, `signup_date` DATE, `customer_segment` STRING, `lifetime_value` DECIMAL(12,2) |
+| `silver_products` | `product_id` STRING, `product_name` STRING, `category` STRING, `unit_price` DECIMAL(10,2) |
+| `silver_orders` | `order_line_id` STRING, `order_id` STRING, `customer_id` STRING, `product_id` STRING, `order_date` DATE, `quantity` INT, `unit_price` DECIMAL(10,2) |
 
-Typed source columns (`*_typed`) are mapped to final Silver column names. No `line_revenue` (Gold only). D17 remains quarantine-only — no catalog price auto-correction.
+No `*_typed`, `_dup_rank`, `_row_num`, or `line_revenue` in curated output. D17 remains quarantine-only — no catalog price auto-correction.
 
 **Idempotency:** All five Silver outputs use Delta `overwrite` per run.
 
 **Local validation:** `py_compile` all Silver `.py` files + `test_silver_helpers.py` — **PASS**
 
-**Databricks Serverless validation:** **Pending**
+**Databricks Serverless validation** (`SERVERLESS_COMPAT_VERSION = 9`):
+
+| Check | Observed | Assessment |
+|-------|----------|------------|
+| `create_silver_tables` load | Success | **PASS** |
+| `run_silver_pipeline` completion | Success | **PASS** |
+| Quarantine failure records | **1569** | Matches Iteration 4 baseline |
+| DQ summary rows | **13** | **PASS** |
+| Idempotency (re-run) | 1569 → 1569 | **PASS** |
+| `pass_percentage` calculations | Validated | **PASS** |
+| D11 / D12 / D17 proxy in quarantine | 25 / 25 / 18 | **PASS** |
+
+**Curated Silver row counts (validated):**
+
+| Table | Bronze rows | Silver rows |
+|-------|-------------|-------------|
+| customers | 1,006 | **878** |
+| products | 206 | **164** |
+| orders | 5,163 | **3,832** |
+
+Silver row counts are lower than Bronze because invalid rows are quarantined, not silently dropped.
+
+**Validated DQ summary (`silver_dq_summary`):**
+
+| Category | Entity | rows_tested | rows_passed | rows_failed |
+|----------|--------|-------------|-------------|-------------|
+| completeness | customers | 1006 | 946 | 60 |
+| completeness | products | 206 | 198 | 8 |
+| completeness | orders | 5163 | 5163 | 0 |
+| uniqueness | customers | 1006 | 1000 | 6 |
+| uniqueness | products | 206 | 200 | 6 |
+| uniqueness | orders | 5163 | 5159 | 4 |
+| type_validation | customers | 1006 | 956 | 50 |
+| type_validation | products | 206 | 191 | 15 |
+| type_validation | orders | 5163 | 5133 | 30 |
+| referential_integrity | orders | 5163 | 4134 | **1029** |
+| business_logic | customers | 1006 | 996 | 10 |
+| business_logic | products | 206 | 196 | 10 |
+| business_logic | orders | 5163 | 4886 | 277 |
+
+**Referential integrity — intentional non-zero failures (NOT a bug):**
+
+The Bronze dataset contains intentional D11/D12 orphan defects. Non-zero RI results are **expected and correct**:
+
+| RI metric | Value | Meaning |
+|-----------|-------|---------|
+| D11 orphan `customer_id` failure records | **25** | Exact match to defect injection |
+| D12 orphan `product_id` failure records | **25** | Exact match to defect injection |
+| Total RI failure records (quarantine) | **1087** | Includes D11/D12 + existing-but-non-canonical parent effects (1,037) |
+| Distinct failed order `business_key` rows (summary) | **1029** | Row-oriented RI metric |
+| Orders failing both FK checks | Some | Explains 1087 failure records > 1029 distinct failed rows |
+
+**Quarantine vs summary semantics (preserved):**
+
+- **Quarantine:** failure-record oriented (one row per rule violation; 1,569 total across all categories).
+- **Summary:** row-oriented — `rows_failed` = distinct `business_key` per category where applicable (e.g. orders uniqueness: 8 failure records / 4 distinct failed rows; orders RI: 1087 failure records / 1029 distinct failed rows).
+
+**Phase 4 Silver — cumulative validated DQ baselines (Iterations 2–4, unchanged in Iteration 5):**
+
+| Iteration | Key results |
+|-----------|-------------|
+| Iteration 2 completeness | customers 60; products 9 records / 8 rows; orders 0 |
+| Iteration 2 uniqueness | customers 6; products 6; orders 8 records / 4 rows |
+| Iteration 2 type validation | customers 50; products 15; orders 30 |
+| Iteration 3 RI | D11 25 + D12 25; 1,087 total RI failure records; 1,029 distinct failed order rows |
+| Iteration 3 business logic | D17 proxy 18; catalog-price mismatches 222 total (18 D17 + 204 other) |
+| Iteration 4 persistence | quarantine 1,569; summary 13; idempotent overwrite |
+
+**FINAL DECISION:** **ACCEPTED** — Silver Iteration 5 complete. Phase 4 Silver layer **complete**. Gold not started.
 
 ---
 

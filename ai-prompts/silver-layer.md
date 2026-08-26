@@ -579,81 +579,73 @@ Bronze → run_all_dq_checks (01–05)
 | D17 | Quarantine-only — preserved, no price correction |
 | Serverless | DataFrame APIs only; `SERVERLESS_COMPAT_VERSION = 9` |
 
-**Validation performed (local):**
+**Validation performed:**
 
 | Check | Result |
 |-------|--------|
 | `py_compile` all Silver `.py` files | **PASS** |
 | `test_silver_helpers.py` | **PASS** |
 | `create_silver_tables` import (notebook-style module load) | **PASS** |
-| Bronze files modified | **No** |
-| Gold/Dashboard files created | **No** |
-| Databricks Serverless execution | **Not performed in Cursor** |
+| Databricks Serverless `run_silver_pipeline` | **PASS** |
 
-**Databricks validation cells (to run on Serverless):**
+**Databricks Serverless observed results** (`SERVERLESS_COMPAT_VERSION = 9`):
 
-```python
-# Cell 1 — run full pipeline
-import importlib.util, sys
-from pathlib import Path
+| Check | Observed | Assessment |
+|-------|----------|------------|
+| Pipeline execution | Success | **PASS** |
+| Quarantine failure records | **1569** | Matches Iteration 4 |
+| DQ summary rows | **13** | **PASS** |
+| Idempotency | 1569 → 1569 | **PASS** |
+| Curated `silver_customers` | **878** rows | **PASS** |
+| Curated `silver_products` | **164** rows | **PASS** |
+| Curated `silver_orders` | **3832** rows | **PASS** |
+| Curated schemas | No helper columns | **PASS** |
+| D11 / D12 / D17 proxy | 25 / 25 / 18 | **PASS** |
 
-silver_dir = Path("/Workspace/Users/shubhanshu.pandey@tothenew.com/DE_C1_Coding_Evaluation/src/silver")
-for name in list(sys.modules):
-    if name.startswith(("silver_common", "quality_", "referential", "business", "write_dq", "create_silver", "_load")):
-        del sys.modules[name]
-sys.path.insert(0, str(silver_dir))
+**Curated schemas (validated):**
 
-spec = importlib.util.spec_from_file_location("silver_common", silver_dir / "silver_common.py")
-silver_common = importlib.util.module_from_spec(spec)
-sys.modules["silver_common"] = silver_common
-spec.loader.exec_module(silver_common)
-print("SERVERLESS_COMPAT_VERSION =", silver_common.SERVERLESS_COMPAT_VERSION)
+| Table | Columns |
+|-------|---------|
+| `silver_customers` | `customer_id` STRING, `customer_name` STRING, `email` STRING, `country` STRING, `signup_date` DATE, `customer_segment` STRING, `lifetime_value` DECIMAL(12,2) |
+| `silver_products` | `product_id` STRING, `product_name` STRING, `category` STRING, `unit_price` DECIMAL(10,2) |
+| `silver_orders` | `order_line_id` STRING, `order_id` STRING, `customer_id` STRING, `product_id` STRING, `order_date` DATE, `quantity` INT, `unit_price` DECIMAL(10,2) |
 
-spec = importlib.util.spec_from_file_location("create_silver_tables", silver_dir / "create_silver_tables.py")
-create_silver_tables = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(create_silver_tables)
+**Validated DQ summary:**
 
-result = create_silver_tables.run_silver_pipeline(spark=spark)
-for entity in ("customers", "products", "orders"):
-    print(entity, result["curated"][entity].count(), "->", result["curated_tables"][entity])
-```
+| Category | Entity | tested | passed | failed |
+|----------|--------|--------|--------|--------|
+| completeness | customers | 1006 | 946 | 60 |
+| completeness | products | 206 | 198 | 8 |
+| completeness | orders | 5163 | 5163 | 0 |
+| uniqueness | customers | 1006 | 1000 | 6 |
+| uniqueness | products | 206 | 200 | 6 |
+| uniqueness | orders | 5163 | 5159 | 4 |
+| type_validation | customers | 1006 | 956 | 50 |
+| type_validation | products | 206 | 191 | 15 |
+| type_validation | orders | 5163 | 5133 | 30 |
+| referential_integrity | orders | 5163 | 4134 | **1029** |
+| business_logic | customers | 1006 | 996 | 10 |
+| business_logic | products | 206 | 196 | 10 |
+| business_logic | orders | 5163 | 4886 | 277 |
 
-```python
-# Cell 2 — verify curated schemas (no helper columns)
-for table in [
-    "de_c1_coding_evaluation.silver.silver_customers",
-    "de_c1_coding_evaluation.silver.silver_products",
-    "de_c1_coding_evaluation.silver.silver_orders",
-]:
-    print(table)
-    spark.sql(f"DESCRIBE TABLE {table}").show(20, truncate=False)
-```
+**Referential integrity — intentional non-zero failures (ACCEPTED, not a bug):**
 
-```python
-# Cell 3 — row counts vs Bronze
-spark.sql("""
-SELECT 'bronze_customers' AS tbl, COUNT(*) AS cnt FROM de_c1_coding_evaluation.bronze.bronze_customers
-UNION ALL SELECT 'silver_customers', COUNT(*) FROM de_c1_coding_evaluation.silver.silver_customers
-UNION ALL SELECT 'bronze_products', COUNT(*) FROM de_c1_coding_evaluation.bronze.bronze_products
-UNION ALL SELECT 'silver_products', COUNT(*) FROM de_c1_coding_evaluation.silver.silver_products
-UNION ALL SELECT 'bronze_orders', COUNT(*) FROM de_c1_coding_evaluation.bronze.bronze_orders
-UNION ALL SELECT 'silver_orders', COUNT(*) FROM de_c1_coding_evaluation.silver.silver_orders
-""").show()
-```
+FK integrity is **not** expected to be zero for this intentionally defective Bronze dataset:
 
-```python
-# Cell 4 — quarantine/summary unchanged from Iteration 4 baselines
-spark.sql("SELECT check_category, COUNT(*) FROM de_c1_coding_evaluation.silver.silver_quarantine_records GROUP BY 1 ORDER BY 1").show()
-spark.sql("SELECT COUNT(*) FROM de_c1_coding_evaluation.silver.silver_dq_summary").show()
-```
+| RI evidence | Value |
+|-------------|-------|
+| D11 orphan `customer_id` failure records | **25** |
+| D12 orphan `product_id` failure records | **25** |
+| Total RI quarantine failure records | **1087** |
+| Distinct failed order rows (summary `rows_failed`) | **1029** |
+| Orders failing both FK checks | Some rows | Explains 1087 > 1029 |
 
-```python
-# Cell 5 — idempotency
-c1 = spark.table("de_c1_coding_evaluation.silver.silver_orders").count()
-create_silver_tables.run_silver_pipeline(spark=spark)
-c2 = spark.table("de_c1_coding_evaluation.silver.silver_orders").count()
-print(f"orders before={c1}, after={c2}, match={c1==c2}")
-```
+Non-zero RI results confirm D11/D12 detection and canonical-parent FK semantics — **ACCEPTED**.
+
+**Quarantine vs summary (preserved):**
+
+- Quarantine stores **failure records** (1,569 total).
+- Summary uses **distinct `business_key`** per category where applicable (e.g. orders uniqueness: 8 records / 4 rows; orders RI: 1087 records / 1029 rows).
 
 **Acceptance criteria:**
 
@@ -662,24 +654,28 @@ print(f"orders before={c1}, after={c2}, match={c1==c2}")
 | `create_silver_tables.py` created | **Yes** |
 | `run_silver_pipeline(spark=spark)` entry point | **Yes** |
 | Reuses Iterations 2–4 DQ modules | **Yes** |
-| Curated schemas match spec | **Yes** (design) |
-| No helper columns in output | **Yes** (design) |
-| Quarantine + summary written | **Yes** (design) |
-| Delta overwrite idempotency | **Yes** (design) |
-| Serverless-safe (no RDD) | **Yes** (design) |
+| Curated schemas match spec | **Yes** |
+| No helper columns in output | **Yes** |
+| Quarantine + summary written | **Yes** |
+| Delta overwrite idempotency | **Yes** |
+| Serverless-safe (no RDD) | **Yes** |
 | Bronze unchanged | **Yes** |
 | Gold/Dashboard not started | **Yes** |
-| Databricks validation | **Pending** |
+| Databricks validation | **PASS** |
 
-**FINAL DECISION:** **PENDING DATABRICKS VALIDATION**
+**YOUR EVALUATION:**
+
+Full Silver pipeline validated on Databricks Serverless. Curated row counts (878 / 164 / 3832) are consistent with quarantining all DQ failures. RI non-zero results are intentional (D11/D12 + canonical-parent semantics). Phase 4 Silver layer complete.
+
+**FINAL DECISION:** **ACCEPTED** — Silver Iteration 5 complete. Phase 4 Silver **complete**. Gold not started.
 
 ---
 
-## Cursor Evaluation Evidence (Phase 4 — in progress)
+## Cursor Evaluation Evidence (Phase 4 — complete)
 
 | Requirement | Evidence |
 |-------------|----------|
 | Persistent context | Foundation docs + Bronze validation + `tool-specific/cursor-workflow/*` |
-| Iteration | Deliberate 5-iteration plan; Iteration 1 design + 1b refinement before code |
-| Validation | Iterations 2–4: Databricks **PASS**; Iteration 5: local **PASS**, Databricks **pending** |
-| Human review | Iterations 1b, 2, 3, 4 **ACCEPTED**; Iteration 5 **pending Databricks** |
+| Iteration | Deliberate 5-iteration plan; all five Silver iterations implemented and validated |
+| Validation | Iterations 2–5: Databricks Serverless **PASS** |
+| Human review | Iterations 1b, 2, 3, 4, 5 **ACCEPTED** — Phase 4 Silver **complete** |

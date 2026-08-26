@@ -94,19 +94,28 @@ See `src/bronze/BRONZE_LAYER_NOTES.md` for execution and validation details.
 |--------|----------------|
 | **Purpose** | Pre-computed analytics for reporting |
 | **Inputs** | Trusted Silver tables |
-| **Outputs** | Gold metric tables |
+| **Outputs** | Four Gold Delta tables in `de_c1_coding_evaluation.gold` |
 | **Implementation** | Primarily SQL (`.sql` files) + `create_gold_tables.py` |
 
-**Planned analytical themes:**
+**Authoritative contract:** `src/gold/GOLD_LAYER_NOTES.md` (Iteration 1b — finalized).
 
-| File (planned) | Theme |
-|----------------|-------|
-| `01_sales_by_product.sql` | Product-level sales metrics |
-| `02_revenue_by_customer.sql` | Customer-level revenue |
-| `03_daily_weekly_trends.sql` | Time-series trends |
-| `04_customer_segmentation.sql` | Customer segments from behavior |
+| Table | Theme |
+|-------|-------|
+| `gold_sales_by_product` | Product-level sales metrics |
+| `gold_revenue_by_customer` | Customer-level revenue |
+| `gold_daily_weekly_trends` | Daily and weekly time-series trends |
+| `gold_customer_segmentation` | Customer segments with behavioral aggregates |
 
-**To be finalized during implementation:** metric formulas, time grains, refresh strategy.
+**Planned SQL files:**
+
+| File | Maps to |
+|------|---------|
+| `01_sales_by_product.sql` | `gold_sales_by_product` |
+| `02_revenue_by_customer.sql` | `gold_revenue_by_customer` |
+| `03_daily_weekly_trends.sql` | `gold_daily_weekly_trends` |
+| `04_customer_segmentation.sql` | `gold_customer_segmentation` |
+
+Metric formulas, time grains, column names, and write semantics are **finalized** in `GOLD_LAYER_NOTES.md`.
 
 ---
 
