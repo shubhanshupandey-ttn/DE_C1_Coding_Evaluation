@@ -135,3 +135,30 @@ Databricks Serverless validation reported `UNRESOLVED_COLUMN: order_count cannot
 **Gold FQNs:** Only the four approved `de_c1_coding_evaluation.gold.*` tables referenced — **PASS**.
 
 **FINAL DECISION:** Dashboard SQL aligned with Gold schema; re-run validation one query block at a time in Databricks.
+
+---
+
+## Iteration 3: Evaluation dashboard completion
+
+**PROMPT SENT:** Complete Databricks evaluation dashboard — audit queries, add Top 10 products, customer revenue histogram, behavioral segmentation (High-Value/Repeat/One-Time/Inactive), reorganize SQL into 7 sections, recommend layout.
+
+**Gold inspection:**
+
+| Finding | Detail |
+|---------|--------|
+| Behavioral segments in Gold? | **No** — `customer_segment` is Premium/Standard/Basic only |
+| Behavioral inputs in Gold | `frequency`, `total_spend` on `gold_customer_segmentation` |
+| Inactive customers | Excluded from Gold segmentation grain (zero-order customers) |
+
+**Queries added:**
+
+- `customer_revenue_distribution` (histogram, customer-level from `gold_revenue_by_customer`)
+- `behavioral_segment_summary` (derived from `frequency` + `total_spend`)
+- `overall_customer_kpis` (replaces narrower `customer_revenue_summary_kpis`)
+- 4 validation queries
+
+**Queries reorganized:** 7 sections per evaluation spec; supplemental block preserves `top_products_by_quantity`, `revenue_by_category`, `top_customers_by_revenue`.
+
+**Removed from primary dashboard path:** `daily_revenue_trend`, `weekly_revenue_trend`, `customer_revenue_summary_kpis` (superseded or not required for order-focused trends).
+
+**FINAL DECISION:** Evaluation-required visualizations supported; behavioral segmentation is Dashboard-derived (Gold metrics only).

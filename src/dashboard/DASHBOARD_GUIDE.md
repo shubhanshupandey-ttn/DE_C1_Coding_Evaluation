@@ -23,7 +23,7 @@ Business logic (revenue, order counts, segments, weekly boundaries) is defined i
 
 | File | Purpose |
 |------|---------|
-| `src/dashboard/dashboard_queries.sql` | Query catalog (10 queries, 4 themes) |
+| `src/dashboard/dashboard_queries.sql` | Query catalog (15 queries: dashboard tiles + supplemental + validation) |
 | `src/dashboard/DASHBOARD_GUIDE.md` | This guide |
 
 ---
@@ -52,59 +52,97 @@ Dashboard reads **only** these four Gold tables:
 
 **Global totals:** Use entity Gold tables or KPI queries — do **not** sum daily and weekly trend rows together (double-counting).
 
-**Column scope:** `order_count` exists only on `gold_daily_weekly_trends`. `gold_sales_by_product` exposes `total_quantity` and `total_revenue` only — do not reference `order_count` (or any other column) from the product table.
+**Column scope:** `order_count` exists only on `gold_daily_weekly_trends`. `gold_sales_by_product` exposes `total_quantity` and `total_revenue` only.
+
+**Two segmentation types (do not confuse):**
+
+| Type | Source | Values |
+|------|--------|--------|
+| Master-data segment | `gold_customer_segmentation.customer_segment` | `Premium`, `Standard`, `Basic` |
+| Behavioral segment | Derived in Dashboard SQL from `frequency` + `total_spend` | `High-Value`, `Repeat`, `One-Time`, `Inactive`* |
+
+\* `Inactive` (zero-order customers) is not in `gold_customer_segmentation` by Gold grain design.
 
 ---
 
-## 4. Query catalog
+## 4. Recommended dashboard layout
 
-All queries live in `dashboard_queries.sql`. Execute one block at a time in Databricks SQL.
+| Row | Tiles | Query | Viz type |
+|-----|-------|-------|----------|
+| **1 — KPI cards** | Total Customers, Total Spend, Total Orders, Avg Spend, Avg Frequency, Avg LTV | `overall_customer_kpis` | KPI counters |
+| **2 — Trends** | Weekly Order Trend (primary), Daily Order Trend (secondary) | `weekly_order_trend`, `daily_order_trend` | Line charts |
+| **3 — Products** | Top 10 Products by Revenue | `top_products_by_revenue` | Horizontal bar chart |
+| **4 — Customer analysis** | Revenue Distribution, Behavioral Segmentation | `customer_revenue_distribution`, `behavioral_segment_summary` | Histogram, pie/donut |
+| **5 — Optional** | Premium/Standard/Basic spend share | `segment_spend_share` | Donut chart |
 
-### 1. Product Performance (`gold_sales_by_product`)
-
-| Query | Purpose | Output grain | Key columns | Recommended viz |
-|-------|---------|--------------|---------------|-----------------|
-| `top_products_by_revenue` | Top 10 products by revenue | Product | `product_name`, `category`, `total_revenue`, `total_quantity` | Horizontal bar chart |
-| `top_products_by_quantity` | Top 10 products by units sold | Product | `product_name`, `category`, `total_quantity`, `total_revenue` | Horizontal bar chart |
-| `revenue_by_category` | Revenue and quantity by product category | Category | `category`, `product_count`, `total_quantity`, `total_revenue` | Bar or donut chart |
-
-### 2. Customer Revenue (`gold_revenue_by_customer`)
-
-| Query | Purpose | Output grain | Key columns | Recommended viz |
-|-------|---------|--------------|---------------|-----------------|
-| `top_customers_by_revenue` | Top 10 customers by revenue | Customer | `customer_id`, `total_revenue` | Bar chart |
-| `customer_revenue_summary_kpis` | Portfolio KPIs (count, sum, avg, min, max) | Single summary row | `customer_count`, `total_revenue`, `avg_revenue_per_customer`, … | Counter / KPI cards |
-
-### 3. Revenue / Trends (`gold_daily_weekly_trends`)
-
-| Query | Purpose | Output grain | Key columns | Recommended viz |
-|-------|---------|--------------|---------------|-----------------|
-| `daily_revenue_trend` | Daily revenue and orders over time | Day (`period_start`) | `period_start`, `total_revenue`, `order_count` | Line chart (revenue); optional second series for orders |
-| `weekly_revenue_trend` | Weekly revenue and orders | Week (`period_start` = Monday) | `period_start`, `total_revenue`, `order_count` | Line chart |
-| `daily_order_trend` | Daily distinct order count | Day | `period_start`, `order_count` | Line chart |
-| `weekly_order_trend` | Weekly distinct order count | Week | `period_start`, `order_count` | Line chart |
-
-Filter `time_grain` in SQL — do not mix daily and weekly rows in one chart without an explicit grain dimension.
-
-### 4. Customer Segmentation (`gold_customer_segmentation`)
-
-| Query | Purpose | Output grain | Key columns | Recommended viz |
-|-------|---------|--------------|---------------|-----------------|
-| `segment_summary` | Customers and spend metrics by segment | Segment | `customer_segment`, `customer_count`, `total_spend`, `avg_total_spend`, `avg_frequency`, `avg_lifetime_value` | Grouped bar chart |
-| `segment_spend_share` | Spend share by segment | Segment | `customer_segment`, `total_spend`, `pct_of_total_spend` | Pie, donut, or bar chart |
-
-**Metric notes (from Gold):**
-
-- `total_revenue` / `total_spend`: `SUM(quantity * unit_price)` at Silver order-line grain, aggregated in Gold.
-- `order_count`: `COUNT(DISTINCT order_id)` per trend period — **only** on `gold_daily_weekly_trends`.
-- `frequency`: `COUNT(DISTINCT order_id)` per customer — **only** on `gold_customer_segmentation`.
-- `total_quantity`: units sold — **only** on `gold_sales_by_product` (product-level volume proxy; not order count).
-- `lifetime_value`: Customer attribute from Silver (not recomputed in Dashboard).
-- `customer_segment`: Customer attribute from Silver (not redefined in Dashboard).
+**Best optional tile:** `segment_spend_share` — complements behavioral segmentation with master-data segment mix without duplicating the required histogram.
 
 ---
 
-## 5. Running the SQL
+## 5. Query catalog
+
+All queries live in `dashboard_queries.sql`. Execute one block at a time.
+
+### Section 1 — KPI cards
+
+| Query | Source | Viz |
+|-------|--------|-----|
+| `overall_customer_kpis` | `gold_customer_segmentation` + `gold_daily_weekly_trends` | KPI cards |
+
+### Section 2 — Order trends
+
+| Query | Source | Viz |
+|-------|--------|-----|
+| `weekly_order_trend` | `gold_daily_weekly_trends` (`time_grain = 'week'`) | Line chart |
+| `daily_order_trend` | `gold_daily_weekly_trends` (`time_grain = 'day'`) | Line chart |
+
+### Section 3 — Top products
+
+| Query | Source | Viz |
+|-------|--------|-----|
+| `top_products_by_revenue` | `gold_sales_by_product` | Horizontal bar chart (Y: `product_name`, X: `total_revenue`, LIMIT 10 DESC) |
+
+### Section 4 — Customer revenue distribution
+
+| Query | Source | Viz |
+|-------|--------|-----|
+| `customer_revenue_distribution` | `gold_revenue_by_customer` | Histogram (X: revenue bin, Y: `customer_count`) |
+
+### Section 5 — Behavioral segmentation
+
+| Query | Source | Viz |
+|-------|--------|-----|
+| `behavioral_segment_summary` | `gold_customer_segmentation` (derived) | Pie/donut (`behavioral_segment` vs `customer_count` or `total_spend`) |
+
+**Behavioral rules (Dashboard-layer):** High-Value = `total_spend` ≥ 75th percentile; Repeat = `frequency` ≥ 2 (not High-Value); One-Time = `frequency` = 1 (not High-Value).
+
+### Section 6 — Master-data segment analysis (Premium / Standard / Basic)
+
+| Query | Source | Viz |
+|-------|--------|-----|
+| `segment_summary` | `gold_customer_segmentation` | Grouped bar chart |
+| `segment_spend_share` | `gold_customer_segmentation` | Donut/pie chart |
+
+### Supplemental (optional)
+
+| Query | Viz |
+|-------|-----|
+| `top_products_by_quantity` | Bar chart |
+| `revenue_by_category` | Bar/donut |
+| `top_customers_by_revenue` | Bar chart |
+
+### Section 7 — Validation (not tiles)
+
+| Query | Purpose |
+|-------|---------|
+| `validation_daily_weekly_order_totals` | Daily vs weekly order/revenue totals |
+| `validation_segment_spend_reconciliation` | Segment spend sum |
+| `validation_segment_pct_sum` | Premium/Standard/Basic % ≈ 100 |
+| `validation_revenue_by_customer_vs_segmentation` | Revenue vs spend alignment |
+
+---
+
+## 6. Running the SQL
 
 1. Open **Databricks** → **SQL** (or a notebook with `%sql` on a SQL warehouse).
 2. Confirm Gold tables exist:  
