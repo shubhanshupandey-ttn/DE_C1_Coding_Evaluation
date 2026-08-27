@@ -52,6 +52,8 @@ Dashboard reads **only** these four Gold tables:
 
 **Global totals:** Use entity Gold tables or KPI queries — do **not** sum daily and weekly trend rows together (double-counting).
 
+**Column scope:** `order_count` exists only on `gold_daily_weekly_trends`. `gold_sales_by_product` exposes `total_quantity` and `total_revenue` only — do not reference `order_count` (or any other column) from the product table.
+
 ---
 
 ## 4. Query catalog
@@ -94,7 +96,9 @@ Filter `time_grain` in SQL — do not mix daily and weekly rows in one chart wit
 **Metric notes (from Gold):**
 
 - `total_revenue` / `total_spend`: `SUM(quantity * unit_price)` at Silver order-line grain, aggregated in Gold.
-- `order_count` / `frequency`: `COUNT(DISTINCT order_id)` per customer or per trend period.
+- `order_count`: `COUNT(DISTINCT order_id)` per trend period — **only** on `gold_daily_weekly_trends`.
+- `frequency`: `COUNT(DISTINCT order_id)` per customer — **only** on `gold_customer_segmentation`.
+- `total_quantity`: units sold — **only** on `gold_sales_by_product` (product-level volume proxy; not order count).
 - `lifetime_value`: Customer attribute from Silver (not recomputed in Dashboard).
 - `customer_segment`: Customer attribute from Silver (not redefined in Dashboard).
 
@@ -165,6 +169,7 @@ Use these **post–Silver RI alignment** values when sanity-checking Gold inputs
 ## 9. Limitations / assumptions
 
 - **Gold-only:** No customer names or product attributes beyond what Gold exposes (`product_name`, `category` on sales-by-product only; revenue-by-customer is `customer_id` only).
+- **No product-level `order_count`:** `gold_sales_by_product` does not include `order_count`. Product performance queries use `total_quantity` and `total_revenue` only. Order-count trends use `gold_daily_weekly_trends`.
 - **Trend double-counting:** Daily and weekly trend tables are separate grains; never add their revenue or order totals for a global KPI.
 - **Segment `lifetime_value`:** Sourced from Silver customer master; Dashboard does not validate or recompute it against `total_spend`.
 - **Empty periods:** Trend tables include only periods with at least one order (Gold definition); charts may show gaps if rendered with a continuous date axis in the BI tool.
@@ -194,4 +199,22 @@ SELECT SUM(total_quantity) FROM de_c1_coding_evaluation.gold.gold_sales_by_produ
 SELECT SUM(order_count) FROM de_c1_coding_evaluation.gold.gold_daily_weekly_trends WHERE time_grain = 'day';
 ```
 
-Then execute each named query in `dashboard_queries.sql` and confirm success.
+Then execute each named query in `dashboard_queries.sql` **one block at a time** and confirm success.
+
+---
+
+## Per-query Gold column validation
+
+| Query | Gold source | Columns referenced | Valid |
+|-------|-------------|-------------------|-------|
+| `top_products_by_revenue` | `gold_sales_by_product` | `product_id`, `product_name`, `category`, `total_quantity`, `total_revenue` | Yes |
+| `top_products_by_quantity` | `gold_sales_by_product` | `product_id`, `product_name`, `category`, `total_quantity`, `total_revenue` | Yes |
+| `revenue_by_category` | `gold_sales_by_product` | `category`, `total_quantity`, `total_revenue` | Yes |
+| `top_customers_by_revenue` | `gold_revenue_by_customer` | `customer_id`, `total_revenue` | Yes |
+| `customer_revenue_summary_kpis` | `gold_revenue_by_customer` | `total_revenue` | Yes |
+| `daily_revenue_trend` | `gold_daily_weekly_trends` | `time_grain`, `period_start`, `total_revenue`, `order_count` | Yes |
+| `weekly_revenue_trend` | `gold_daily_weekly_trends` | `time_grain`, `period_start`, `total_revenue`, `order_count` | Yes |
+| `daily_order_trend` | `gold_daily_weekly_trends` | `time_grain`, `period_start`, `order_count` | Yes |
+| `weekly_order_trend` | `gold_daily_weekly_trends` | `time_grain`, `period_start`, `order_count` | Yes |
+| `segment_summary` | `gold_customer_segmentation` | `customer_segment`, `total_spend`, `frequency`, `lifetime_value` | Yes |
+| `segment_spend_share` | `gold_customer_segmentation` | `customer_segment`, `total_spend` | Yes |

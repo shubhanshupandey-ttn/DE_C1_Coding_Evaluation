@@ -2,9 +2,19 @@
 -- Catalog: de_c1_coding_evaluation | Schema: gold
 -- Sources: Gold tables only (no Bronze/Silver)
 -- Prerequisites: run Gold pipeline (create_gold_tables.py) before executing
+--
+-- Gold column contract (do not reference columns outside these lists):
+--   gold_sales_by_product:        product_id, product_name, category, total_quantity, total_revenue
+--                                 (NO order_count — use gold_daily_weekly_trends for order metrics)
+--   gold_revenue_by_customer:     customer_id, total_revenue
+--   gold_daily_weekly_trends:     time_grain, period_start, total_revenue, order_count
+--   gold_customer_segmentation:   customer_id, customer_segment, lifetime_value, frequency, total_spend
+--
+-- Execute ONE query block at a time (each block starts with "-- Query:").
 
 -- =============================================================================
 -- 1. Product Performance (gold_sales_by_product)
+-- Columns: product_id, product_name, category, total_quantity, total_revenue
 -- =============================================================================
 
 -- Query: top_products_by_revenue
@@ -40,10 +50,11 @@ SELECT
     SUM(total_revenue) AS total_revenue
 FROM de_c1_coding_evaluation.gold.gold_sales_by_product
 GROUP BY category
-ORDER BY total_revenue DESC;
+ORDER BY SUM(total_revenue) DESC;
 
 -- =============================================================================
 -- 2. Customer Revenue (gold_revenue_by_customer)
+-- Columns: customer_id, total_revenue
 -- =============================================================================
 
 -- Query: top_customers_by_revenue
@@ -67,6 +78,7 @@ FROM de_c1_coding_evaluation.gold.gold_revenue_by_customer;
 
 -- =============================================================================
 -- 3. Revenue / Trends (gold_daily_weekly_trends)
+-- Columns: time_grain, period_start, total_revenue, order_count
 -- =============================================================================
 
 -- Query: daily_revenue_trend
@@ -109,6 +121,7 @@ ORDER BY period_start;
 
 -- =============================================================================
 -- 4. Customer Segmentation (gold_customer_segmentation)
+-- Columns: customer_id, customer_segment, lifetime_value, frequency, total_spend
 -- =============================================================================
 
 -- Query: segment_summary
