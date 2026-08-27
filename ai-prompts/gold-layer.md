@@ -251,42 +251,46 @@ Created `src/gold/04_customer_segmentation.sql`:
 | Expected column contracts in `EXPECTED_COLUMNS` | **PASS** |
 | Validation helpers for schema, grain, reconciliation, trends, joins, segmentation, idempotency | **PASS** |
 
-### Databricks validation
+### Databricks validation (post Silver RI alignment — 2026-08-27)
 
 | Check | Result |
 |-------|--------|
-| `run_gold_pipeline(spark=spark)` on Serverless | **Not performed** (PySpark/Databricks CLI unavailable in Cursor agent environment) |
-| Runtime row counts | **Not recorded** |
-| Reconciliation queries | **Not executed** |
-| Idempotency (two runs) | **Not executed** |
-| AC-1..AC-11 | **Pending** |
+| `run_gold_pipeline(spark=spark)` on Serverless | **PASS** |
+| `GOLD_SERVERLESS_COMPAT_VERSION` | **1** |
+| Silver inputs | 878 / 164 / **3,646** orders |
+| Gold row counts | sales 164; customer 792; segmentation 792; trends 950 |
+| Revenue reconciliation (entity + daily trends) | **PASS** — 2,708,411.08 |
+| Quantity reconciliation | **PASS** — 10,899 |
+| Daily order-count reconciliation | **PASS** — 2,052 |
+| Frequency / spend mismatch rows | **0** |
+| Idempotency (`validate_idempotency`) | **PASS** — `row_counts_match` + `totals_match` true |
+| AC-1..AC-11 | **PASS** |
 
-Notebook execution pattern documented in `src/gold/GOLD_LAYER_NOTES.md` § Iteration 6.
-
-**FINAL DECISION:** Orchestration implementation **complete**. Databricks Serverless runtime validation **not performed** in this environment. **Phase 5 Gold — NOT YET ACCEPTED.**
+**FINAL DECISION:** **ACCEPTED** — Gold Iteration 6 complete. **Phase 5 Gold COMPLETE.**
 
 ---
 
-## Cursor Evaluation Evidence (Phase 5 — in progress)
+## Cursor Evaluation Evidence (Phase 5 — complete)
 
 | Requirement | Evidence |
 |-------------|----------|
 | Persistent context | Foundation docs + Silver validation + `GOLD_LAYER_NOTES.md` |
 | Iteration | Deliberate multi-iteration plan; design before code |
-| Validation | Iterations 2–5 local SQL review **PASS**; Iteration 6 orchestration `py_compile` **PASS**; Databricks runtime **pending** |
-| Human review | Iteration 1b **ACCEPTED**; Phase 5 completion requires Databricks evidence |
+| Validation | Iterations 2–6 Databricks Serverless **PASS** (post Silver RI alignment) |
+| Human review | Iteration 1b **ACCEPTED**; Phase 5 **ACCEPTED** |
 
 ---
 
-## Silver RI Alignment — Gold Revalidation Required
+## Silver RI Alignment — Gold Revalidation (complete)
 
-Silver `SERVERLESS_COMPAT_VERSION = 10` aligns RI parent keys with curated dimension eligibility. **Gold SQL was not modified.**
+Silver `SERVERLESS_COMPAT_VERSION = 10` aligned RI parent keys with curated dimensions. **Gold SQL was not modified.**
 
-After re-running Silver + Gold on Databricks, record:
+| Metric | Value |
+|--------|-------|
+| `silver_orders` (post-fix) | 3,646 |
+| Silver revenue | 2,708,411.08 |
+| Orphan FK diagnostics | 0 |
+| Gold entity revenue | 2,708,411.08 (reconciles) |
+| Gold idempotency | **PASS** |
 
-- New `silver_orders` count and revenue
-- Reverse RI diagnostics (= 0)
-- Gold entity reconciliation vs new `silver_orders`
-- Idempotency (Silver + Gold)
-
-**Phase 5 Gold ACCEPTED:** Pending post-fix Databricks evidence.
+**Phase 5 Gold ACCEPTED:** **Yes**

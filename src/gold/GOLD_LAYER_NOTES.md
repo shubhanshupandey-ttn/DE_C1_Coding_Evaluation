@@ -1,6 +1,6 @@
 # Gold Layer Notes — Design (Iteration 1b — Finalized)
 
-**Status:** Iteration 1b design **ACCEPTED**. Iterations 2–5 **implemented**. Iteration 6 orchestration **implemented** — Databricks Serverless validation **pending** (no PySpark/Databricks CLI in Cursor agent environment).
+**Status:** Iteration 1b design **ACCEPTED**. Iterations 2–6 **implemented and Databricks validated** (`GOLD_SERVERLESS_COMPAT_VERSION = 1`). **Phase 5 Gold — COMPLETE / ACCEPTED** (post Silver RI alignment `SERVERLESS_COMPAT_VERSION = 10`).
 
 Phase 5 Gold design defines analytical Delta tables built exclusively from validated Silver curated entities. Open ambiguities from Gold Iteration 1 are resolved in this document.
 
@@ -397,17 +397,19 @@ Use this as a primary Gold validation check in Databricks.
 
 ```python
 # Notebook cell — Gold Iteration 6 (Serverless)
+# IMPORTANT: register module in sys.modules BEFORE exec_module (Databricks requirement)
 import importlib.util, json, sys
 from pathlib import Path
 
 gold_dir = Path("/Workspace/Users/shubhanshu.pandey@tothenew.com/DE_C1_Coding_Evaluation/src/gold")
 for name in list(sys.modules):
-    if name.startswith("create_gold_tables"):
+    if name == "create_gold_tables" or name.startswith("create_gold_tables."):
         del sys.modules[name]
 sys.path.insert(0, str(gold_dir))
 
 spec = importlib.util.spec_from_file_location("create_gold_tables", gold_dir / "create_gold_tables.py")
 create_gold_tables = importlib.util.module_from_spec(spec)
+sys.modules["create_gold_tables"] = create_gold_tables
 spec.loader.exec_module(create_gold_tables)
 
 print("GOLD_SERVERLESS_COMPAT_VERSION =", create_gold_tables.GOLD_SERVERLESS_COMPAT_VERSION)
@@ -434,38 +436,60 @@ print(json.dumps({
 }, indent=2, default=str))
 ```
 
-**Prerequisite:** Silver Iteration 5 curated tables must exist (`silver_customers` 878 / `silver_products` 164 / `silver_orders` 3,832 per last validated Silver run).
+**Prerequisite:** Silver curated tables after RI alignment (`SERVERLESS_COMPAT_VERSION = 10`): `silver_customers` 878 / `silver_products` 164 / `silver_orders` 3,646.
 
-### Runtime validation evidence (Databricks)
+### Runtime validation evidence (Databricks Serverless — post Silver RI alignment)
 
-| Check | Status | Evidence |
-|-------|--------|----------|
-| Orchestrator execution | **Pending** | Requires Databricks notebook run above |
-| Table existence (4 Gold tables) | **Pending** | — |
-| Schema validation | **Pending** | — |
-| Grain validation | **Pending** | — |
-| Revenue reconciliation | **Pending** | — |
-| Quantity reconciliation | **Pending** | — |
-| Order-count reconciliation (daily + weekly separately) | **Pending** | — |
-| Frequency / total-spend reconciliation | **Pending** | — |
-| Join behavior (inner-join semantics) | **Pending** | — |
-| Idempotency (two consecutive runs) | **Pending** | — |
-| Acceptance criteria AC-1..AC-11 | **Pending** | — |
+**Execution:** `run_gold_pipeline(spark=spark)` + `validate_gold_pipeline` + `validate_idempotency` (`GOLD_SERVERLESS_COMPAT_VERSION = 1`).
 
-**Do not mark Phase 5 Gold ACCEPTED until the notebook run above completes with all AC checks passing.**
+#### Row counts
 
-### Static validation (local — performed)
+| Table | Rows |
+|-------|------|
+| `silver_customers` | 878 |
+| `silver_products` | 164 |
+| `silver_orders` | 3,646 |
+| `gold_sales_by_product` | 164 |
+| `gold_revenue_by_customer` | 792 |
+| `gold_daily_weekly_trends` | 950 (818 day + 132 week) |
+| `gold_customer_segmentation` | 792 |
+
+#### Reconciliation (all **PASS**)
+
+| Check | Silver | Gold | Match |
+|-------|--------|------|-------|
+| Revenue | 2,708,411.08 | sales / customer / daily trends / segmentation | **true** |
+| Quantity | 10,899 | sales-by-product | **true** |
+| Distinct orders (daily trend sum) | 2,052 | daily `order_count` sum | **true** |
+| Frequency per customer | — | mismatch rows | **0** |
+| Spend per customer | — | mismatch rows | **0** |
+
+#### Idempotency (**PASS**)
 
 | Check | Result |
 |-------|--------|
-| `create_gold_tables.py` syntax (`py_compile`) | **PASS** |
-| SQL files executed in documented order | **PASS** (code review) |
-| No SQL logic duplicated in Python | **PASS** |
-| No RDD APIs | **PASS** |
-| Expected column contracts encoded in `EXPECTED_COLUMNS` | **PASS** |
-| Validation helpers cover schema, grain, reconciliation, trends, joins, segmentation, idempotency | **PASS** |
+| Row counts (run 1 vs run 2) | **Identical** |
+| Sales + customer revenue totals | **2,708,411.08** both runs |
+| `row_counts_match` | **true** |
+| `totals_match` | **true** |
 
-**FINAL DECISION (Iteration 6):** Orchestration implementation **complete**. Databricks Serverless execution and runtime validation **not yet performed** in this environment. **Phase 5 Gold — NOT YET ACCEPTED.**
+#### Acceptance criteria AC-1..AC-11
+
+| AC | Criterion | Result |
+|----|-----------|--------|
+| AC-1 | Orchestrator on Serverless | **PASS** |
+| AC-2 | Four Gold tables exist | **PASS** |
+| AC-3 | Sales-by-product contract | **PASS** |
+| AC-4 | Revenue-by-customer grain + columns | **PASS** |
+| AC-5 | Daily/weekly trends contract | **PASS** |
+| AC-6 | Segmentation contract | **PASS** |
+| AC-7 | No helper columns | **PASS** (prior schema validation) |
+| AC-8 | Silver entity tables only | **PASS** |
+| AC-9 | Join keys match contract | **PASS** |
+| AC-10 | Idempotent overwrite | **PASS** |
+| AC-11 | Revenue/quantity reconciliation | **PASS** |
+
+**FINAL DECISION (Iteration 6):** **ACCEPTED** — Phase 5 Gold **COMPLETE**.
 
 ---
 
@@ -475,11 +499,14 @@ print(json.dumps({
 
 **Gold SQL:** **Unchanged** — entity tables still use `INNER JOIN` to `silver_customers` / `silver_products`.
 
-**Required revalidation sequence:**
+**Required revalidation sequence:** **Complete** (2026-08-27 Databricks Serverless).
 
-1. Re-run `run_silver_pipeline(spark=spark)` on Databricks (`SERVERLESS_COMPAT_VERSION = 10`)
-2. Confirm reverse RI diagnostics return **0**
-3. Re-run `run_gold_pipeline(spark=spark)` without Gold code changes
-4. Confirm entity Gold revenue/quantity/order-count reconciliations against new `silver_orders`
+| Step | Result |
+|------|--------|
+| Silver `run_silver_pipeline` (`SERVERLESS_COMPAT_VERSION = 10`) | **PASS** — 878 / 164 / 3,646 |
+| Reverse RI diagnostics | **0** orphan product + customer FKs |
+| Gold `run_gold_pipeline` (no Gold SQL changes) | **PASS** |
+| Entity Gold reconciles to `silver_orders` | **PASS** — revenue 2,708,411.08; quantity 10,899 |
+| Gold idempotency | **PASS** |
 
-**Gold ACCEPTED status:** Remains **pending** until post-fix Silver + Gold Databricks evidence is recorded.
+**Gold ACCEPTED status:** **ACCEPTED** — Phase 5 Gold **COMPLETE**.

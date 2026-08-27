@@ -6,9 +6,15 @@ Executes the four Gold SQL scripts in order on Databricks Serverless.
 SQL files remain the authoritative transformation logic.
 
 Databricks notebook:
-    from create_gold_tables import run_gold_pipeline, validate_gold_pipeline
-    result = run_gold_pipeline(spark=spark)
-    validation = validate_gold_pipeline(spark=spark)
+    import importlib.util, sys
+    from pathlib import Path
+    gold_dir = Path("/Workspace/.../src/gold")
+    spec = importlib.util.spec_from_file_location("create_gold_tables", gold_dir / "create_gold_tables.py")
+    create_gold_tables = importlib.util.module_from_spec(spec)
+    sys.modules["create_gold_tables"] = create_gold_tables  # required before exec_module on Databricks
+    spec.loader.exec_module(create_gold_tables)
+    result = create_gold_tables.run_gold_pipeline(spark=spark)
+    validation = create_gold_tables.validate_gold_pipeline(spark=spark)
 """
 
 from __future__ import annotations

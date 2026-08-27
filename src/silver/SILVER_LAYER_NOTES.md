@@ -1,6 +1,6 @@
 # Silver Layer Notes — Design (Iteration 1 — Finalized)
 
-**Status:** Silver Iterations 1–5 **ACCEPTED** (`SERVERLESS_COMPAT_VERSION = 9`). **RI alignment fix implemented** (`SERVERLESS_COMPAT_VERSION = 10`) — Databricks revalidation **pending**.
+**Status:** Silver Iterations 1–5 **ACCEPTED** (`SERVERLESS_COMPAT_VERSION = 9`). **RI alignment fix ACCEPTED** (`SERVERLESS_COMPAT_VERSION = 10`). Phase 4 Silver **complete**.
 
 Phase 4 Silver design defines how Bronze transforms into curated, typed Delta tables with explicit data-quality enforcement. Open design decisions were resolved in the Iteration 1 design-refinement pass (see `ai-prompts/silver-layer.md`).
 
@@ -571,7 +571,7 @@ The Bronze dataset contains intentional D11/D12 orphan defects. Non-zero RI resu
 
 **Problem (discovered during Gold Iteration 6 validation):** RI previously validated order FKs against `canonical_valid_filter()` parents (`_dup_rank = 1` + completeness + type only). Curated `silver_customers` / `silver_products` use `filter_valid_rows()` which also applies uniqueness and business_logic. Order lines could pass RI while referencing parent keys absent from curated dimensions (e.g. `product_id = 184`, `customer_id = 177`), causing Gold entity-table reconciliation gaps.
 
-**Fix (implemented — Databricks revalidation pending):**
+**Fix (implemented — Databricks validated):**
 
 | Change | Detail |
 |--------|--------|
@@ -590,20 +590,23 @@ The Bronze dataset contains intentional D11/D12 orphan defects. Non-zero RI resu
 
 **Expected post-fix (confirm on Databricks):**
 
-| Check | Expected |
-|-------|----------|
-| `silver_customers` | 878 (unchanged) |
-| `silver_products` | 164 (unchanged) |
-| `silver_orders` | < 3,832 (exact count from Databricks) |
-| Reverse RI product FK diagnostic | 0 |
-| Reverse RI customer FK diagnostic | 0 |
-| Gold entity revenue/quantity | Reconcile to new `silver_orders` totals |
+| Check | Expected | Observed |
+|-------|----------|----------|
+| `SERVERLESS_COMPAT_VERSION` | 10 | **10** |
+| `silver_customers` | 878 (unchanged) | **878** |
+| `silver_products` | 164 (unchanged) | **164** |
+| `silver_orders` | < 3,832 | **3,646** |
+| Reverse RI product FK diagnostic | 0 | **0** |
+| Reverse RI customer FK diagnostic | 0 | **0** |
+| Silver revenue | (from Databricks) | **2,708,411.08** |
+| Silver quantity | (from Databricks) | **10,899** |
+| Silver distinct orders | (from Databricks) | **2,052** |
 
-**Local validation:** `py_compile` (silver_common, create_silver_tables, 04, 06) + `test_silver_helpers.py` — **PASS**
+**Databricks validation (Silver RI alignment):** **PASS** (`SERVERLESS_COMPAT_VERSION = 10`).
 
-**Databricks validation:** **Not performed in Cursor environment** — run cells in `ai-prompts/silver-layer.md` § RI Alignment Revalidation.
+**Gold revalidation after fix:** **PASS** — entity Gold reconciles to new `silver_orders` (revenue 2,708,411.08; Phase 5 Gold **ACCEPTED**).
 
-**Note:** Order catalog-price business_logic still joins `prepare_canonical_entity_df()` products (unchanged). RI and curated dimension keys are now aligned.
+**FINAL DECISION (RI alignment):** **ACCEPTED**.
 
 ---
 

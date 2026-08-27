@@ -7,9 +7,9 @@
 | Phase 1: Foundation | Complete |
 | Phase 2: Data generation | Complete |
 | Phase 3: Bronze ingestion | Complete (Databricks validated) |
-| **Phase 4: Silver** | **COMPLETE — RI alignment fix implemented; Databricks revalidation pending** |
-| **Phase 5: Gold** | **Iteration 6 orchestration done — Databricks validation pending** |
-| Phase 6: Dashboard | Not started |
+| Phase 4: Silver** | **COMPLETE — RI alignment validated (`SERVERLESS_COMPAT_VERSION = 10`)** |
+| **Phase 5: Gold** | **COMPLETE / ACCEPTED — Iteration 6 Databricks validated** |
+| Phase 6: Dashboard | **Implementation complete — Databricks validation pending** |
 
 ---
 
@@ -118,8 +118,8 @@
 | 4.5.15 | Reorder DQ: business_logic before referential_integrity | Done |
 | 4.5.16 | RI uses `curated_eligible_parent_keys_df()` | Done |
 | 4.5.17 | Local `py_compile` + helper tests | Done |
-| 4.5.18 | Databricks reverse-RI + row-count revalidation | **Pending** |
-| 4.5.19 | Gold re-run + reconciliation after Silver fix | **Pending** |
+| 4.5.18 | Databricks reverse-RI + row-count revalidation | Done |
+| 4.5.19 | Gold re-run + reconciliation after Silver fix | Done |
 
 ---
 
@@ -181,18 +181,32 @@
 | 5.5.2 | Local validation | Done |
 | 5.5.3 | Document in `ai-prompts/gold-layer.md` | Done |
 
-### Iteration 6: Orchestration + Databricks validation — **IN PROGRESS**
+### Iteration 6: Orchestration + Databricks validation — **ACCEPTED**
 
 | # | Task | Status |
 |---|------|--------|
 | 5.6.1 | Implement `create_gold_tables.py` | Done |
 | 5.6.2 | `CREATE SCHEMA IF NOT EXISTS de_c1_coding_evaluation.gold` | Done (via SQL scripts) |
-| 5.6.3 | Run full Gold pipeline in Databricks | **Pending** |
-| 5.6.4 | Verify Gold schemas and column contracts | **Pending** |
-| 5.6.5 | Verify aggregate sanity reconciliation | **Pending** |
-| 5.6.6 | Verify overwrite idempotency | **Pending** |
-| 5.6.7 | Finalize `GOLD_LAYER_NOTES.md` with validation evidence | Done (static + notebook cells; runtime evidence pending) |
-| 5.6.8 | Document Iteration 6 + acceptance in `ai-prompts/gold-layer.md` | Done (runtime acceptance pending) |
+| 5.6.3 | Run full Gold pipeline in Databricks | Done |
+| 5.6.4 | Verify Gold schemas and column contracts | Done |
+| 5.6.5 | Verify aggregate sanity reconciliation | Done |
+| 5.6.6 | Verify overwrite idempotency | Done |
+| 5.6.7 | Finalize `GOLD_LAYER_NOTES.md` with validation evidence | Done |
+| 5.6.8 | Document Iteration 6 + acceptance in `ai-prompts/gold-layer.md` | Done |
+| 5.6.9 | **Phase 5 Gold ACCEPTED** | **Done** |
+
+---
+
+## Phase 6 — Dashboard
+
+| # | Task | Status |
+|---|------|--------|
+| 6.1 | Inspect repo + Gold contract (`GOLD_LAYER_NOTES.md`, `src/gold/*.sql`) | Done |
+| 6.2 | Create `src/dashboard/dashboard_queries.sql` (10 queries, Gold-only) | Done |
+| 6.3 | Create `src/dashboard/DASHBOARD_GUIDE.md` | Done |
+| 6.4 | Document in `ai-prompts/dashboard.md` | Done |
+| 6.5 | Local/static validation (Gold-only grep, query/guide alignment) | Done |
+| 6.6 | Databricks Serverless — execute all dashboard queries | **Pending** |
 
 ---
 
