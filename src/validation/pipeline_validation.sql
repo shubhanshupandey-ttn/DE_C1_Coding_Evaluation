@@ -29,22 +29,20 @@ FROM (SELECT COUNT(*) AS cnt FROM de_c1_coding_evaluation.bronze.bronze_customer
 CROSS JOIN (SELECT COUNT(*) AS cnt FROM de_c1_coding_evaluation.bronze.bronze_products) p
 CROSS JOIN (SELECT COUNT(*) AS cnt FROM de_c1_coding_evaluation.bronze.bronze_orders) o;
 
--- A2. Bronze required columns present (customers)
+-- A2. Bronze required business columns present (customers) — uses information_schema (DESCRIBE not valid in subquery)
 SELECT
     'bronze_customers_columns' AS check_name,
-    '7 business columns + metadata' AS expected,
+    '7' AS expected,
     CAST(COUNT(*) AS STRING) AS actual,
-    CASE WHEN COUNT(*) >= 7 THEN 'PASS' ELSE 'FAIL' END AS status
-FROM (
-    SELECT col_name
-    FROM (
-        DESCRIBE TABLE de_c1_coding_evaluation.bronze.bronze_customers
-    )
-    WHERE col_name IN (
-        'customer_id', 'customer_name', 'email', 'country',
-        'signup_date', 'customer_segment', 'lifetime_value'
-    )
-) cols;
+    CASE WHEN COUNT(*) = 7 THEN 'PASS' ELSE 'FAIL' END AS status
+FROM system.information_schema.columns
+WHERE table_catalog = 'de_c1_coding_evaluation'
+  AND table_schema = 'bronze'
+  AND table_name = 'bronze_customers'
+  AND column_name IN (
+      'customer_id', 'customer_name', 'email', 'country',
+      'signup_date', 'customer_segment', 'lifetime_value'
+  );
 
 -- A3. Intentional Bronze defects preserved (spot checks — D11/D12 orphans in orders)
 SELECT
@@ -93,13 +91,14 @@ SELECT
 FROM de_c1_coding_evaluation.silver.silver_dq_summary;
 
 -- B3. Intentional DQ failures detected — referential integrity (orders)
+-- silver_dq_summary uses table_name (not entity_name): values are customers | products | orders
 SELECT
     'silver_ri_orders_rows_failed' AS check_name,
     '> 0 (D11/D12 orphans expected)' AS expected,
     CAST(rows_failed AS STRING) AS actual,
     CASE WHEN rows_failed > 0 THEN 'PASS' ELSE 'FAIL' END AS status
 FROM de_c1_coding_evaluation.silver.silver_dq_summary
-WHERE entity_name = 'orders' AND check_category = 'referential_integrity';
+WHERE table_name = 'orders' AND check_category = 'referential_integrity';
 
 -- B4. Intentional DQ failures detected — completeness (customers)
 SELECT
@@ -108,7 +107,7 @@ SELECT
     CAST(rows_failed AS STRING) AS actual,
     CASE WHEN rows_failed = 60 THEN 'PASS' ELSE 'FAIL' END AS status
 FROM de_c1_coding_evaluation.silver.silver_dq_summary
-WHERE entity_name = 'customers' AND check_category = 'completeness';
+WHERE table_name = 'customers' AND check_category = 'completeness';
 
 -- B5. Post-fix referential integrity — no orphan FKs in curated orders
 SELECT

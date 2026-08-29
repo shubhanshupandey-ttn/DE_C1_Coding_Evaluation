@@ -199,3 +199,27 @@ Additionally:
 | Unified SQL validation script | **ADDED** — full execution **REQUIRES DATABRICKS** |
 
 **Overall:** Project implementation is complete and consistent with the frozen Gold contract. Primary remaining work is documentation hygiene, closure artifacts, and executing `pipeline_validation.sql` on Databricks to produce a final machine-readable PASS/FAIL log.
+
+---
+
+## Databricks execution results (2026-08-30)
+
+Operator ran `src/validation/pipeline_validation.sql` on Databricks Serverless.
+
+| # | check_name | status | notes |
+|---|------------|--------|-------|
+| 1 | bronze_row_counts | **PASS** | 1006 / 206 / 5163 |
+| 2 | bronze_customers_columns | **ERROR → FIXED** | `DESCRIBE` in subquery invalid; replaced with `system.information_schema.columns` |
+| 3 | bronze_orphan_customer_ids | **PASS** | 25 (D11) |
+| 4 | bronze_orphan_product_ids | **PASS** | 25 (D12) |
+| 5 | silver_curated_row_counts | **PASS** | 878 / 164 / 3646 |
+| 6 | silver_dq_summary_rows | **PASS** | 13 |
+| 7 | silver_ri_orders_rows_failed | **ERROR → FIXED** | Column is `table_name`, not `entity_name` |
+| 8 | silver_completeness_customers_rows_failed | **ERROR → FIXED** | Column is `table_name`, not `entity_name` |
+| 9 | silver_orphan_product_fks | **PASS** | 0 |
+| 10 | silver_orphan_customer_fks | **PASS** | 0 |
+| 11 | silver_quarantine_non_empty | **PASS** | 1,994 rows (post–RI-alignment run; > 0 confirms defects captured) |
+| 12–21 | Gold reconciliation checks | **PASS** | Revenue 2,708,411.08; quantity 10,899; orders 2,052; segment % = 100% |
+| 22–26 | Dashboard logic checks | **PASS** | Top-10 sort, histogram grain 792, behavioral segments = 3 |
+
+**First run summary:** 20 PASS, 2 SQL errors (queries 2, 7, 8). Fixes applied in `pipeline_validation.sql`. Re-run queries 2, 7, and 8 to confirm **26/26 PASS**.
