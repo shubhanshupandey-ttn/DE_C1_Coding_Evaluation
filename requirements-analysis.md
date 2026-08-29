@@ -40,7 +40,7 @@ The problem is not only to move data between layers, but to demonstrate **cohere
 | Gold | SQL files (`01`–`04`), `create_gold_tables.py`, `GOLD_LAYER_NOTES.md`, `ai-prompts/gold-layer.md` | **Complete** (Databricks validated) |
 | Dashboard | `dashboard_queries.sql`, `DASHBOARD_GUIDE.md`, `ai-prompts/dashboard.md`; Databricks SQL dashboard (3 pages) | **Complete** (Databricks validated) |
 | Pipeline validation | `src/validation/pipeline_validation.sql`, `VALIDATION_REPORT.md`, `ai-prompts/validation.md` | **Complete** (26/26 PASS on Databricks Serverless) |
-| Submission provenance | `ai-prompts/` (incl. `debugging.md`, `verbatim-recoveries.md`), `data/*.csv`, `final-ai-usage-summary.md` | **Complete** |
+| Submission provenance | `ai-prompts/` (numbered prompts 01–35 in phase files), `data/*.csv`, `final-ai-usage-summary.md` | **Complete** |
 | Database | `database/` schema and setup notes | **Not started** |
 | Closure | `debugging-notes.md`, `reflection.md`, `final-ai-usage-summary.md` | **Complete** |
 

@@ -37,19 +37,20 @@ Human/developer review is recorded in `YOUR EVALUATION` / `FINAL DECISION` secti
 
 ---
 
-## 3. Prompt history index
+## 3. Prompt history index (01–35)
 
-| Phase | Detailed prompt file | Main artifacts | Status |
-|-------|---------------------|----------------|--------|
-| Foundation / docs | `ai-prompts/documentation.md` | Root foundation docs | Complete |
-| Data generation | `ai-prompts/data-generation.md` | `generate_sample_data.py`, `data/*.csv` | Complete |
-| Bronze | `ai-prompts/bronze-layer.md` | `src/bronze/*` | Complete — ACCEPTED |
-| Silver | `ai-prompts/silver-layer.md` | `src/silver/*`, DQ/quarantine | Complete — ACCEPTED |
-| Gold | `ai-prompts/gold-layer.md` | `src/gold/*` | Complete — ACCEPTED |
-| Dashboard | `ai-prompts/dashboard.md` | `src/dashboard/*` | Complete — ACCEPTED |
-| Debugging (consolidated) | `ai-prompts/debugging.md` | Cross-ref to layer files | Complete |
-| Validation | `ai-prompts/validation.md` | `pipeline_validation.sql`, `VALIDATION_REPORT.md` | Complete — 26/26 PASS |
-| Verbatim recoveries (supplement) | `ai-prompts/verbatim-recoveries.md` | Long-form prompts recovered at closure | Supplement only |
+Full prompt text and results are in **phase files only**. See the index table at the top of `ai-prompts/documentation.md`.
+
+| File | Prompts |
+|------|---------|
+| `documentation.md` | 01–03, 24, 31–35 |
+| `data-generation.md` | 04 |
+| `bronze-layer.md` | 05–06, 25 |
+| `silver-layer.md` | 07–13, 26–28 |
+| `gold-layer.md` | 14–20, 29 |
+| `dashboard.md` | 21–23, 30 |
+| `debugging.md` | Cross-reference for fixes (not numbered prompts) |
+| `validation.md` | Points to Prompt 24 |
 
 ---
 
@@ -113,10 +114,9 @@ AI output was reviewed against:
 
 ## 8. Debugging
 
-**Consolidated index:** `ai-prompts/debugging.md`  
+**Consolidated index:** `ai-prompts/debugging.md` (14 items; references Prompts 04–06, 09–13, 20, 22, 24)  
 **Chronological log:** `debugging-notes.md`  
-**Original prompts where preserved:** `bronze-layer.md` Prompt 2, `dashboard.md` Iteration 2  
-**Recovered verbatim:** `verbatim-recoveries.md` (RI alignment, validation review, etc.)
+**Numbered debugging prompts:** Prompt 06 (Bronze Spark), Prompt 13 (Silver RI), Prompt 22 (Dashboard schema)
 
 ---
 
@@ -162,7 +162,7 @@ AI prompt (Phase 2) → generate_sample_data.py → data/*.csv
 | Silver | DQ + quarantine + curated | `silver_*`, quarantine, DQ summary | Databricks DQ evidence; 0 orphan FKs post–RI |
 | Gold | Aggregations | 4 Gold tables | Reconciliation + idempotency |
 | Dashboard | Gold-only analytics SQL | `dashboard_queries.sql`, 3 UI pages | Static review + checks 22–26 |
-| Validation | End-to-end SQL suite | `pipeline_validation.sql` | **26/26 PASS** |
+| Validation (Prompt 24) | End-to-end SQL suite | `pipeline_validation.sql` | **26/26 PASS** |
 
 ---
 
@@ -170,14 +170,11 @@ AI prompt (Phase 2) → generate_sample_data.py → data/*.csv
 
 | Gap | Status |
 |-----|--------|
-| Phase 2–6 long-form prompts originally filed as **faithful summaries** in phase files | **Supplemented** by `verbatim-recoveries.md` (recovered 2026-08-30) |
-| `ai-prompts/debugging.md` did not exist during implementation | **Created at closure** as consolidation (cross-references originals) |
-| Validation operator re-run prompt (3 SQL fixes) | **Not preserved** — fixes documented in `validation.md` + git `1965d50` |
-| `candidate-info.md` personal fields | **Complete** |
+| Operational chat messages (git, notebook cells, short confirmations) | Not separate prompts; outcomes in phase files / `debugging.md` |
+| Validation SQL fix follow-up (3 checks) | Documented under Prompt 24 + `debugging.md` Debug 12–13 |
 | `database/` setup | **Not implemented** |
-| Original kickoff (Aug 21) | Recovered in `verbatim-recoveries.md`; Phase 1 prompts also in `documentation.md` |
 
-**Rule applied:** No reconstructed prompts are labeled as verbatim unless sourced from recovery file or existing `PROMPT SENT` blocks.
+**Coverage rule:** Prompts 01–35 have full **PROMPT SENT** text in phase files.
 
 ---
 

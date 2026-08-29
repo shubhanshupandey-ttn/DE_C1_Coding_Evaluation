@@ -27,7 +27,7 @@ Concise chronological log of non-trivial debugging during `DE_C1_Coding_Evaluati
 | **Resolution** | `resolve_spark()`, `run_ingestion(..., spark=spark)`; notebook guidance |
 | **Files** | `bronze_common.py`, `ingest_all.py`, `BRONZE_LAYER_NOTES.md` |
 | **Validation** | Databricks row counts 1,006 / 206 / 5,163; defects preserved |
-| **Prompt** | `ai-prompts/bronze-layer.md` Prompt 2 |
+| **Prompt** | Prompt 06 in `ai-prompts/bronze-layer.md` |
 
 ---
 
@@ -40,7 +40,7 @@ Concise chronological log of non-trivial debugging during `DE_C1_Coding_Evaluati
 | **Resolution** | DataFrame-only patterns; `try_to_date`; `when`+`rlike` casts; partitioned windows |
 | **Files** | `src/silver/*.py` |
 | **Validation** | Completeness/uniqueness/type checks PASS with exact defect counts |
-| **Prompt** | `ai-prompts/silver-layer.md` Iteration 2 |
+| **Prompt** | Prompt 09 in `ai-prompts/silver-layer.md` |
 
 ---
 
@@ -54,11 +54,11 @@ Concise chronological log of non-trivial debugging during `DE_C1_Coding_Evaluati
 | **Resolution** | `curated_eligible_parent_keys_df()`; DQ order 05 before 04; `SERVERLESS_COMPAT_VERSION = 10` |
 | **Files** | `silver_common.py`, `04_quality_referential_integrity.py`, `06_write_dq_results.py`, `create_silver_tables.py` |
 | **Validation** | 0 orphan FKs; orders 3,646; Gold revenue 2,708,411.08 reconciles |
-| **Prompt** | `verbatim-recoveries.md` key `silver-ri-alignment` |
+| **Prompt** | Prompt 13 in `ai-prompts/silver-layer.md` |
 
 ---
 
-## 5. Gold — notebook module loading (Iteration 6)
+## 5. Gold — notebook module loading (Prompt 20)
 
 | Field | Detail |
 |-------|--------|
@@ -66,6 +66,7 @@ Concise chronological log of non-trivial debugging during `DE_C1_Coding_Evaluati
 | **Symptom** | `AttributeError` without `sys.modules` registration |
 | **Resolution** | Register module before `exec_module` (documented cells) |
 | **Validation** | `run_gold_pipeline`, `validate_gold_pipeline`, idempotency PASS |
+| **Prompt** | Prompt 20 in `ai-prompts/gold-layer.md` |
 
 ---
 
@@ -76,7 +77,7 @@ Concise chronological log of non-trivial debugging during `DE_C1_Coding_Evaluati
 | **Issue** | Databricks error `order_count` on `gold_sales_by_product` |
 | **Investigation** | Repo SQL had no such reference; `order_count` valid only on trends table |
 | **Resolution** | Schema contract comments in SQL + guide (no logic change) |
-| **Prompt** | `ai-prompts/dashboard.md` Iteration 2 |
+| **Prompt** | Prompt 22 in `ai-prompts/dashboard.md` |
 
 ---
 

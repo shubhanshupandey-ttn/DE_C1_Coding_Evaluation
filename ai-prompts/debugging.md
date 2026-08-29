@@ -2,13 +2,15 @@
 
 Cross-reference artifact for debugging iterations across the project. **Not every item below originated as a standalone debugging prompt** — some were documented inside phase-specific `ai-prompts/<layer>.md` files during implementation.
 
-**Related detailed history:** `bronze-layer.md` (Prompt 2), `silver-layer.md` (Iteration 2 Serverless fixes, RI alignment), `dashboard.md` (Iteration 2), `validation.md` (SQL corrections).
+**Numbered prompt reference:** Prompts **01–35** in phase `ai-prompts/*.md` files (index at top of `documentation.md`).
 
 ---
 
 ## Debug 1 — Bronze local dry-run without PySpark
 
 **TYPE:** Correction (discovered during local validation)
+
+**RELATED PROMPT:** Prompt 05 (`bronze-layer.md`)
 
 **SOURCE:** `ai-prompts/bronze-layer.md` § Iteration / Refinement Evidence (no standalone PROMPT SENT)
 
@@ -30,6 +32,8 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 **TYPE:** Correction (draft fix before validation)
 
+**RELATED PROMPT:** Prompt 05 (`bronze-layer.md`)
+
 **SOURCE:** `ai-prompts/bronze-layer.md` § Iteration / Refinement Evidence
 
 **SYMPTOM:** Indentation error in dry-run print logic.
@@ -44,9 +48,9 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 **TYPE:** Debugging
 
-**ORIGINAL PROMPT LOCATION:** `ai-prompts/bronze-layer.md` — **Prompt 2** (verbatim error context preserved)
+**RELATED PROMPT:** **Prompt 06** (`bronze-layer.md`)
 
-**PROMPT SENT (excerpt — full text in bronze-layer.md):**
+**PROMPT SENT (excerpt — full text in Prompt 06):**
 
 > User ran Bronze ingest on Databricks using `!python .../ingest_all.py` with catalog `de_c1_coding_evaluation`, schema `bronze`, write mode `overwrite`.
 >
@@ -70,7 +74,9 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 **TYPE:** Debugging / compatibility
 
-**SOURCE:** `ai-prompts/silver-layer.md` — Iteration 2 § Serverless compatibility
+**RELATED PROMPT:** Prompt 09 (`silver-layer.md`)
+
+**SOURCE:** `ai-prompts/silver-layer.md` — Prompt 09 § Serverless compatibility
 
 **SYMPTOM:** RDD API blocked on Databricks Serverless.
 
@@ -88,7 +94,9 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 **TYPE:** Debugging
 
-**SOURCE:** `ai-prompts/silver-layer.md` — Iteration 2
+**RELATED PROMPT:** Prompt 09 (`silver-layer.md`)
+
+**SOURCE:** `ai-prompts/silver-layer.md` — Prompt 09
 
 **SYMPTOM:** Failure builder v3 produced false 100% completeness failures (~7× row inflation) on Spark Connect.
 
@@ -102,7 +110,9 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 **TYPE:** Debugging
 
-**SOURCE:** `ai-prompts/silver-layer.md` — Iteration 2
+**RELATED PROMPT:** Prompt 09 (`silver-layer.md`)
+
+**SOURCE:** `ai-prompts/silver-layer.md` — Prompt 09
 
 **SYMPTOM:** `to_date('NOT-A-DATE')` throws under ANSI SQL.
 
@@ -116,7 +126,9 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 **TYPE:** Debugging
 
-**SOURCE:** `ai-prompts/silver-layer.md` — Iteration 2
+**RELATED PROMPT:** Prompt 09 (`silver-layer.md`)
+
+**SOURCE:** `ai-prompts/silver-layer.md` — Prompt 09
 
 **SYMPTOM:** `F.try_cast` not available in notebook PySpark bindings.
 
@@ -130,7 +142,9 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 **TYPE:** Correction
 
-**SOURCE:** `ai-prompts/silver-layer.md` — Iteration 4
+**RELATED PROMPT:** Prompt 11 (`silver-layer.md`)
+
+**SOURCE:** `ai-prompts/silver-layer.md` — Prompt 11
 
 **SYMPTOM:** Deprecation warning in Databricks notebook.
 
@@ -144,7 +158,7 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 **TYPE:** Correction (architectural)
 
-**ORIGINAL PROMPT:** Recovered verbatim in `ai-prompts/verbatim-recoveries.md` — recovery key `silver-ri-alignment`. Summary also in `ai-prompts/silver-layer.md` § RI Alignment Fix.
+**RELATED PROMPT:** **Prompt 13** (`silver-layer.md` — full **PROMPT SENT**)
 
 **SYMPTOM:** Gold validation exposed order FKs in `silver_orders` referencing customers/products not present in curated dimension tables (RI parents used `canonical_valid_filter()` without uniqueness/business-logic gates).
 
@@ -162,7 +176,9 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 **TYPE:** Debugging (Databricks notebook pattern)
 
-**SOURCE:** `ai-prompts/gold-layer.md` Iteration 6; notebook cells in `silver-layer.md` / `GOLD_LAYER_NOTES.md`
+**RELATED PROMPT:** Prompt 20 (`gold-layer.md`); notebook cells in `silver-layer.md` Prompt 13
+
+**SOURCE:** `ai-prompts/gold-layer.md` Prompt 20; notebook cells in `silver-layer.md` / `GOLD_LAYER_NOTES.md`
 
 **SYMPTOM:** `AttributeError` when loading `create_gold_tables.py` via `importlib` without pre-registering in `sys.modules`.
 
@@ -178,7 +194,7 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 **TYPE:** Validation / schema clarification
 
-**ORIGINAL PROMPT LOCATION:** `ai-prompts/dashboard.md` — Iteration 2 (verbatim error context)
+**RELATED PROMPT:** **Prompt 22** (`dashboard.md`)
 
 **SYMPTOM:** Databricks reported `UNRESOLVED_COLUMN: order_count` against `gold_sales_by_product`.
 
@@ -194,7 +210,7 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 **TYPE:** Validation correction
 
-**SOURCE:** `ai-prompts/validation.md` — Prompt 2
+**RELATED PROMPT:** Prompt 24 follow-up (`documentation.md`; details in `validation.md` index)
 
 **SYMPTOM:** `bronze_customers_columns` — `PARSE_SYNTAX_ERROR` on Databricks SQL.
 
@@ -212,7 +228,7 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 **TYPE:** Validation correction
 
-**SOURCE:** `ai-prompts/validation.md` — Prompt 2
+**RELATED PROMPT:** Prompt 24 follow-up (`documentation.md`; details in `validation.md` index)
 
 **SYMPTOM:** `silver_ri_orders_rows_failed` and `silver_completeness_customers_rows_failed` — column `entity_name` not found.
 
@@ -230,6 +246,8 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 **TYPE:** Correction (Phase 2 validation)
 
+**RELATED PROMPT:** Prompt 04 (`data-generation.md`)
+
 **SOURCE:** `ai-prompts/data-generation.md`
 
 **SYMPTOM:** Initial duplicate defect count reported 3 instead of 6.
@@ -246,6 +264,6 @@ Cross-reference artifact for debugging iterations across the project. **Not ever
 
 | Issue | Documented in |
 |-------|----------------|
-| Silver global window warning (uniqueness) | `silver-layer.md` Iteration 2 |
-| Silver `parse_int_string` accidental removal (Iter 3) | `silver-layer.md` Iteration 3 |
-| Quarantine vs summary metric semantics | `silver-layer.md` Iterations 4–5 |
+| Silver global window warning (uniqueness) | `silver-layer.md` Prompt 09 |
+| Silver `parse_int_string` accidental removal (Prompt 10) | `silver-layer.md` Prompt 10 |
+| Quarantine vs summary metric semantics | `silver-layer.md` Prompts 11–12 |

@@ -155,7 +155,7 @@ Additionally:
 | `reflection.md` | **Complete** |
 | `debugging-notes.md` | **Complete** |
 | `final-ai-usage-summary.md` | **Complete** |
-| `ai-prompts/debugging.md`, `ai-prompts/validation.md`, `verbatim-recoveries.md` | **Complete** (submission closure) |
+| `ai-prompts/debugging.md`, `ai-prompts/validation.md` | **Complete** (submission closure) |
 | `database/` | **Still missing** (listed in requirements; optional for evaluator) |
 | `task-breakdown.md` | **Resolved** — Phase 6.7 documents 26/26 PASS |
 
