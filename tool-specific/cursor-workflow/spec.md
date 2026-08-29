@@ -101,7 +101,7 @@ Recorded in `DATA_GENERATION_NOTES.md` and Phase 2 implementation report.
 
 # Specification — Phase 4 Silver (Iteration 1 — Design Finalized)
 
-**Status:** Design finalized (Iteration 1b). **No Silver Python implementation yet.**
+**Status:** Design finalized and **implemented** (Silver Iterations 1–5 + RI alignment `SERVERLESS_COMPAT_VERSION = 10`). See `ai-prompts/silver-layer.md` and `SILVER_LAYER_NOTES.md`.
 
 ## Objective
 
@@ -133,10 +133,11 @@ Transform Bronze Delta tables into curated, typed Silver tables with five DQ cat
 ## Iteration Plan
 
 1. **Iteration 1 + 1b:** Design + resolve open decisions — **complete**
-2. Iteration 2: Types, completeness, uniqueness — **not started**
-3. Iteration 3: Type validation, FK, business logic — pending
-4. Iteration 4: Quarantine + DQ summary — pending
-5. Iteration 5: Orchestration + Databricks validation — pending
+2. Iteration 2: Types, completeness, uniqueness — **complete**
+3. Iteration 3: Type validation, FK, business logic — **complete**
+4. Iteration 4: Quarantine + DQ summary — **complete**
+5. Iteration 5: Orchestration + Databricks validation — **complete**
+6. RI alignment: Curated parent keys — **complete** (`SERVERLESS_COMPAT_VERSION = 10`)
 
 See `src/silver/SILVER_LAYER_NOTES.md` and `tool-specific/cursor-workflow/task-breakdown.md`.
 

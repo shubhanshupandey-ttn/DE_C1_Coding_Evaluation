@@ -19,8 +19,8 @@
 | Dashboard | `src/dashboard/dashboard_queries.sql`, `DASHBOARD_GUIDE.md` | Complete |
 | AI prompt history | `ai-prompts/*.md` | Present per phase |
 | **Validation SQL** | `src/validation/pipeline_validation.sql` | **Added (this review)** |
-| Closure artifacts | `reflection.md` | Placeholder only |
-| Missing per requirements | `database/`, `debugging-notes.md`, `final-ai-usage-summary.md` | Not created |
+| Closure artifacts | `reflection.md`, `final-ai-usage-summary.md`, `debugging-notes.md`, `candidate-info.md` | Complete |
+| Missing per requirements | `database/` | Not created |
 
 ---
 
@@ -148,17 +148,18 @@ Additionally:
 
 | Document | Issue |
 |----------|-------|
-| `README.md` | Status table stale (Silver/Gold/Dashboard marked "Not started"); missing Silver/Gold/Dashboard run instructions |
-| `requirements-analysis.md` | Phase status table stale; closure artifacts still "Not started" |
-| `data-quality-strategy.md` | Header still says Silver checks "planned but not yet implemented" |
-| `candidate-info.md` | Setup table stale |
-| `reflection.md` | Placeholder only |
-| `debugging-notes.md` | Missing (listed in README tree) |
-| `final-ai-usage-summary.md` | Missing (closure requirement) |
-| `database/` | Missing (listed in requirements) |
-| `task-breakdown.md` | Phase 6 task 6.6 still "Pending" until Databricks SQL validation script run |
+| `README.md` | **Resolved** — phases, run instructions, provenance section current |
+| `requirements-analysis.md` | **Resolved** — phase status and closure artifacts current |
+| `data-quality-strategy.md` | **Resolved** — Silver checks marked implemented |
+| `candidate-info.md` | **Resolved** — candidate details and setup table complete |
+| `reflection.md` | **Complete** |
+| `debugging-notes.md` | **Complete** |
+| `final-ai-usage-summary.md` | **Complete** |
+| `ai-prompts/debugging.md`, `ai-prompts/validation.md`, `verbatim-recoveries.md` | **Complete** (submission closure) |
+| `database/` | **Still missing** (listed in requirements; optional for evaluator) |
+| `task-breakdown.md` | **Resolved** — Phase 6.7 documents 26/26 PASS |
 
-**Implementation vs docs:** Pipeline code is substantially complete; root-level status docs were not updated through Phases 4–6.
+**Remaining optional gap:** `database/` schema/setup notes only.
 
 ---
 
@@ -170,9 +171,10 @@ Additionally:
 | `DASHBOARD_GUIDE.md` | requirements | **Present** |
 | `ai-prompts/dashboard.md` | tool-workflow | **Present** |
 | `database/` setup | requirements-analysis | **Missing** |
-| `debugging-notes.md` | README / closure | **Missing** |
-| `final-ai-usage-summary.md` | requirements closure | **Missing** |
-| `reflection.md` (completed) | closure | **Placeholder** |
+| `debugging-notes.md` | README / closure | **Complete** |
+| `final-ai-usage-summary.md` | requirements closure | **Complete** |
+| `ai-prompts/debugging.md`, `ai-prompts/validation.md` | tool-workflow / provenance | **Complete** |
+| `reflection.md` (completed) | closure | **Complete** |
 | Unified validation SQL | This review | **Added** |
 
 ---
@@ -182,7 +184,7 @@ Additionally:
 1. **Run** `src/validation/pipeline_validation.sql` on Databricks Serverless and archive results alongside this report.
 2. **Update** `README.md` and `requirements-analysis.md` phase status tables (documentation only — no pipeline changes).
 3. **Update** `data-quality-strategy.md` header to reflect implemented Silver checks.
-4. **Complete** closure artifacts: `reflection.md`, `final-ai-usage-summary.md` (and `debugging-notes.md` if non-trivial issues occurred).
+4. **Complete** closure artifacts: `reflection.md`, `final-ai-usage-summary.md`, `debugging-notes.md`, `ai-prompts/debugging.md`, `ai-prompts/validation.md` — **done** (2026-08-30 submission closure).
 5. **Optional:** Add `database/` schema notes if still required by evaluator.
 6. **Do not** modify Bronze/Silver/Gold SQL or dashboard queries unless a concrete FAIL emerges from step 1.
 
@@ -196,9 +198,9 @@ Additionally:
 | Silver DQ | **PASS** (documented Databricks evidence; intentional defects detected) |
 | Gold | **PASS** (accepted; reconciliation documented) |
 | Dashboard | **PASS** (static Gold-only review + operator Databricks visual validation) |
-| Unified SQL validation script | **ADDED** — full execution **REQUIRES DATABRICKS** |
+| Unified SQL validation script | **26/26 PASS** on Databricks Serverless (2026-08-30) |
 
-**Overall:** Project implementation is complete and consistent with the frozen Gold contract. Primary remaining work is documentation hygiene, closure artifacts, and executing `pipeline_validation.sql` on Databricks to produce a final machine-readable PASS/FAIL log.
+**Overall:** Project implementation is complete and consistent with the frozen Gold contract. Documentation and submission provenance artifacts are complete. Optional remaining item: `database/` if still required by evaluator.
 
 ---
 
@@ -222,4 +224,16 @@ Operator ran `src/validation/pipeline_validation.sql` on Databricks Serverless.
 | 12–21 | Gold reconciliation checks | **PASS** | Revenue 2,708,411.08; quantity 10,899; orders 2,052; segment % = 100% |
 | 22–26 | Dashboard logic checks | **PASS** | Top-10 sort, histogram grain 792, behavioral segments = 3 |
 
-**First run summary:** 20 PASS, 2 SQL errors (queries 2, 7, 8). Fixes applied in `pipeline_validation.sql`. Re-run queries 2, 7, and 8 to confirm **26/26 PASS**.
+**First run summary:** 20 PASS, 3 SQL errors (queries 2, 7, 8). Fixes applied in `pipeline_validation.sql`.
+
+**Re-run (2026-08-30) — revised queries 27–29:**
+
+| check_name | expected | actual | status |
+|------------|----------|--------|--------|
+| `bronze_customers_columns` | 7 | 7 | **PASS** |
+| `silver_ri_orders_rows_failed` | > 0 | 1,405 | **PASS** |
+| `silver_completeness_customers_rows_failed` | 60 | 60 | **PASS** |
+
+**Final validation status: 26 / 26 PASS** (all checks in `pipeline_validation.sql`).
+
+**Note:** RI `rows_failed = 1,405` (distinct failed order rows) differs from older quarantine-oriented counts in `SILVER_LAYER_NOTES.md` (1,029) due to post–RI-alignment DQ execution; `> 0` confirms intentional D11/D12 defects are detected.

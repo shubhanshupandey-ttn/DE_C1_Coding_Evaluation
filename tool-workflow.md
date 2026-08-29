@@ -95,7 +95,7 @@ Documentation is **continuous**, not a final cleanup task.
 | Bronze | `BRONZE_LAYER_NOTES.md` |
 | Silver / Gold | Design notes, quality strategy, layer-specific notes as needed |
 | Dashboard | `DASHBOARD_GUIDE.md` |
-| Project close | `reflection.md`, `final-ai-usage-summary.md` |
+| Project close | `reflection.md`, `final-ai-usage-summary.md`, `debugging-notes.md`, `ai-prompts/debugging.md`, `ai-prompts/validation.md` |
 
 Docs must describe **actual implementation**. If behavior changes, update docs in the same change set.
 
@@ -124,4 +124,4 @@ After each milestone: inspect `git status`, ensure prompt and doc files are incl
 |------|--------|
 | Workflow documented (this file) | Complete |
 | Prompt artifact convention established | Complete (`ai-prompts/documentation.md`) |
-| Implementation phases using this workflow | Data generation and Bronze complete; Silver+ not started |
+| Implementation phases using this workflow | Phases 2–6 complete; validation **26/26 PASS**; closure docs complete |

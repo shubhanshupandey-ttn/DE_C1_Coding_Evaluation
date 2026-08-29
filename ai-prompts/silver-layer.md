@@ -673,6 +673,12 @@ Full Silver pipeline validated on Databricks Serverless. Curated row counts (878
 
 ## RI Alignment Fix — Curated Parent Keys (`SERVERLESS_COMPAT_VERSION = 10`)
 
+**TYPE:** Correction / implementation
+
+**PROMPT SENT — VERBATIM (recovered):**
+
+> Full text: `ai-prompts/verbatim-recoveries.md` — recovery key `silver-ri-alignment`.
+
 **Context:** Gold Iteration 6 Databricks validation exposed order FKs in `silver_orders` that were absent from curated `silver_customers` / `silver_products` because RI used `canonical_valid_filter()` parents while curated dimensions used full `filter_valid_rows()`.
 
 **Implementation:**

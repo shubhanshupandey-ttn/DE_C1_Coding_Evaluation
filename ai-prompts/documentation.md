@@ -6,7 +6,7 @@ Prompt history for **documentation phases**. Each major activity should follow t
 - **AI RESPONSE SUMMARY** — what the AI produced
 - **YOUR EVALUATION** — what was accepted, changed, or rejected (and why)
 
-Related files: `ai-prompts/data-generation.md`, `bronze-layer.md`, `silver-layer.md`, `gold-layer.md`, `dashboard.md`, `debugging.md`.
+Related files: `ai-prompts/data-generation.md`, `bronze-layer.md`, `silver-layer.md`, `gold-layer.md`, `dashboard.md`, `debugging.md`, `validation.md`, `verbatim-recoveries.md`.
 
 ---
 
@@ -64,16 +64,48 @@ Restructured foundation docs to match submission section layouts (Problem Statem
 
 **YOUR EVALUATION:**
 
-_To be completed by developer after review._
-
 - ✓ **Accept** template-aligned structure
-- △ **Change** — [note any edits]
-- ✗ **Reject** — [note if reverting sections]
+- Foundation docs match submission template sections without claiming unimplemented work
 
-**FINAL DECISION:** _Pending developer review._
+**FINAL DECISION:** **ACCEPTED** — template alignment retained as project baseline.
+
+---
+
+## Prompt 4 — README / requirements update (post-validation)
+
+**TYPE:** Documentation / closure
+
+**PROMPT SENT — VERBATIM (recovered):**
+
+> See `ai-prompts/verbatim-recoveries.md` — recovery key `readme-requirements-update`.
+
+**AI RESPONSE SUMMARY:**
+
+- Updated `README.md` and `requirements-analysis.md` to reflect Phases 2–6 complete and **26/26 PASS** validation
+- No pipeline or dashboard code changes
+
+**FINAL DECISION:** ACCEPTED
+
+---
+
+## Prompt 5 — Submission closure (prompt history & provenance)
+
+**TYPE:** Closure / documentation
+
+**PROMPT SENT — VERBATIM (recovered):**
+
+> See `ai-prompts/verbatim-recoveries.md` — recovery key `submission-closure-step4`.
+
+**AI RESPONSE SUMMARY:**
+
+- Created `ai-prompts/debugging.md`, `ai-prompts/validation.md`, `ai-prompts/verbatim-recoveries.md`
+- Created `final-ai-usage-summary.md`, `debugging-notes.md`; completed `reflection.md`
+- Updated stale workflow/status documentation
+
+**FINAL DECISION:** ACCEPTED (closure artifacts)
 
 ---
 
 ## Future documentation prompts
 
-Add new sections below as docs are updated (e.g., after data generation revises `data-model.md`).
+Add new sections below if post-submission documentation changes occur.

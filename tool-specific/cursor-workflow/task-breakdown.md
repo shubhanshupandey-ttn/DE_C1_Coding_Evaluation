@@ -207,7 +207,7 @@
 | 6.4 | Document in `ai-prompts/dashboard.md` | Done |
 | 6.5 | Local/static validation (Gold-only grep, query/guide alignment) | Done |
 | 6.6 | Databricks Serverless — execute all dashboard queries | Done (operator visual validation) |
-| 6.7 | Final validation review + `src/validation/pipeline_validation.sql` | Done |
+| 6.7 | Final validation review + `src/validation/pipeline_validation.sql` | Done — **26/26 PASS** on Databricks |
 
 ---
 

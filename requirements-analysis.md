@@ -6,7 +6,7 @@ Build an **e-commerce-style sales analytics data pipeline** on Databricks using 
 
 The problem is not only to move data between layers, but to demonstrate **coherent data engineering practice**: consistent modeling, traceable quality rules, incremental delivery, and documented AI-assisted development.
 
-**Current status:** Phase 2 (data generation) and Phase 3 (Bronze ingestion) are **complete**. Silver and later layers are **not started**.
+**Current status:** Phases 2–6 (data generation through dashboard) are **complete and Databricks-validated**. End-to-end pipeline validation (`src/validation/pipeline_validation.sql`) is **complete — 26/26 PASS** on Databricks Serverless. Submission provenance artifacts (`ai-prompts/`, `data/`, `final-ai-usage-summary.md`, `reflection.md`, `debugging-notes.md`) are **complete**. `database/` remains **not implemented**.
 
 ---
 
@@ -35,11 +35,14 @@ The problem is not only to move data between layers, but to demonstrate **cohere
 | Phase | Deliverables | Status |
 |-------|--------------|--------|
 | Data generation | `generate_sample_data.py`, `DATA_GENERATION_NOTES.md`, `ai-prompts/data-generation.md`, `data/*.csv` | **Complete** |
-| Bronze | Ingest scripts, `ingest_all.py`, `BRONZE_LAYER_NOTES.md`, `ai-prompts/bronze-layer.md` | **Complete** |
-| Silver | Quality modules, `create_silver_tables.py`, updated `data-quality-strategy.md` | Not started |
-| Gold | SQL files, `create_gold_tables.py`, `ai-prompts/gold-layer.md` | Not started |
-| Dashboard | `dashboard_queries.sql`, `DASHBOARD_GUIDE.md` | Not started |
-| Closure | `debugging-notes.md`, `reflection.md`, `final-ai-usage-summary.md` | Not started |
+| Bronze | Ingest scripts, `ingest_all.py`, `BRONZE_LAYER_NOTES.md`, `ai-prompts/bronze-layer.md` | **Complete** (Databricks validated) |
+| Silver | Quality modules (`01`–`05`), quarantine/DQ summary (`06`), `create_silver_tables.py`, `SILVER_LAYER_NOTES.md`, `ai-prompts/silver-layer.md` | **Complete** (Databricks validated) |
+| Gold | SQL files (`01`–`04`), `create_gold_tables.py`, `GOLD_LAYER_NOTES.md`, `ai-prompts/gold-layer.md` | **Complete** (Databricks validated) |
+| Dashboard | `dashboard_queries.sql`, `DASHBOARD_GUIDE.md`, `ai-prompts/dashboard.md`; Databricks SQL dashboard (3 pages) | **Complete** (Databricks validated) |
+| Pipeline validation | `src/validation/pipeline_validation.sql`, `VALIDATION_REPORT.md`, `ai-prompts/validation.md` | **Complete** (26/26 PASS on Databricks Serverless) |
+| Submission provenance | `ai-prompts/` (incl. `debugging.md`, `verbatim-recoveries.md`), `data/*.csv`, `final-ai-usage-summary.md` | **Complete** |
+| Database | `database/` schema and setup notes | **Not started** |
+| Closure | `debugging-notes.md`, `reflection.md`, `final-ai-usage-summary.md` | **Complete** |
 
 ---
 
@@ -47,14 +50,14 @@ The problem is not only to move data between layers, but to demonstrate **cohere
 
 | ID | Requirement | Status |
 |----|-------------|--------|
-| NFR-01 | **Consistency** — Same entities and relationships across data, Bronze, Silver, Gold, and dashboard | Required |
-| NFR-02 | **Maintainability** — Readable, modular Python/SQL; layer separation | Required |
-| NFR-03 | **Security** — No hardcoded credentials, tokens, or secrets in repo | Required |
-| NFR-04 | **Traceability** — AI prompts and design decisions preserved in `ai-prompts/` and docs | Required |
-| NFR-05 | **Documentation** — Docs updated alongside implementation, not deferred to project end | Required |
-| NFR-06 | **Databricks alignment** — Lakehouse/medallion patterns (Delta, PySpark where applicable) | Planned |
-| NFR-07 | **Reproducibility** — Pipeline runnable from documented steps in target environment | Data generation reproducible via `--seed` (verified) |
-| NFR-08 | **Performance / scale** — Appropriate for assessment/demo dataset sizes | Default: 1,006 customers, 206 products, 5,163 order lines |
+| NFR-01 | **Consistency** — Same entities and relationships across data, Bronze, Silver, Gold, and dashboard | **Met** — validated via `pipeline_validation.sql` reconciliation checks |
+| NFR-02 | **Maintainability** — Readable, modular Python/SQL; layer separation | **Met** |
+| NFR-03 | **Security** — No hardcoded credentials, tokens, or secrets in repo | **Met** |
+| NFR-04 | **Traceability** — AI prompts and design decisions preserved in `ai-prompts/` and docs | **Met** (per-phase prompt artifacts) |
+| NFR-05 | **Documentation** — Docs updated alongside implementation, not deferred to project end | **Mostly met** — layer notes and validation report complete; some root docs updated at project close |
+| NFR-06 | **Databricks alignment** — Lakehouse/medallion patterns (Delta, PySpark where applicable) | **Met** — Unity Catalog `de_c1_coding_evaluation`; Delta tables; Serverless validated |
+| NFR-07 | **Reproducibility** — Pipeline runnable from documented steps in target environment | **Met** — data generation via `--seed`; layer orchestration documented in `*_LAYER_NOTES.md` |
+| NFR-08 | **Performance / scale** — Appropriate for assessment/demo dataset sizes | **Met** — default: 1,006 customers, 206 products, 5,163 order lines |
 
 ---
 
@@ -62,7 +65,7 @@ The problem is not only to move data between layers, but to demonstrate **cohere
 
 - Sample data is **generated locally or in Databricks**, not sourced from production systems
 - Domain is simplified retail/e-commerce: customers place orders that reference products
-- **Delta Lake** is the expected table format on Databricks (to be confirmed during implementation)
+- **Delta Lake** is the table format on Databricks (implemented)
 - Single-currency, batch processing unless scope is explicitly expanded later
 - Developer reviews all AI-generated code and documentation before acceptance
 - Repository root (`DE_C1_Coding_Evaluation`) is the project root (no nested project folder)
@@ -71,19 +74,19 @@ The problem is not only to move data between layers, but to demonstrate **cohere
 
 ## Edge Cases
 
-_Validated during Phase 2 data generation; Silver handling TBD._
+_Validated during Phase 2 data generation; Silver handling implemented and Databricks-validated._
 
-| Edge case | Sample data evidence | Expected Silver handling |
-|-----------|---------------------|--------------------------|
+| Edge case | Sample data evidence | Silver handling |
+|-----------|---------------------|-----------------|
 | NULL or empty required fields | D01, D02, D07 | Completeness → quarantine |
 | Duplicate business keys | D03, D08, D16 | Uniqueness → quarantine |
-| Invalid data types / formats | D04, D05, D09, D13 | Type validation → reject/quarantine |
-| Orphan FK on orders | D11, D12 | Referential integrity → quarantine |
+| Invalid data types / formats | D04, D05, D09, D13 | Type validation → quarantine |
+| Orphan FK on orders | D11, D12 | Referential integrity → quarantine (detected; curated orders exclude orphans post–RI alignment) |
 | Invalid business values | D06, D10, D14, D15, D17 | Business logic → quarantine |
-| Re-running ingestion idempotently | Bronze design TBD | — |
-| Partial pipeline failure mid-layer | Bronze design TBD | — |
+| Re-running ingestion idempotently | Bronze/Silver/Gold | Overwrite per run (documented in layer notes) |
+| Partial pipeline failure mid-layer | — | Not formally orchestrated as a workflow engine; per-layer scripts are idempotent on re-run |
 
-See defect matrix in `src/data_generation/DATA_GENERATION_NOTES.md`.
+See defect matrix in `src/data_generation/DATA_GENERATION_NOTES.md` and DQ evidence in `src/silver/SILVER_LAYER_NOTES.md`.
 
 ---
 
@@ -91,16 +94,16 @@ See defect matrix in `src/data_generation/DATA_GENERATION_NOTES.md`.
 
 | # | Topic | Status |
 |---|-------|--------|
-| 1 | Databricks environment | Open — workspace; Bronze uses `bronze` schema by default |
+| 1 | Databricks environment | **Resolved** — Unity Catalog `de_c1_coding_evaluation`; Serverless validated |
 | 2 | Entity schema | **Resolved (Phase 2)** — see `data-model.md` |
 | 3 | Order granularity | **Resolved (Phase 2)** — line-item model in `orders.csv` |
 | 4 | Sample data volume | **Resolved (Phase 2)** — defaults in `DATA_GENERATION_NOTES.md` |
 | 5 | Intentional quality defects | **Resolved (Phase 2)** — 17 defect types, 328 injections |
-| 6 | DQ thresholds | Open — target % documented; Silver implementation TBD |
-| 7 | Failed record handling | Open — quarantine design at Silver phase |
-| 8 | Gold metric definitions | Open — formulas/grains at Gold phase |
-| 9 | Dashboard target | Open |
-| 10 | Orchestration | Open — notebooks, jobs, bundles |
+| 6 | DQ thresholds | **Resolved (Phase 4)** — implemented in Silver; summary in `silver_dq_summary` |
+| 7 | Failed record handling | **Resolved (Phase 4)** — `silver_quarantine_records` + `silver_dq_summary` |
+| 8 | Gold metric definitions | **Resolved (Phase 5)** — frozen in `GOLD_LAYER_NOTES.md` |
+| 9 | Dashboard target | **Resolved (Phase 6)** — Databricks SQL dashboard; Gold-only `dashboard_queries.sql` |
+| 10 | Orchestration | **Partially resolved** — per-layer Python orchestrators (`ingest_all.py`, `create_silver_tables.py`, `create_gold_tables.py`); no Databricks Jobs/bundles artifact |
 
 ---
 
@@ -112,6 +115,7 @@ See defect matrix in `src/data_generation/DATA_GENERATION_NOTES.md`.
 | `data-model.md` | Logical entities and relationships |
 | `data-quality-strategy.md` | Quality check definitions and thresholds |
 | `tool-workflow.md` | AI-assisted development process |
+| `VALIDATION_REPORT.md` | End-to-end Databricks validation evidence (26/26 PASS) |
 
 ## Out of Scope (Unless Added Later)
 

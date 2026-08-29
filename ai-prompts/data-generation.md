@@ -2,7 +2,7 @@
 
 ## Prompt 1: Phase 2 — Data Generation (Primary)
 
-**PROMPT SENT:**
+**PROMPT SENT — FAITHFUL SUMMARY:**
 
 > Phase 2 DATA GENERATION for `DE_C1_Coding_Evaluation`. Implement only:
 > - `src/data_generation/generate_sample_data.py`
@@ -17,6 +17,8 @@
 >
 > Validate: run generator, verify CSVs, defects, reproducibility. Do not commit. Do not implement Bronze+.
 
+**Verbatim recovery:** Full Phase 2 prompt text — `ai-prompts/verbatim-recoveries.md` (recovery key `phase2-data-generation`).
+
 **AI RESPONSE SUMMARY:**
 
 - Implemented `generate_sample_data.py` with clean generation + defect injection (`DEFECT_COUNTS`)
@@ -27,8 +29,6 @@
 - Fixed duplicate-row injection counts (6 customer/product dup rows) and argparse typo during validation
 
 **YOUR EVALUATION:**
-
-_To be completed by developer._
 
 - ✓ **What was good:**
   - Line-item order model supports multi-product orders and revenue derivation
@@ -45,7 +45,7 @@ _To be completed by developer._
   - Initial duplicate defect count reported 3 instead of 6 — **fixed** in generator
   - Argparse indentation typo — **fixed**
 
-**FINAL DECISION:** _Pending developer review._
+**FINAL DECISION:** **ACCEPTED** — Generator, CSVs, defect matrix, and reproducibility validated (see Validation Log below). Committed datasets: `data/customers.csv` (1,006 rows), `data/products.csv` (206), `data/orders.csv` (5,163); seed **42**.
 
 ---
 

@@ -60,4 +60,9 @@ Implementation output + DATA_GENERATION_NOTES.md + ai-prompts/data-generation.md
 |-------|----------------|
 | Phase 1 foundation | Complete and accepted |
 | Phase 2 data generation | Spec in `spec.md`; implementation complete |
-| Phase 3+ | Awaiting phase prompts |
+| Phase 3 Bronze | Complete — `ai-prompts/bronze-layer.md` |
+| Phase 4 Silver | Complete — `ai-prompts/silver-layer.md` |
+| Phase 5 Gold | Complete — `ai-prompts/gold-layer.md` |
+| Phase 6 Dashboard | Complete — `ai-prompts/dashboard.md` |
+| Validation | Complete — `ai-prompts/validation.md`, **26/26 PASS** |
+| Closure | `final-ai-usage-summary.md`, `reflection.md`, `debugging-notes.md` |

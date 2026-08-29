@@ -8,7 +8,11 @@ Related: `src/dashboard/dashboard_queries.sql`, `src/dashboard/DASHBOARD_GUIDE.m
 
 > Phase 6 Dashboard — consumption layer over frozen Gold. Gold-only SQL, ~8–10 visualization-ready queries, `DASHBOARD_GUIDE.md`, local/static validation. No Bronze/Silver/Gold modifications.
 
-**PROMPT SENT:**
+**PROMPT SENT — VERBATIM (recovered):**
+
+> Full text: `ai-prompts/verbatim-recoveries.md` — recovery key `dashboard-phase6-implementation`.
+
+**PROMPT SENT — FAITHFUL SUMMARY (original filing):**
 
 Full Phase 6 implementation specification (2026-08-27):
 
@@ -140,7 +144,15 @@ Databricks Serverless validation reported `UNRESOLVED_COLUMN: order_count cannot
 
 ## Iteration 3: Evaluation dashboard completion
 
-**PROMPT SENT:** Complete Databricks evaluation dashboard — audit queries, add Top 10 products, customer revenue histogram, behavioral segmentation (High-Value/Repeat/One-Time/Inactive), reorganize SQL into 7 sections, recommend layout.
+**TYPE:** Iteration / finalization
+
+**PROMPT SENT — VERBATIM (recovered):**
+
+> Full text: `ai-prompts/verbatim-recoveries.md` — recovery key `dashboard-evaluation-completion`.
+
+**PROMPT SENT — FAITHFUL SUMMARY (original filing):**
+
+> Complete Databricks evaluation dashboard — audit queries, add Top 10 products, customer revenue histogram, behavioral segmentation (High-Value/Repeat/One-Time/Inactive), reorganize SQL into 7 sections, recommend layout.
 
 **Gold inspection:**
 

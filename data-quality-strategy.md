@@ -1,6 +1,6 @@
 # Data Quality Strategy
 
-Data quality framework for the **Silver layer**, aligned with Phase 2 sample data schemas. Silver checks are **planned but not yet implemented**.
+Data quality framework for the **Silver layer**, aligned with Phase 2 sample data schemas. Silver checks are **implemented and Databricks-validated** (see `SILVER_LAYER_NOTES.md`, `ai-prompts/silver-layer.md`, `VALIDATION_REPORT.md`).
 
 ## Quality Checks Overview
 

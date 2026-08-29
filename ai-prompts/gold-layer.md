@@ -92,7 +92,8 @@ Created authoritative Gold design contract in `src/gold/GOLD_LAYER_NOTES.md`. Up
 
 **YOUR EVALUATION:**
 
-_To be completed by developer._
+- Gold design contract aligns with `data-model.md`, `design-notes.md`, and validated Silver inputs
+- Ambiguities resolved without changing Bronze/Silver
 
 **FINAL DECISION:** **ACCEPTED** — Gold design contract frozen. Implementation may proceed in Gold Iteration 2.
 
@@ -228,6 +229,12 @@ Created `src/gold/04_customer_segmentation.sql`:
 ---
 
 ## Iteration 6: Orchestration + Databricks validation
+
+**TYPE:** Implementation / validation
+
+**PROMPT SENT — VERBATIM (recovered):**
+
+> Full text: `ai-prompts/verbatim-recoveries.md` — recovery key `gold-iteration-6`.
 
 > Gold Iteration 6 — implement `create_gold_tables.py`, run on Databricks Serverless, validate all four Gold tables, reconcile against Silver, test idempotency, update documentation.
 
