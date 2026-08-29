@@ -161,7 +161,7 @@ See `src/gold/GOLD_LAYER_NOTES.md` for grains, metrics, reconciliation baselines
 
 ## Run Dashboard & Validation
 
-**Dashboard SQL** (Gold-only consumption): `src/dashboard/dashboard_queries.sql` with usage guide `src/dashboard/DASHBOARD_GUIDE.md`. A Databricks SQL dashboard with three pages (Executive Overview, Product Performance, Customer Insights) has been validated against Gold tables.
+**Dashboard SQL** (Gold-only consumption): `src/dashboard/dashboard_queries.sql` with usage guide `src/dashboard/DASHBOARD_GUIDE.md`. A Databricks SQL dashboard with three pages (Executive Overview, Product Performance, Customer Insights) has been validated against Gold tables. Screenshots: `src/dashboard/screenshots/`.
 
 **Pipeline validation** (Databricks SQL):
 

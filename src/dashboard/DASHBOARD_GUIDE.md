@@ -25,6 +25,7 @@ Business logic (revenue, order counts, segments, weekly boundaries) is defined i
 |------|---------|
 | `src/dashboard/dashboard_queries.sql` | Query catalog (15 queries: dashboard tiles + supplemental + validation) |
 | `src/dashboard/DASHBOARD_GUIDE.md` | This guide |
+| `src/dashboard/screenshots/` | Databricks SQL dashboard screenshots (3 pages) |
 
 ---
 
@@ -256,3 +257,21 @@ Then execute each named query in `dashboard_queries.sql` **one block at a time**
 | `weekly_order_trend` | `gold_daily_weekly_trends` | `time_grain`, `period_start`, `order_count` | Yes |
 | `segment_summary` | `gold_customer_segmentation` | `customer_segment`, `total_spend`, `frequency`, `lifetime_value` | Yes |
 | `segment_spend_share` | `gold_customer_segmentation` | `customer_segment`, `total_spend` | Yes |
+
+---
+
+## Visual evidence (Databricks SQL dashboard)
+
+Screenshots from the validated **Sales & Customer Analytics Dashboard** on Databricks Serverless (catalog `de_c1_coding_evaluation`, Gold-only queries). KPIs align with documented baselines: total revenue **~2.71M** (2,708,411.08), total quantity **~10.9K** (10,899).
+
+### Executive Overview
+
+![Executive Overview — KPIs, top products, customer behavior and segment revenue](screenshots/executive-overview.png)
+
+### Product Performance
+
+![Product Performance — revenue and quantity by category, top 10 products, revenue per unit](screenshots/product-performance.png)
+
+### Customer Insights
+
+![Customer Insights — segment and behavioral charts, customer revenue distribution](screenshots/customer-insights.png)
