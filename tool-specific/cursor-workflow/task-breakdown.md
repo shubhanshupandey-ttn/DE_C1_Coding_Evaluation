@@ -9,7 +9,7 @@
 | Phase 3: Bronze ingestion | Complete (Databricks validated) |
 | Phase 4: Silver** | **COMPLETE — RI alignment validated (`SERVERLESS_COMPAT_VERSION = 10`)** |
 | **Phase 5: Gold** | **COMPLETE / ACCEPTED — Iteration 6 Databricks validated** |
-| Phase 6: Dashboard | **Implementation complete — Databricks validation pending** |
+| Phase 6: Dashboard | **Complete — Databricks dashboard validated; see `VALIDATION_REPORT.md`** |
 
 ---
 
@@ -206,7 +206,8 @@
 | 6.3 | Create `src/dashboard/DASHBOARD_GUIDE.md` | Done |
 | 6.4 | Document in `ai-prompts/dashboard.md` | Done |
 | 6.5 | Local/static validation (Gold-only grep, query/guide alignment) | Done |
-| 6.6 | Databricks Serverless — execute all dashboard queries | **Pending** |
+| 6.6 | Databricks Serverless — execute all dashboard queries | Done (operator visual validation) |
+| 6.7 | Final validation review + `src/validation/pipeline_validation.sql` | Done |
 
 ---
 
