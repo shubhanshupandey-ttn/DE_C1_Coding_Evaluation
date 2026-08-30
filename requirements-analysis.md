@@ -6,7 +6,7 @@ Build an **e-commerce-style sales analytics data pipeline** on Databricks using 
 
 The problem is not only to move data between layers, but to demonstrate **coherent data engineering practice**: consistent modeling, traceable quality rules, incremental delivery, and documented AI-assisted development.
 
-**Current status:** Phases 2–6 (data generation through dashboard) are **complete and Databricks-validated**. End-to-end pipeline validation (`src/validation/pipeline_validation.sql`) is **complete — 26/26 PASS** on Databricks Serverless. Submission provenance artifacts (`ai-prompts/`, `data/`, `final-ai-usage-summary.md`, `reflection.md`, `debugging-notes.md`) are **complete**. `database/` remains **not implemented**.
+**Current status:** Phases 2–6 (data generation through dashboard) are **complete and Databricks-validated**. End-to-end pipeline validation (`src/validation/pipeline_validation.sql`) is **complete — 26/26 PASS** on Databricks Serverless. Submission provenance artifacts (`ai-prompts/`, `data/`, `final-ai-usage-summary.md`, `reflection.md`, `debugging-notes.md`) are **complete**. Database schema/setup artifacts (`database/`) are **implemented**; external relational-database deployment is **not claimed**.
 
 ---
 
@@ -40,8 +40,8 @@ The problem is not only to move data between layers, but to demonstrate **cohere
 | Gold | SQL files (`01`–`04`), `create_gold_tables.py`, `GOLD_LAYER_NOTES.md`, `ai-prompts/gold-layer.md` | **Complete** (Databricks validated) |
 | Dashboard | `dashboard_queries.sql`, `DASHBOARD_GUIDE.md`, `ai-prompts/dashboard.md`; Databricks SQL dashboard (3 pages) | **Complete** (Databricks validated) |
 | Pipeline validation | `src/validation/pipeline_validation.sql`, `VALIDATION_REPORT.md`, `ai-prompts/validation.md` | **Complete** (26/26 PASS on Databricks Serverless) |
-| Submission provenance | `ai-prompts/` (numbered prompts 01–35 in phase files), `data/*.csv`, `final-ai-usage-summary.md` | **Complete** |
-| Database | `database/` schema and setup notes | **Not started** |
+| Submission provenance | `ai-prompts/` (numbered prompts 01–36 in phase files), `data/*.csv`, `final-ai-usage-summary.md` | **Complete** |
+| Database | `database/` schema and setup notes | **Complete** (schema/setup artifacts; no external RDBMS deployment) |
 | Closure | `debugging-notes.md`, `reflection.md`, `final-ai-usage-summary.md` | **Complete** |
 
 ---

@@ -38,7 +38,7 @@ Supporting assets:
 - **`ai-prompts/`** — preserved prompts from AI-assisted implementation phases
 - **`VALIDATION_REPORT.md`** — final validation evidence (26/26 PASS on Databricks Serverless)
 - **Root documentation** — requirements, design, data model, and quality strategy
-- **`database/`** — listed in original scope; **not yet implemented** in this repository
+- **`database/`** — source schema/setup artifacts (`schema.sql`, seed and setup notes); **no external RDBMS deployment claimed**
 
 Data quality is a first-class concern in the Silver layer, with explicit checks for completeness, uniqueness, type validation, referential integrity, and business logic. Invalid records are written to `silver_quarantine_records`; category results are persisted in `silver_dq_summary`.
 
@@ -64,9 +64,19 @@ Data quality is a first-class concern in the Silver layer, with explicit checks 
 │   ├── silver/
 │   ├── gold/
 │   ├── dashboard/
+│   │   ├── dashboard_queries.sql
+│   │   ├── DASHBOARD_GUIDE.md
+│   │   └── screenshots/
+│   │       ├── executive-overview.png
+│   │       ├── product-performance.png
+│   │       └── customer-insights.png
 │   └── validation/
 │
 ├── data/
+├── database/
+│   ├── schema.sql
+│   ├── seed-data-notes.md
+│   └── setup-notes.md
 └── ai-prompts/
 ```
 
@@ -107,7 +117,7 @@ Foundation documentation (requirements, design, data model, quality strategy) wa
 | Phase 6: Dashboard | Complete (Databricks SQL dashboard validated) |
 | Pipeline validation (`pipeline_validation.sql`) | **Complete — 26/26 PASS** on Databricks Serverless |
 | Submission provenance (`ai-prompts/`, `data/`, `final-ai-usage-summary.md`) | **Complete** |
-| Database setup artifacts (`database/`) | Not started |
+| Database schema/setup artifacts (`database/`) | **Complete** (external RDBMS deployment not claimed) |
 | Closure (`reflection.md`, `final-ai-usage-summary.md`, `debugging-notes.md`) | **Complete** |
 
 ## Run Data Generation

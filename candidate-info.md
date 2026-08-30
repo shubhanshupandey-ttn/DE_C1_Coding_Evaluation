@@ -16,7 +16,8 @@
 
 | Item | Value |
 |------|-------|
-| Databricks | [Community Edition] |
+| Databricks (development / workspace) | Community Edition (initial workspace reference) |
+| Databricks (final validation) | **Serverless** — pipeline validation **26/26 PASS** (`VALIDATION_REPORT.md`, 2026-08-30) |
 | Languages | Python, PySpark, SQL |
 | Libraries used | PySpark, Delta Lake |
 | AI Tool | Cursor |
@@ -44,5 +45,5 @@ See `README.md` and `final-ai-usage-summary.md` for run instructions and provena
 
 - Incremental delivery (Phases 2–6) with AI-assisted development; prompt history in `ai-prompts/`.
 - Generated datasets (`data/*.csv`, seed 42) are committed and traced through Bronze → validation.
-- `database/` setup artifact listed in requirements but **not implemented**.
+- `database/` schema/setup artifacts **implemented** (`schema.sql`, seed and setup notes); external RDBMS deployment **not claimed**.
 - Dashboard: 3 Databricks SQL pages (Executive Overview, Product Performance, Customer Insights); Gold-only consumption.

@@ -2,7 +2,7 @@
 
 **Prompts in this file:** 01, 02, 03, 24, 31, 32, 33, 34, 35
 
-## Global prompt index (01–35)
+## Global prompt index (01–36)
 
 All prompt history lives in **phase files only** — each entry has **PROMPT SENT** (full text where available), **AI RESPONSE SUMMARY**, and **FINAL DECISION**.
 
@@ -14,8 +14,19 @@ All prompt history lives in **phase files only** — each entry has **PROMPT SEN
 | 07–13, 26–28 | `silver-layer.md` | Silver design through RI alignment |
 | 14–20, 29 | `gold-layer.md` | Gold design through orchestration |
 | 21–23, 30 | `dashboard.md` | Dashboard SQL + validation + evaluation |
+| 36 | `database.md` | Step 7 — source schema/setup artifacts |
 
 Minor operational messages (git checks, notebook cells, short confirmations) are not separate numbered prompts; outcomes are in the relevant phase prompt or `debugging.md`.
+
+### Prompt provenance (read before evaluating history)
+
+| Label | Meaning |
+|-------|---------|
+| **Original** | Prompt recorded from the development session (may include historical `PENDING` states in diary entries below) |
+| **RECOVERED / CONSOLIDATED** | Full **PROMPT SENT** text backfilled from the Cursor chat transcript during final documentation closure (2026-08-30). These are **not** claimed as contemporaneous diary entries filed at implementation time. |
+| **Historical diary** | `PENDING`, `not started`, or iteration-level statuses **inside** a prompt block reflect the state **at that point in development**, not current project status. |
+
+Do not treat RECOVERED/CONSOLIDATED prompt text as proof of real-time recording unless the entry is explicitly labeled **Original** and was filed during the phase.
 
 ---
 

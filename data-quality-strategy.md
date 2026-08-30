@@ -138,15 +138,18 @@ Data quality framework for the **Silver layer**, aligned with Phase 2 sample dat
 
 ## Quality Metrics Report
 
-Planned Silver output (example):
+**Historical planning table (Phase 1–2).** Actual post-implementation DQ metrics are documented in:
+
+- `src/silver/SILVER_LAYER_NOTES.md` — per-category `silver_dq_summary` results and quarantine counts
+- `VALIDATION_REPORT.md` — end-to-end validation including Silver DQ checks (26/26 PASS)
 
 | Check | Table | Rows tested | Rows passed | Rows failed | Pass % |
 |-------|-------|-------------|-------------|-------------|--------|
-| Completeness | customers | 1,006 | TBD | TBD | TBD |
-| Uniqueness | customers | 1,006 | TBD | TBD | TBD |
-| Type validation | orders | 5,163 | TBD | TBD | TBD |
-| Referential integrity | orders | 5,163 | TBD | TBD | TBD |
-| Business logic | orders | 5,163 | TBD | TBD | TBD |
+| Completeness | customers | 1,006 | *(see SILVER_LAYER_NOTES)* | *(see SILVER_LAYER_NOTES)* | *(see SILVER_LAYER_NOTES)* |
+| Uniqueness | customers | 1,006 | *(see SILVER_LAYER_NOTES)* | *(see SILVER_LAYER_NOTES)* | *(see SILVER_LAYER_NOTES)* |
+| Type validation | orders | 5,163 | *(see SILVER_LAYER_NOTES)* | *(see SILVER_LAYER_NOTES)* | *(see SILVER_LAYER_NOTES)* |
+| Referential integrity | orders | 5,163 | *(see SILVER_LAYER_NOTES)* | *(see SILVER_LAYER_NOTES)* | *(see SILVER_LAYER_NOTES)* |
+| Business logic | orders | 5,163 | *(see SILVER_LAYER_NOTES)* | *(see SILVER_LAYER_NOTES)* | *(see SILVER_LAYER_NOTES)* |
 
 Baseline defect counts documented in `src/data_generation/DATA_GENERATION_NOTES.md`.
 
@@ -201,5 +204,5 @@ silver_dq_summary (per-run metrics)
 |----------|------|
 | `src/data_generation/DATA_GENERATION_NOTES.md` | Defect seeding evidence |
 | `data-model.md` | Schema and keys |
-| `src/silver/*.py` | Implementation (not started) |
+| `src/silver/*.py` | Silver DQ implementation — **complete** (Databricks validated; see `SILVER_LAYER_NOTES.md`) |
 | `ai-prompts/silver-layer.md` | Prompts + design iterations |

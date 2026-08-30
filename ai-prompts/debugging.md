@@ -2,7 +2,7 @@
 
 Cross-reference artifact for debugging iterations across the project. **Not every item below originated as a standalone debugging prompt** — some were documented inside phase-specific `ai-prompts/<layer>.md` files during implementation.
 
-**Numbered prompt reference:** Prompts **01–35** in phase `ai-prompts/*.md` files (index at top of `documentation.md`).
+**Numbered prompt reference:** Prompts **01–36** in phase `ai-prompts/*.md` files (index at top of `documentation.md`).
 
 ---
 

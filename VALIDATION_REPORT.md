@@ -20,7 +20,7 @@
 | AI prompt history | `ai-prompts/*.md` | Present per phase |
 | **Validation SQL** | `src/validation/pipeline_validation.sql` | **Added (this review)** |
 | Closure artifacts | `reflection.md`, `final-ai-usage-summary.md`, `debugging-notes.md`, `candidate-info.md` | Complete |
-| Missing per requirements | `database/` | Not created |
+| Database schema/setup (`database/`) | `schema.sql`, seed/setup notes | **Complete** (Step 7; external RDBMS not claimed) |
 
 ---
 
@@ -96,6 +96,16 @@ Additionally:
 | Inactive segment | Zero-order customers | **Absent** (expected — Gold excludes zero-order customers) | **PASS** (documented limitation) |
 | Dashboard pages | 3 pages implemented | Executive Overview, Product Performance, Customer Insights | **PASS** (user-reported) |
 
+**Visual evidence (committed screenshots):** `src/dashboard/screenshots/`
+
+| File | Dashboard page |
+|------|----------------|
+| `executive-overview.png` | Executive Overview |
+| `product-performance.png` | Product Performance |
+| `customer-insights.png` | Customer Insights |
+
+Referenced in `src/dashboard/DASHBOARD_GUIDE.md` § Visual evidence.
+
 ### Dashboard does NOT reimplement Gold incorrectly
 
 - Revenue/spend uses Gold `total_revenue` / `total_spend` — not rebuilt from Silver.
@@ -156,10 +166,10 @@ Additionally:
 | `debugging-notes.md` | **Complete** |
 | `final-ai-usage-summary.md` | **Complete** |
 | `ai-prompts/debugging.md`, `ai-prompts/validation.md` | **Complete** (submission closure) |
-| `database/` | **Still missing** (listed in requirements; optional for evaluator) |
+| `database/` | **Complete** — schema/setup artifacts (Step 7); external RDBMS deployment not claimed |
 | `task-breakdown.md` | **Resolved** — Phase 6.7 documents 26/26 PASS |
 
-**Remaining optional gap:** `database/` schema/setup notes only.
+**Database artifacts:** `database/` schema/setup notes added (Step 7). No external RDBMS validation performed.
 
 ---
 
@@ -170,7 +180,7 @@ Additionally:
 | `dashboard_queries.sql` | requirements | **Present** |
 | `DASHBOARD_GUIDE.md` | requirements | **Present** |
 | `ai-prompts/dashboard.md` | tool-workflow | **Present** |
-| `database/` setup | requirements-analysis | **Missing** |
+| `database/` setup | requirements-analysis | **Complete** |
 | `debugging-notes.md` | README / closure | **Complete** |
 | `final-ai-usage-summary.md` | requirements closure | **Complete** |
 | `ai-prompts/debugging.md`, `ai-prompts/validation.md` | tool-workflow / provenance | **Complete** |
@@ -181,11 +191,11 @@ Additionally:
 
 ## 10. Recommended next actions
 
-1. **Run** `src/validation/pipeline_validation.sql` on Databricks Serverless and archive results alongside this report.
+1. ~~**Run** `src/validation/pipeline_validation.sql` on Databricks Serverless and archive results alongside this report.~~ — **done** (26/26 PASS; § Databricks execution results).
 2. **Update** `README.md` and `requirements-analysis.md` phase status tables (documentation only — no pipeline changes).
 3. **Update** `data-quality-strategy.md` header to reflect implemented Silver checks.
 4. **Complete** closure artifacts: `reflection.md`, `final-ai-usage-summary.md`, `debugging-notes.md`, `ai-prompts/debugging.md`, `ai-prompts/validation.md` — **done** (2026-08-30 submission closure).
-5. **Optional:** Add `database/` schema notes if still required by evaluator.
+5. ~~**Optional:** Add `database/` schema notes~~ — **done** (Step 7).
 6. **Do not** modify Bronze/Silver/Gold SQL or dashboard queries unless a concrete FAIL emerges from step 1.
 
 ---
@@ -200,7 +210,7 @@ Additionally:
 | Dashboard | **PASS** (static Gold-only review + operator Databricks visual validation) |
 | Unified SQL validation script | **26/26 PASS** on Databricks Serverless (2026-08-30) |
 
-**Overall:** Project implementation is complete and consistent with the frozen Gold contract. Documentation and submission provenance artifacts are complete. Optional remaining item: `database/` if still required by evaluator.
+**Overall:** Project implementation is complete and consistent with the frozen Gold contract. Documentation, submission provenance, and database schema/setup artifacts are complete. External relational-database deployment is not claimed.
 
 ---
 

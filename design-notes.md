@@ -1,6 +1,6 @@
 # Design Notes
 
-High-level architecture and design direction for the Databricks Medallion Pipeline. Bronze is **implemented** (Phase 3); Silver and above are not started.
+High-level architecture and design direction for the Databricks Medallion Pipeline. **Current status:** Bronze (Phase 3), Silver + DQ (Phase 4), Gold (Phase 5), Dashboard (Phase 6), and pipeline validation are **implemented and Databricks-validated** (see `VALIDATION_REPORT.md`).
 
 ## Architecture Overview
 
@@ -68,6 +68,8 @@ See `src/bronze/BRONZE_LAYER_NOTES.md` for execution and validation details.
 
 ## Silver Layer Design
 
+**Status:** Implemented (Phase 4). Authoritative execution and validation evidence: `src/silver/SILVER_LAYER_NOTES.md`.
+
 | Aspect | Design direction |
 |--------|----------------|
 | **Purpose** | Cleansed, typed, analyst-trusted tables |
@@ -84,11 +86,13 @@ See `src/bronze/BRONZE_LAYER_NOTES.md` for execution and validation details.
 | `04_quality_referential_integrity.py` | FK relationships valid |
 | `05_quality_business_logic.py` | Domain rules (amounts, dates, etc.) |
 
-**To be finalized during implementation:** quarantine vs. flag vs. fail-on-error; order of checks; DQ summary reporting.
+**Finalized during implementation:** quarantine (`silver_quarantine_records`), DQ summary (`silver_dq_summary`), check order, and reporting — see `SILVER_LAYER_NOTES.md` and `data-quality-strategy.md`.
 
 ---
 
 ## Gold Layer Design
+
+**Status:** Implemented (Phase 5). Authoritative contract and validation: `src/gold/GOLD_LAYER_NOTES.md`.
 
 | Aspect | Design direction |
 |--------|----------------|
@@ -131,13 +135,13 @@ Quality runs primarily in **Silver** (not Bronze, not as a substitute in Gold).
 | Referential integrity | FKs resolve to parent tables | `data-quality-strategy.md` |
 | Business logic | Domain rules (positive qty, valid dates, etc.) | `data-quality-strategy.md` |
 
-Gold assumes Silver inputs meet agreed thresholds. See `data-quality-strategy.md` for What / How / Threshold / Result per check (thresholds TBD until Silver is built).
+Gold assumes Silver inputs meet agreed thresholds. See `data-quality-strategy.md` for What / How / Threshold / Result per check. Observed pass/fail metrics: `SILVER_LAYER_NOTES.md` and `VALIDATION_REPORT.md`.
 
 ---
 
 ## Debugging Approach
 
-_To be used during implementation; recorded in `debugging-notes.md` and `ai-prompts/debugging.md`._
+Recorded in `debugging-notes.md` and `ai-prompts/debugging.md` (Bronze Spark session, Silver Serverless compatibility, RI alignment, dashboard schema clarification, validation SQL fixes).
 
 | Step | Action |
 |------|--------|
@@ -146,8 +150,6 @@ _To be used during implementation; recorded in `debugging-notes.md` and `ai-prom
 | 3 | Compare record counts and schemas between layers |
 | 4 | Use AI for hypothesis/fix suggestions **after** sharing actual errors |
 | 5 | Document root cause and resolution for non-trivial issues |
-
-**Not yet applicable** — no pipeline code to debug.
 
 ---
 
@@ -163,10 +165,10 @@ _To be used during implementation; recorded in `debugging-notes.md` and `ai-prom
 
 ---
 
-## Consistency Checklist (for future phases)
+## Consistency Checklist (phases 2–6)
 
-- [ ] Entity names match `data-model.md`
-- [ ] Quality rules match `data-quality-strategy.md`
-- [ ] Gold metrics align with Silver fields
-- [ ] Dashboard queries reference existing Gold objects
-- [ ] Prompts recorded in correct `ai-prompts/` file
+- [x] Entity names match `data-model.md`
+- [x] Quality rules match `data-quality-strategy.md`
+- [x] Gold metrics align with Silver fields
+- [x] Dashboard queries reference existing Gold objects
+- [x] Prompts recorded in correct `ai-prompts/` file

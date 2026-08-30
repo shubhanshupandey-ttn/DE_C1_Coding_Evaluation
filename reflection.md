@@ -83,7 +83,7 @@ Validation evidence is archived in `VALIDATION_REPORT.md` and `*_LAYER_NOTES.md`
 
 From documented gaps (not speculative):
 
-- **`database/`** setup notes still missing if required by evaluator.
+- **`database/`** schema/setup artifacts added in Step 7; external RDBMS deployment was not part of the validated Databricks pipeline.
 - **Automated Spark integration tests** for Silver DQ modules (only helper unit tests exist locally).
 - **Databricks Jobs/bundles** orchestration (currently per-layer notebook/Python entry points).
 - **Earlier closure documentation** — root status docs lagged implementation until final pass.

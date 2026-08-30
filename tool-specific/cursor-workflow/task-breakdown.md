@@ -40,7 +40,7 @@
 | 4.1b.5 | Finalize date rules (`current_date()`) + `run_timestamp` traceability | Done |
 | 4.1b.6 | Confirm execution order unchanged | Done |
 | 4.1b.7 | Update `SILVER_LAYER_NOTES.md`, `data-quality-strategy.md`, `spec.md`, `silver-layer.md` | Done |
-| 4.1b.8 | **Developer approval before Iteration 2** | **Pending** |
+| 4.1b.8 | **Developer approval before Iteration 2** | **Done** |
 
 ---
 
@@ -72,7 +72,7 @@
 | 4.3.4 | Local `py_compile` + helper tests | Done |
 | 4.3.5 | Validate logic against Phase 2 defect matrix (Databricks Serverless) | Done |
 | 4.3.6 | Document Iteration 3 in `ai-prompts/silver-layer.md` | Done |
-| 4.3.7 | **Developer approval before Iteration 4** | **Pending** |
+| 4.3.7 | **Developer approval before Iteration 4** | **Done** |
 
 ---
 
@@ -110,7 +110,7 @@
 | 4.5.12 | Document Iteration 5 + acceptance in `ai-prompts/silver-layer.md` | Done |
 | 4.5.13 | **Developer approval / ACCEPTED** | **Done** |
 
-### RI Alignment: Curated parent keys — **IMPLEMENTED (Databricks revalidation pending)**
+### RI Alignment: Curated parent keys — **COMPLETE (Databricks revalidated)**
 
 | # | Task | Status |
 |---|------|--------|
@@ -147,9 +147,9 @@
 | 5.1b.7 | Finalize overwrite/idempotency semantics | Done |
 | 5.1b.8 | Create `src/gold/GOLD_LAYER_NOTES.md` | Done |
 | 5.1b.9 | Document Iteration 1b in `ai-prompts/gold-layer.md` | Done |
-| 5.1b.10 | **Developer approval before Gold Iteration 2** | **Pending** |
+| 5.1b.10 | **Developer approval before Gold Iteration 2** | **Done** |
 
-### Iteration 2: Sales by product — **COMPLETE (Databricks validation pending)**
+### Iteration 2: Sales by product — **COMPLETE** *(Databricks validation consolidated in Iteration 6)*
 
 | # | Task | Status |
 |---|------|--------|
@@ -157,7 +157,7 @@
 | 5.2.2 | Local validation | Done |
 | 5.2.3 | Document in `ai-prompts/gold-layer.md` | Done |
 
-### Iteration 3: Revenue by customer — **COMPLETE (Databricks validation pending)**
+### Iteration 3: Revenue by customer — **COMPLETE** *(Databricks validation consolidated in Iteration 6)*
 
 | # | Task | Status |
 |---|------|--------|
@@ -165,7 +165,7 @@
 | 5.3.2 | Local validation | Done |
 | 5.3.3 | Document in `ai-prompts/gold-layer.md` | Done |
 
-### Iteration 4: Daily / weekly trends — **COMPLETE (Databricks validation pending)**
+### Iteration 4: Daily / weekly trends — **COMPLETE** *(Databricks validation consolidated in Iteration 6)*
 
 | # | Task | Status |
 |---|------|--------|
@@ -173,7 +173,7 @@
 | 5.4.2 | Local validation | Done |
 | 5.4.3 | Document in `ai-prompts/gold-layer.md` | Done |
 
-### Iteration 5: Customer segmentation — **COMPLETE (Databricks validation pending)**
+### Iteration 5: Customer segmentation — **COMPLETE** *(Databricks validation consolidated in Iteration 6)*
 
 | # | Task | Status |
 |---|------|--------|

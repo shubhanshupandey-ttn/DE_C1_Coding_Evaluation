@@ -37,9 +37,11 @@ Human/developer review is recorded in `YOUR EVALUATION` / `FINAL DECISION` secti
 
 ---
 
-## 3. Prompt history index (01–35)
+## 3. Prompt history index (01–36)
 
 Full prompt text and results are in **phase files only**. See the index table at the top of `ai-prompts/documentation.md`.
+
+**Provenance:** Many full **PROMPT SENT** blocks were **RECOVERED / CONSOLIDATED** from the chat transcript at project closure (2026-08-30). Historical `PENDING` lines inside prompt diaries are intentional. See `documentation.md` § Prompt provenance.
 
 | File | Prompts |
 |------|---------|
@@ -49,6 +51,7 @@ Full prompt text and results are in **phase files only**. See the index table at
 | `silver-layer.md` | 07–13, 26–28 |
 | `gold-layer.md` | 14–20, 29 |
 | `dashboard.md` | 21–23, 30 |
+| `database.md` | 36 |
 | `debugging.md` | Cross-reference for fixes (not numbered prompts) |
 | `validation.md` | Points to Prompt 24 |
 
@@ -172,9 +175,9 @@ AI prompt (Phase 2) → generate_sample_data.py → data/*.csv
 |-----|--------|
 | Operational chat messages (git, notebook cells, short confirmations) | Not separate prompts; outcomes in phase files / `debugging.md` |
 | Validation SQL fix follow-up (3 checks) | Documented under Prompt 24 + `debugging.md` Debug 12–13 |
-| `database/` setup | **Not implemented** |
+| `database/` setup | **Implemented** (Step 7 — `schema.sql`, seed/setup notes; external RDBMS not claimed) |
 
-**Coverage rule:** Prompts 01–35 have full **PROMPT SENT** text in phase files.
+**Coverage rule:** Prompts 01–36 have full **PROMPT SENT** text in phase files (Prompt 36 in `ai-prompts/database.md`).
 
 ---
 

@@ -94,11 +94,11 @@ Rejected alternative: separate header and line CSV files — unnecessary complex
 
 ## Medallion Mapping
 
-| Layer | Objects |
-|-------|---------|
-| Bronze | `bronze.bronze_customers`, `bronze.bronze_orders`, `bronze.bronze_products` |
-| Silver | Cleansed entity tables at same grain as source (not started) |
-| Gold | Aggregated metric tables (not started) |
+| Layer | Objects | Status |
+|-------|---------|--------|
+| Bronze | `bronze.bronze_customers`, `bronze.bronze_orders`, `bronze.bronze_products` | Implemented (Phase 3) |
+| Silver | `silver.silver_customers`, `silver.silver_products`, `silver.silver_orders`; `silver_quarantine_records`; `silver_dq_summary` | Implemented (Phase 4) |
+| Gold | `gold.gold_sales_by_product`, `gold.gold_revenue_by_customer`, `gold.gold_daily_weekly_trends`, `gold.gold_customer_segmentation` | Implemented (Phase 5) |
 
 ## Resolved Modeling Questions
 
@@ -117,3 +117,6 @@ Rejected alternative: separate header and line CSV files — unnecessary complex
 | Phase 1 | Initial logical model; schema TBD |
 | Phase 2 | Physical schemas finalized; line-item orders adopted |
 | Phase 3 | Bronze Delta tables: `bronze.bronze_*`; source columns ingested as STRING |
+| Phase 4 | Silver curated tables + quarantine + DQ summary (`SILVER_LAYER_NOTES.md`) |
+| Phase 5 | Four Gold analytical tables (`GOLD_LAYER_NOTES.md`) |
+| Phase 6 | Dashboard SQL + Databricks SQL dashboard (`DASHBOARD_GUIDE.md`) |

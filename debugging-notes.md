@@ -90,7 +90,7 @@ Concise chronological log of non-trivial debugging during `DE_C1_Coding_Evaluati
 | **Resolution** | `information_schema.columns`; `table_name` filter |
 | **Files** | `src/validation/pipeline_validation.sql`, `VALIDATION_REPORT.md` |
 | **Validation** | **26/26 PASS** on re-run |
-| **Prompt** | `ai-prompts/validation.md` Prompt 2 (operator re-run — prompt text not preserved) |
+| **Prompt** | Prompt 24 follow-up (`documentation.md`; details in `validation.md` index) |
 
 ---
 
